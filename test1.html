@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>ストップウォッチ</title>
+<style>
+  body {
+    font-family: Arial;
+    text-align: center;
+    margin-top: 50px;
+  }
+  #time {
+    font-size: 48px;
+    margin-bottom: 20px;
+  }
+  button {
+    font-size: 18px;
+    margin: 5px;
+    padding: 10px 20px;
+  }
+  #laps {
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<h1>ストップウォッチ</h1>
+<div id="time">00:00.00</div>
+
+<button onclick="start()">スタート</button>
+<button onclick="stop()">ストップ</button>
+<button onclick="reset()">リセット</button>
+<button onclick="lap()">ラップ</button>
+
+<div id="laps"></div>
+
+<script>
+let startTime;
+let elapsed = 0;
+let timer;
+
+function update() {
+  let now = Date.now();
+  let diff = now - startTime + elapsed;
+
+  let ms = Math.floor((diff % 1000) / 10);
+  let sec = Math.floor((diff / 1000) % 60);
+  let min = Math.floor(diff / 60000);
+
+  document.getElementById("time").textContent =
+    String(min).padStart(2, '0') + ":" +
+    String(sec).padStart(2, '0') + "." +
+    String(ms).padStart(2, '0');
+}
+
+function start() {
+  startTime = Date.now();
+  timer = setInterval(update, 10);
+}
+
+function stop() {
+  clearInterval(timer);
+  elapsed += Date.now() - startTime;
+}
+
+function reset() {
+  clearInterval(timer);
+  elapsed = 0;
+  document.getElementById("time").textContent = "00:00.00";
+  document.getElementById("laps").innerHTML = "";
+}
+
+function lap() {
+  let now = new Date();
+  let currentTime = now.toLocaleTimeString();
+
+  let lapTime = document.getElementById("time").textContent;
+
+  let div = document.createElement("div");
+  div.textContent = "ラップ: " + lapTime + " / 時刻: " + currentTime;
+
+  document.getElementById("laps").prepend(div);
+}
+</script>
+
+</body>
+</html>
