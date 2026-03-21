@@ -1,0 +1,65 @@
+
+<!DOCTYPE HTML>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>トップページ</title>
+    <style>
+        /* 画像を親要素に合わせて表示するためのスタイル */
+        img.resize-image {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body><script type="text/javascript" charset="utf-8" src="//asumi.shinobi.jp/encount"></script><div style="text-align: center;"><div style="display: inline-block; position: relative; z-index: 9999;"><script type="text/javascript" charset="utf-8" src="//asumi.shinobi.jp/fire?f=435"></script><script type="text/javascript" charset="utf-8" src="/__sys__inactive_message.js"></script></div></div>
+    <h1><font color="#888888">トップページ</font></h1>
+    <p><big><big><font color="#888888">リンク<BR></big></big></p>
+
+    <ul>
+        <li><a href="https://mmcalc.aikotoba.jp/mix.html">MIX計算機</a></li>
+        <li><a href="https://mmcalc.aikotoba.jp/mixp.html">MIX確率計算</a></li>
+        <li><a href="https://mmcalc.aikotoba.jp/expx.html">経験値倍率計算</a></li>
+        <li><a href="https://mmcalc.aikotoba.jp/huntdata.html">ハントデータ</a></li>
+        <li><a href="https://mmcalc.aikotoba.jp/mixgun.html">MC計算</a></li>
+        <li><a href="https://mmcalc.aikotoba.jp/success.html">成功確率のグラフ</a></li>
+        <li><a href="https://mmcalc.aikotoba.jp/strength.html">簡易強度計算</a></li>
+        <li><a href="https://mmcalc.aikotoba.jp/statuscalk.html">ステータス計算</a></li>
+        <li><a href="https://mmcalc.aikotoba.jp/strengthdetails.html">詳細強度計算</a></li>
+        <li><a href="https://ameblo.jp/uppooooo">uppoのブログ</a></li>
+    </ul>
+
+    <br>
+    <br>
+
+    <p>
+        <!-- 画像の自動リサイズ -->
+        <img id="image" class="resize-image" src="index002.jpg" alt="index002">
+    </p>
+
+    <script>
+        // 画像の読み込み完了後に実行
+        window.onload = function () {
+            var img = document.getElementById('image');
+            // 画像の表示サイズを調整
+            img.onload = function () {
+                var maxWidth = img.parentElement.clientWidth; // 親要素の幅
+                var naturalWidth = img.naturalWidth; // 元画像の幅
+                var naturalHeight = img.naturalHeight; // 元画像の高さ
+                // 元画像の幅が親要素の幅を超えている場合のみリサイズ
+                if (naturalWidth > maxWidth) {
+                    var ratio = maxWidth / naturalWidth;
+                    img.width = naturalWidth * ratio;
+                    img.height = naturalHeight * ratio;
+                }
+            };
+        };
+    </script>
+
+<div style="text-align: center;"><div style="display: inline-block; position: relative; z-index: 9999;"><script type="text/javascript" charset="utf-8" src="//asumi.shinobi.jp/fire?f=434"></script></div></div></body>
+
+</html>
