@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <title>ハントデータ</title>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+</head>
+<body>
+    <h1><font color="#888888">ハントデータ</font></h1>
+    <p><font color="#888888">※半角数字で入力してください</font></p>
+
+    <label for="input_time">狩り時間（分）:</label>
+    <input type="text" size="5" id="input_time"><br>
+
+    <label for="input_gpi">初期ＧＰ:</label>
+    <input type="text" size="12" id="input_gpi"><br>
+
+    <label for="input_gpf">最終ＧＰ:</label>
+    <input type="text" size="12" id="input_gpf"><br>
+
+    <label for="input_gp1">取得ＧＰ／匹　その１:</label>
+    <input type="text" size="5" id="input_gp1"><br>
+
+    <label for="input_gp2">取得ＧＰ／匹　その２:</label>
+    <input type="text" size="5" id="input_gp2"><br>
+
+    <label for="input_gp3">取得ＧＰ／匹　その３:</label>
+    <input type="text" size="5" id="input_gp3"><br>
+
+    <label for="input_gp4">取得ＧＰ／匹　その４:</label>
+    <input type="text" size="5" id="input_gp4"><br>
+
+    <label for="input_gp5">取得ＧＰ／匹　その５:</label>
+    <input type="text" size="5" id="input_gp5"><br>
+
+    <label for="input_exp">獲得経験値／匹:</label>
+    <input type="text" size="5" id="input_exp"><br>
+
+    <label for="input_expi">初期経験値（％）:</label>
+    <input type="text" size="5" id="input_expi"><br>
+
+    <label for="input_expf">最終経験値（％）:</label>
+    <input type="text" size="5" id="input_expf"><br>
+
+    <button onclick="calculateAndDisplay()">計算</button>
+    <p id="customTextGP"></p>
+    <p id="averageResult"></p>
+    <p id="differenceResult"></p>
+    <p id="gpPerTimeResult"></p>
+    <p id="gpPerHourResult"></p>
+    <p id="customTextHunts"></p>
+    <p id="totalHuntsResult"></p>
+    <p id="huntsPerMinuteResult"></p>
+    <p id="huntsPerHourResult"></p>
+    <p id="customTextEXP"></p>
+    <p id="expResult"></p>
+    <p id="expPerHourResult"></p>
+    <p id="totalExpResult"></p>
+
+    <script>
+        function calculateAndDisplay() {
+            var customTextElementGP = document.getElementById('customTextGP');
+            customTextElementGP.textContent = '【取得ＧＰ】';
+
+            var customTextElementHunts = document.getElementById('customTextHunts');
+            customTextElementHunts.textContent = '【狩り数】';
+
+            var customTextElementEXP = document.getElementById('customTextEXP');
+            customTextElementEXP.textContent = '【獲得経験値】';
+
+            var gpi = parseInt(document.getElementById('input_gpi').value);
+            var gpf = parseInt(document.getElementById('input_gpf').value);
+            var time = parseInt(document.getElementById('input_time').value);
+            var expi = parseFloat(document.getElementById('input_expi').value);
+            var expf = parseFloat(document.getElementById('input_expf').value);
+            var exp = parseInt(document.getElementById('input_exp').value);
+
+            var difference = gpf - gpi;
+            var gpPerTime = difference / time;
+            var gpPerHour = gpPerTime * 60;
+
+            var sumGP = 0;
+            var countGP = 0;
+            for (var i = 1; i <= 5; i++) {
+                var gp = parseInt(document.getElementById('input_gp' + i).value);
+                if (!isNaN(gp)) {
+                    sumGP += gp;
+                    countGP++;
+                }
+            }
+            var averageGP = countGP > 0 ? sumGP / countGP : 0;
+
+            var totalHunts = Math.floor(difference / averageGP);
+            var huntsPerMinute = Math.floor(totalHunts / time);
+            var huntsPerHour = Math.floor(totalHunts / time * 60);
+
+            var expGain = expf - expi;
+            var expPerHour = (expGain / time) * 60;
+            var totalExp = exp * totalHunts;
+
+            document.getElementById('averageResult').textContent = "平均取得ＧＰ／匹： " + averageGP.toLocaleString();
+            document.getElementById('differenceResult').textContent = "総取得ＧＰ： " + difference.toLocaleString();
+            document.getElementById('gpPerTimeResult').textContent = "取得ＧＰ／分： " + Math.floor(gpPerTime).toLocaleString();
+            document.getElementById('gpPerHourResult').textContent = "取得ＧＰ／時： " + Math.floor(gpPerHour).toLocaleString();
+            document.getElementById('totalHuntsResult').textContent = "総狩り数： " + totalHunts.toLocaleString();
+            document.getElementById('huntsPerMinuteResult').textContent = "狩り数／分： " + huntsPerMinute.toLocaleString();
+            document.getElementById('huntsPerHourResult').textContent = "狩り数／時： " + huntsPerHour.toLocaleString();
+            document.getElementById('expResult').textContent = "取得経験値（％）: " + expGain.toFixed(2).toLocaleString();
+            document.getElementById('expPerHourResult').textContent = "取得経験値／時（％）: " + expPerHour.toFixed(2);
+            document.getElementById('totalExpResult').textContent = "総獲得経験値: " + totalExp.toLocaleString();
+        }
+    </script>
+    <ul>
+        <li><a href="https://mmcalc.aikotoba.jp">トップページ</a></li>
+    </ul>
+</body>
+</html>

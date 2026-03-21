@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+
+<html>
+<head>
+    <title>取得経験値倍率</title>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+
+</head>
+<meta name="viewport" content="width=device-width, 
+　initial-scale=1.0, user-scalable=yes">
+
+<body>
+    <h1><font color="#888888">取得経験値倍率計算</font></h1>
+    <p><font color="#888888">※半角数字で入力してください</p>
+
+    <label for="input_a">マスター:</label>
+    <input type="text" size="5" id="input_a"><br>
+
+    <label for="input_b">メイト１:</label>
+    <input type="text" size="5" id="input_b"><br>
+
+    <label for="input_c">メイト２:</label>
+    <input type="text" size="5" id="input_c"><br>
+
+    <label for="input_d">メイト３:</label>
+    <input type="text" size="5" id="input_d"><br>
+
+    <label for="input_e">敵レベル:</label>
+    <input type="text" size="5" id="input_e"><br>
+
+    <button onclick="calculateAndDisplayDifference()">計算</button>
+
+    <p id="averageResult"></p>
+    <p id="differenceResult"></p>
+    <p id="ratioResult"></p>
+
+    <script>
+        function calculateAndDisplayDifference() {
+            // 入力値を取得
+            var a = parseInt(document.getElementById("input_a").value);
+            var b = parseInt(document.getElementById("input_b").value);
+            var c = parseInt(document.getElementById("input_c").value);
+            var d = parseInt(document.getElementById("input_d").value);
+            var e = parseInt(document.getElementById("input_e").value);
+
+            // b, c, dがa±15以内の場合に平均を計算
+            var count = 0;
+            var sum = 0;
+
+            if (!isNaN(a)) {
+                sum += a;
+                count++;
+            }
+
+            if (!isNaN(b) && Math.abs(a - b) <= 15) {
+                sum += b;
+                count++;
+            }
+
+            if (!isNaN(c) && Math.abs(a - c) <= 15) {
+                sum += c;
+                count++;
+            }
+
+            if (!isNaN(d) && Math.abs(a - d) <= 15) {
+                sum += d;
+                count++;
+            }
+
+            // 入力が1つ以上ある場合のみ平均を計算
+            if (count > 0) {
+                var average = sum / count;
+                document.getElementById("averageResult").textContent = "メイト平均レベル: " + average.toFixed(2);
+
+                // eの値と平均の差を計算
+                var difference = e - average;
+
+                var differenceText = "";
+                var ratio = "";
+                if (difference <= -9) {
+                    differenceText = "灰色";
+                    ratio = "1/8";
+                } else if (difference <= -4) {
+                    differenceText = "緑色";
+                    ratio = "2/8";
+                } else if (difference <= -1) {
+                    differenceText = "黄４";
+                    ratio = "4/8";
+                } else if (difference <= 2) {
+                    differenceText = "黄３";
+                    ratio = "6/8";
+                } else if (difference <= 4) {
+                    differenceText = "黄２";
+                    ratio = "7.2/8";
+                } else if (difference <= 7) {
+                    differenceText = "黄１";
+                    ratio = "8/8";
+                } else if (difference < 14) {
+                    differenceText = "橙色";
+                    ratio = "8/8";
+                } else {
+                    differenceText = "赤色";
+                    ratio = "8/8";
+                }
+
+                document.getElementById("differenceResult").textContent = "レベル差: " + difference.toFixed(2) + " (" + differenceText + ")";
+                document.getElementById("ratioResult").textContent = "経験値倍率: " + ratio;
+            } else {
+                document.getElementById("averageResult").textContent = "条件を満たす値を入力してください。";
+                document.getElementById("differenceResult").textContent = "";
+                document.getElementById("ratioResult").textContent = "";
+            }
+        }
+    </script>
+
+
+<ul>
+ <li><a href="https://mmcalc.aikotoba.jp">トップページ</a></li>
+</ul>
+</body>
+</html>

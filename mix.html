@@ -1,0 +1,46 @@
+﻿<!DOCTYPE HTML>
+<html lang="ja">
+
+<head>
+    <title>MIX計算機</title>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+    <script type="text/javascript">
+        function calc(CL) {
+            CL.E.value = Math.floor((eval(CL.A.value) + eval(CL.C.value)) / 2) +
+                Math.floor((
+                    Math.min(Math.floor(eval(CL.A.value) * 100 / (eval(CL.B.value) + 25)) / 10, 10) +
+                    Math.min(Math.floor(eval(CL.C.value) * 100 / (eval(CL.D.value) + 25)) / 10, 10)
+                ) / 2);
+        }
+    </script>
+</head>
+
+<body>
+    <h1><font color="#888888">MIX計算機</font></h1>
+    <p><font color="#888888">※半角入力<br>
+            <form name="Calc">
+               　　　　 現在Lv　基本Lv
+                <br>
+                メイン：<input type="text" name="A" value="" size="5"> <input type="text" name="B" value="" size="5">
+                <br>
+                <br>
+                　サブ：<input type="text" name="C" value="" size="5"> <input type="text" name="D" value="" size="5">
+                <br>
+                <br>
+
+                　<input type="button" value="MIX" onclick="calc(this.form)"> <input type="reset" value="RESET">
+                <br>
+                <br>
+                完成Lv：<input type="text" name="E" size="5">
+            </form>
+
+            <br>
+            <ul>
+                <li><a href="https://mmcalc.aikotoba.jp">トップページ</a></li>
+            </ul>
+</body>
+
+</html>

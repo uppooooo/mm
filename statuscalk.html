@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>ステータス計算</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+    }
+    label {
+        display: inline-block;
+        width: 100px;
+    }
+    input {
+        width: 70px; /* コンパクトに調整 */
+        margin-bottom: 10px;
+        text-align: right;
+    }
+    .result {
+        margin-top: 15px;
+    }
+</style>
+</head>
+<meta name="viewport" content="width=device-width, 
+　initial-scale=1.0, user-scalable=yes">
+
+<body>
+
+<h2>ステータス計算</h2>
+
+<form onsubmit="calculate(); return false;">
+    <div>
+        <label>レベル：</label>
+        <input type="number" id="level" step="1" max="9999">
+    </div>
+
+    <div>
+        <label>強度：</label>
+        <input type="number" id="power" step="0.01" max="9999">
+    </div>
+
+    <button type="submit">計算</button>
+</form>
+
+<div class="result">
+    <p>力：<span id="str"></span></p>
+    <p>敏捷：<span id="agi"></span></p>
+    <p>器用：<span id="dex"></span></p>
+    <p>幸運：<span id="luk"></span></p>
+</div>
+
+<script>
+function roundDown(value) {
+    return Math.floor(value);
+}
+
+function calculate() {
+    const B3 = parseInt(document.getElementById("level").value);
+    const C3 = parseFloat(document.getElementById("power").value);
+
+    if (isNaN(B3) || isNaN(C3)) {
+        alert("値を入力してください");
+        return;
+    }
+
+    const str = Math.round((B3 + 1) * C3);
+    const agi = Math.round(Math.round(B3 / 2) * C3 + B3);
+    const dex = Math.round(roundDown(B3 * 1.5 + 2) * C3);
+    const luk = Math.round((B3 + 1) * C3);
+
+    document.getElementById("str").textContent = str;
+    document.getElementById("agi").textContent = agi;
+    document.getElementById("dex").textContent = dex;
+    document.getElementById("luk").textContent = luk;
+}
+</script>
+
+    <ul>
+        <li><a href="https://mmcalc.aikotoba.jp">トップページ</a></li>
+    </ul>
+
+</body>
+</html>

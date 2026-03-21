@@ -1,0 +1,85 @@
+﻿
+
+<!DOCTYPE HTML>
+<html lang="ja">
+
+<HTML>
+<HEAD>
+<TITLE>MIX確率計算</TITLE>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex,nofollow,noarchive" />
+
+</HEAD>
+<meta name="viewport" content="width=device-width, 
+　initial-scale=1.0, user-scalable=yes">
+
+
+
+<BODY>
+<H1><font color="#888888">MIX確率計算</font></H1>
+<P><font color="#888888">※半角入力<BR>
+<br>
+
+    <label for="successProbability">成功確率: </label>
+    <input type="text" id="successProbability" min="0" max="100" step="1" size="5">％
+
+    <br>
+    <label for="trials">MIX回数: </label>
+    <input type="text" id="trials" min="1" size="5">回
+<br>
+    <label for="successes">成功回数: </label>
+    <input type="text" id="successes" min="0" size="5">回
+    <br>
+
+    <button onclick="calculate()">計算</button>
+
+    <br>
+    <p>確率: <span id="result"></span>％</p>
+    <p>確率(1回以上成功する確率): <span id="result2"></span>％</p>
+
+    <script>
+        function calculate() {
+            const successes = parseInt(document.getElementById("successes").value);
+            const trials = parseInt(document.getElementById("trials").value);
+            const successProbability = parseFloat(document.getElementById("successProbability").value);
+
+            if (isNaN(successes) || isNaN(trials) || isNaN(successProbability)) {
+                alert("数字を入力してください。");
+                return;
+            }
+
+            if (successProbability < 0 || successProbability > 100) {
+                alert("成功確率は0～100%の間で入力してください。");
+                return;
+            }
+
+            const probability =100*( binomialDistribution(successes, trials, successProbability/100));
+            document.getElementById("result").innerText = probability.toFixed(1);
+            const probability2 = 100*(1-(binomialDistribution(0, trials, successProbability/100)));
+            document.getElementById("result2").innerText = probability2.toFixed(1);
+        }
+
+        function binomialDistribution(x, n, p) {
+            const combinations = factorial(n) / (factorial(x) * factorial(n - x));
+            const probability = combinations * Math.pow(p, x) * Math.pow(1 - p, n - x);
+            return probability;
+        }
+
+        function factorial(num) {
+            if (num === 0 || num === 1) {
+                return 1;
+            } else {
+                return num * factorial(num - 1);
+            }
+        }
+            const probability2 = combinations * Math.pow(p, x) * Math.pow(1 - p, n - x);
+
+       
+
+    </script>
+<ul>
+ <li><a href="https://mmcalc.aikotoba.jp">トップページ</a></li>
+</ul>
+
+</BODY>
+</HTML>

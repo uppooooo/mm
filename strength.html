@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>強度計算</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, select {
+            margin-top: 5px;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>強度計算</h1>
+
+    <form id="strength-form">
+        <label for="level">レベル（整数3桁）:</label>
+        <input type="number" id="level" name="level" min="0" max="999" required>
+
+        <label for="power">力（整数）:</label>
+        <input type="number" id="power" name="power" required>
+
+        <label for="luck">幸運（整数）:</label>
+        <input type="number" id="luck" name="luck" required>
+
+        <label for="trait">特性:</label>
+        <select id="trait" name="trait">
+            <option value="other">力以外</option>
+            <option value="power">力</option>
+        </select>
+
+        <div class="result">
+            強度: <span id="strength">0.00</span>
+        </div>
+    </form>
+            <ul>
+                <li><a href="https://mmcalc.aikotoba.jp">トップページ</a></li>
+            </ul>
+
+    <script>
+        document.getElementById('strength-form').addEventListener('input', function() {
+            const level = parseInt(document.getElementById('level').value) || 0;
+            const power = parseInt(document.getElementById('power').value) || 0;
+            const luck = parseInt(document.getElementById('luck').value) || 0;
+            const trait = document.getElementById('trait').value;
+
+            let strength = 0;
+            if (trait === 'power') {
+                strength = luck / (1 + level);
+            } else {
+                strength = power / (1 + level);
+            }
+
+            document.getElementById('strength').textContent = strength.toFixed(2);
+        });
+    </script>
+</body>
+</html>

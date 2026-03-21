@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>成功確率のグラフ</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<h2>成功確率</h2>
+
+<form id="calculator">
+  <label for="successRate">成功確率（%）:</label>
+  <input type="number" id="successRate" name="successRate" min="0" max="100" required>
+  <br><br>
+  <label for="trialCount">試行回数（回）:</label>
+  <input type="number" id="trialCount" name="trialCount" min="0" required>
+  <br><br>
+  <label for="minSuccess">最小成功数（回）:</label>
+  <input type="number" id="minSuccess" name="minSuccess" min="0">
+  <br><br>
+  <input type="submit" value="計算">
+</form>
+
+<div id="calculationResult"></div>
+<canvas id="myChart" width="400" height="200"></canvas>
+
+<script>
+var myChart;
+
+document.getElementById("calculator").addEventListener("submit", function(event) {
+  event.preventDefault();
+  
+  var successRate = parseFloat(document.getElementById("successRate").value) / 100;
+  var trialCount = parseInt(document.getElementById("trialCount").value);
+  var minSuccess = parseInt(document.getElementById("minSuccess").value);
+  
+  var labels = [];
+  var probabilities = [];
+  var cumulativeProbability = 0;
+  
+  for (var i = 0; i <= trialCount; i++) {
+    labels.push(i);
+    probabilities.push(binomialCoefficient(trialCount, i) * Math.pow(successRate, i) * Math.pow(1 - successRate, trialCount - i) * 100);
+    if (i >= minSuccess) {
+      cumulativeProbability += binomialCoefficient(trialCount, i) * Math.pow(successRate, i) * Math.pow(1 - successRate, trialCount - i);
+    }
+  }
+  
+  if (myChart) {
+    myChart.destroy();
+  }
+  
+  drawChart(labels, probabilities);
+  
+  var resultHTML = "<p>成功期待数: " + (successRate * trialCount).toFixed(2) + "</p>";
+  if (!isNaN(minSuccess) && minSuccess >= 0) {
+    resultHTML += "<p>最小成功数以上の確率の和: " + (cumulativeProbability * 100).toFixed(2) + "%</p>";
+  }
+  
+  document.getElementById("calculationResult").innerHTML = resultHTML;
+});
+
+function drawChart(labels, probabilities) {
+  var ctx = document.getElementById('myChart').getContext('2d');
+  myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: '成功確率 (%)',
+        data: probabilities,
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: '成功数'
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: '確率 (%)'
+          },
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+
+// パスカルの三角形を使った二項係数の計算
+function binomialCoefficient(n, k) {
+  if (k === 0 || k === n) {
+    return 1;
+  } else {
+    var numerator = 1;
+    var denominator = 1;
+    for (var i = 1; i <= k; i++) {
+      numerator *= (n - i + 1);
+      denominator *= i;
+    }
+    return numerator / denominator;
+  }
+}
+</script>
+
+<ul>
+ <li><a href="https://mmcalc.aikotoba.jp">トップページ</a></li>
+</ul>
+
+</body>
+</html>

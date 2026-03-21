@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex,nofollow,noarchive" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<title>詳細強度計算</title>
+<style>
+  body {
+    font-family: sans-serif;
+    padding: 20px;
+  }
+  input {
+    width: 80px;
+    padding: 5px;
+    margin: 5px;
+    font-size: 14px;
+  }
+  .output {
+    margin-top: 10px;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<h2>詳細強度計算</h2>
+
+<div>
+  レベル：<input type="number" id="level" max="999"><br>
+  力：<input type="number" id="power" max="99999"><br>
+  敏捷：<input type="number" id="agi" max="99999"><br>
+  器用：<input type="number" id="dex" max="99999"><br>
+  幸運：<input type="number" id="luck" max="99999"><br>
+</div>
+
+<button onclick="calc()">計算</button>
+
+<div class="output">
+  力強度：<span id="out_power">-</span><br>
+  敏捷強度：<span id="out_agi">-</span><br>
+  器用強度：<span id="out_dex">-</span><br>
+  幸運強度：<span id="out_luck">-</span><br>
+  平均強度：<span id="out_avg">-</span>
+</div>
+
+<script>
+function round(value, decimals) {
+  return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals).toFixed(decimals);
+}
+
+function calc() {
+  let H3 = Number(document.getElementById("level").value);
+  if (!H3) return;
+
+  let I3 = document.getElementById("power").value;
+  let J3 = document.getElementById("agi").value;
+  let K3 = document.getElementById("dex").value;
+  let L3 = document.getElementById("luck").value;
+
+  let results = [];
+
+  // 力
+  let power = (I3 !== "") ? Number(I3) / (1 + H3) : NaN;
+  document.getElementById("out_power").innerText = isNaN(power) ? "-" : round(power, 2);
+  if (!isNaN(power)) results.push(power);
+
+  // 敏捷
+  let agi = (J3 !== "") ? (Number(J3) - H3) / Math.round(H3 / 2) : NaN;
+  document.getElementById("out_agi").innerText = isNaN(agi) ? "-" : round(agi, 2);
+  if (!isNaN(agi)) results.push(agi);
+
+  // 器用
+  let dex = (K3 !== "") ? Number(K3) / Math.floor((H3 * 1.5) + 2) : NaN;
+  document.getElementById("out_dex").innerText = isNaN(dex) ? "-" : round(dex, 2);
+  if (!isNaN(dex)) results.push(dex);
+
+  // 幸運
+  let luck = (L3 !== "") ? Number(L3) / (1 + H3) : NaN;
+  document.getElementById("out_luck").innerText = isNaN(luck) ? "-" : round(luck, 2);
+  if (!isNaN(luck)) results.push(luck);
+
+  // 平均（有効な値のみ）
+  let avg = results.length > 0
+    ? results.reduce((a, b) => a + b, 0) / results.length
+    : NaN;
+
+  document.getElementById("out_avg").innerText = isNaN(avg) ? "-" : round(avg, 2);
+}
+
+// Enterキーで計算
+document.addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    calc();
+  }
+});
+</script>
+    <ul>
+        <li><a href="https://mmcalc.aikotoba.jp">トップページ</a></li>
+    </ul>
+
+</body>
+</html>
