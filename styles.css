@@ -198,3 +198,27 @@ select:focus {
   border-radius: 6px;
   font-size: .9rem;
 }
+
+/* =========================
+   縦並びフォーム（MIX確率計算用）
+   ========================= */
+
+.vertical-form {
+  display: block; /* grid を無効化 */
+}
+
+.vertical-form .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.vertical-form .label {
+  text-align: left;
+  font-weight: 600;
+}
+
+.vertical-form .fld {
+  width: 100%;
+}
