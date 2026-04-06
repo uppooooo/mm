@@ -1,112 +1,129 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>MIX計算機</title>
 
-  <!-- iPhone 表示最適化（共通仕様） -->
+  <!-- 共通CSS -->
+  <link rel="stylesheet" href="./styles.css">
+
+  <!-- iPhone 最適化 -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="format-detection" content="telephone=no">
-
-  <style>
-    :root{
-      --bg:#f7f8fb;
-      --panel:#ffffff;
-      --ink:#1f2937;
-      --muted:#6b7280;
-      --border:#e5e7eb;
-      --accent:#2563eb;
-      --accent-weak:#e7efff;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0}
-    body{
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,
-        "Hiragino Kaku Gothic ProN","Yu Gothic","YuGothic","Noto Sans JP",Meiryo,sans-serif;
-      background:var(--bg);
-      color:var(--ink);
-      font-weight:400;
-    }
-    .wrap{
-      max-width:640px;
-      margin:24px auto;
-      padding:24px;
-      background:var(--panel);
-      border:1px solid var(--border);
-      border-radius:12px;
-      box-shadow:0 2px 12px rgba(0,0,0,.05);
-    }
-    h1{
-      font-size:clamp(1.4rem,1.1rem + 1vw,2rem);
-      margin:0 0 8px;
-      color:#888;
-    }
-    p{color:#333}
-
-    .grid{
-      display:grid;
-      grid-template-columns:110px 1fr 1fr;
-      gap:12px 12px;
-      align-items:center;
-      margin-top:12px;
-    }
-    @media (max-width:520px){
-      .grid{grid-template-columns:1fr}
-    }
-    .head{color:var(--muted); font-size:.9rem}
-
-    label{color:var(--muted)}
-    input[type="number"]{
-      width:100%;
-      padding:10px 12px;
-      font-size:1rem;
-      border-radius:8px;
-      border:1px solid var(--border);
-      background:#fff;
-    }
-    input:focus{
-      outline:none;
-      border-color:var(--accent);
-      box-shadow:0 0 0 3px var(--accent-weak);
-    }
-
-    .result{
-      margin-top:20px;
-      padding:16px;
-      background:#fbfdff;
-      border:1px dashed var(--border);
-      border-radius:10px;
-      font-size:1.1rem;
-      font-weight:700;
-    }
-
-    ul{height:auto; padding-left:20px; margin-top:16px}
-  </style>
 </head>
 
 <body>
-<div class="wrap">
-  <header>
-    <h1>MIX計算機</h1>
-    <p>※ 半角数字で入力してください（リアルタイム計算）</p>
-  </header>
+  <div class="container">
+    <header>
+      <h1>MIX計算機</h1>
+      <p>※ 半角数字で入力してください（リアルタイム計算）</p>
+    </header>
 
-  <main>
-    <div class="grid">
-      <div></div>
-      <div class="head">現在Lv</div>
-      <div class="head">基本Lv</div>
+    <main>
+      <!-- 見出し行 -->
+      <div class="form-grid">
+        <div></div>
+        <div class="label">現在Lv</div>
+        <div class="label">基本Lv</div>
+      </div>
 
-      <label>メイン</label>
-      <input id="A" class="fld" type="number" inputmode="numeric" enterkeyhint="next" data-index="0">
-      <input id="B" class="fld" type="number" inputmode="numeric" enterkeyhint="next" data-index="1">
+      <!-- 入力フォーム -->
+      <form class="form-grid" novalidate>
+        <label class="label">メイン</label>
+        <input id="A" class="fld" type="number" inputmode="numeric"
+               data-index="0" enterkeyhint="next">
+        <input id="B" class="fld" type="number" inputmode="numeric"
+               data-index="1" enterkeyhint="next">
 
-      <label>サブ</label>
-      <input id="C" class="fld" type="number" inputmode="numeric" enterkeyhint="next" data-index="2">
-      <input id="D" class="fld" type="number" inputmode="numeric" enterkeyhint="done" data-index="3">
-    </div>
+        <label class="label">サブ</label>
+        <input id="C" class="fld" type="number" inputmode="numeric"
+               data-index="2" enterkeyhint="next">
+        <input id="D" class="fld" type="number" inputmode="numeric"
+               data-index="3" enterkeyhint="done">
+      </form>
 
-    <section class="result" aria-live="polite">
+      <!-- 結果 -->
+      <section class="result-panel" aria-live="polite">
+        <div class="row total">
+          完成Lv：<span id="E">-</span>
+        </div>
+      </section>
+
+      <ul>
+        <li><a href="https://uppooooo.github.io/mm/">トップページ</a></li>
+      </ul>
+    </main>
+  </div>
+
+<script>
+(function(){
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll('.fld'));
+  const KEY = 'mix-calc.v1';
+  const flds = $$('.fld').sort((a,b) => +a.dataset.index - +b.dataset.index);
+
+  function n(v){
+    const x = Number(v);
+    return Number.isFinite(x) ? x : NaN;
+  }
+
+  function calc(){
+    const A = n($('#A').value);
+    const B = n($('#B').value);
+    const C = n($('#C').value);
+    const D = n($('#D').value);
+
+    if ([A,B,C,D].some(isNaN)){
+      $('#E').textContent = '-';
+      return;
+    }
+
+    // 元仕様と同一ロジック
+    const result =
+      Math.floor((A + C) / 2) +
+      Math.floor((
+        Math.min(Math.floor(A * 100 / (B + 25)) / 10, 10) +
+        Math.min(Math.floor(C * 100 / (D + 25)) / 10, 10)
+      ) / 2);
+
+    $('#E').textContent = result;
+  }
+
+  /* 前回入力の復元 */
+  try{
+    const raw = localStorage.getItem(KEY);
+    if (raw){
+      const data = JSON.parse(raw);
+      flds.forEach(f => {
+        if (data[f.id] != null) f.value = data[f.id];
+      });
+    }
+  }catch{}
+
+  flds.forEach(f => {
+    f.addEventListener('input', ()=>{
+      calc();
+      const data = {};
+      flds.forEach(x => data[x.id] = x.value);
+      localStorage.setItem(KEY, JSON.stringify(data));
+    });
+
+    f.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === 'Tab'){
+        e.preventDefault();
+        const i = flds.indexOf(f);
+        if (i < flds.length - 1) flds[i + 1].focus();
+      }
+    });
+  });
+
+  calc();
+  flds[0].focus();
+})();
+</script>
+</body>
+</html>
+``
