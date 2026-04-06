@@ -24,18 +24,29 @@
 
     <main>
       <!-- 入力フォーム（縦並び） -->
-      <form class="form-grid" novalidate>
-        <label class="label" for="p">成功確率（%）</label>
-        <input id="p" class="fld" type="number"
-               min="0" max="100" step="1"
-               inputmode="numeric" data-index="0">
+<form class="form-grid vertical-form" novalidate>
+  <div class="field">
+    <label class="label" for="p">成功確率（%）</label>
+    <input id="p" class="fld" type="number"
+           min="0" max="100" step="1"
+           inputmode="numeric" data-index="0">
+  </div>
 
-        <label class="label" for="n">MIX回数</label>
-        <input id="n" class="fld" type="number"
-               min="1" step="1"
-               inputmode="numeric" data-index="1">
+  <div class="field">
+    <label class="label" for="n">MIX回数</label>
+    <input id="n" class="fld" type="number"
+           min="1" step="1"
+           inputmode="numeric" data-index="1">
+  </div>
 
-        <label class="label" for="k">成功回数</label>
+  <div class="field">
+    <label class="label" for="k">成功回数</label>
+    <input id="k" class="fld" type="number"
+           min="0" step="1"
+           inputmode="numeric" data-index="2">
+  </div>
+</form>
+``
         <input id="k" class="fld" type="number"
                min="0" step="1"
                inputmode="numeric" data-index="2">
