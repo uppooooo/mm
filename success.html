@@ -7,7 +7,7 @@
   <title>成功確率のグラフ</title>
 
   <!-- 共通CSS -->
-  <link relcss
+  <link rel="stylesheet" href="./styles.css">
 
   <!-- iPhone 表示最適化 -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,7 +15,10 @@
   <meta name="format-detection" content="telephone=no">
 
   <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js" deferbody>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+</head>
+
+<body>
   <div class="container">
     <header>
       <h1>成功確率のグラフ</h1>
@@ -25,22 +28,45 @@
     <main>
       <h2>入力</h2>
 
-      <!-- 入力フォーム -->
+      <!-- 入力フォーム（縦並び） -->
       <form class="form-grid" novalidate>
         <label class="label" for="successRate">成功確率（%）</label>
-        <input id="successRate" name="successRate" class="fld" type="number"
-               min="0" max="100" step="0.01"
-               inputmode="decimal" data-index="0" enterkeyhint="next">
+        <input
+          id="successRate"
+          name="successRate"
+          class="fld"
+          type="number"
+          min="0"
+          max="100"
+          step="0.01"
+          inputmode="decimal"
+          data-index="0"
+        >
 
         <label class="label" for="trialCount">試行回数</label>
-        <input id="trialCount" name="trialCount" class="fld" type="number"
-               min="0" max="1000" step="1"
-               inputmode="numeric" data-index="1" enterkeyhint="next">
+        <input
+          id="trialCount"
+          name="trialCount"
+          class="fld"
+          type="number"
+          min="0"
+          max="1000"
+          step="1"
+          inputmode="numeric"
+          data-index="1"
+        >
 
         <label class="label" for="minSuccess">最小成功数</label>
-        <input id="minSuccess" name="minSuccess" class="fld" type="number"
-               min="0" step="1"
-               inputmode="numeric" data-index="2" enterkeyhint="done">
+        <input
+          id="minSuccess"
+          name="minSuccess"
+          class="fld"
+          type="number"
+          min="0"
+          step="1"
+          inputmode="numeric"
+          data-index="2"
+        >
       </form>
 
       <div class="divider"></div>
@@ -60,7 +86,7 @@
       <canvas id="chart" height="260"></canvas>
 
       <ul>
-        <li>./index.htmlトップページ</a></li>
+        <li><a href="./index.html">トップページ</a></li>
       </ul>
     </main>
   </div>
@@ -70,7 +96,7 @@
   const $  = s => document.querySelector(s);
   const $$ = s => Array.from(document.querySelectorAll('.fld'));
   const KEY = 'success-graph.v1';
-  const flds = $$('.fld').sort((a,b)=>+a.dataset.index-+b.dataset.index);
+  const flds = $$('.fld').sort((a,b)=>+a.dataset.index - +b.dataset.index);
 
   let chart;
 
@@ -79,7 +105,7 @@
     return Number.isFinite(n) ? n : NaN;
   }
 
-  // 二項分布（再帰）
+  /* 二項分布（再帰） */
   function binomialPMFAll(n, p){
     const pmf = new Array(n+1).fill(0);
     if (n === 0){ pmf[0] = 1; return pmf; }
@@ -90,7 +116,7 @@
     let pk = Math.pow(q, n);
     pmf[0] = pk;
 
-    for (let k = 1; k <= n; k++){
+    for (let k=1; k<=n; k++){
       pk = pk * ((n - (k-1)) / k) * (p / q);
       pmf[k] = pk;
     }
@@ -129,16 +155,13 @@
     let pPct = num($('#successRate').value);
     let n    = num($('#trialCount').value);
     let kMin = num($('#minSuccess').value);
-
     $('#note').textContent = '';
 
     if (!Number.isFinite(pPct) || pPct < 0 || pPct > 100){
-      render('-', '-', '-');
-      return;
+      render('-', '-', '-'); return;
     }
     if (!Number.isFinite(n) || n < 0){
-      render('-', '-', '-');
-      return;
+      render('-', '-', '-'); return;
     }
 
     if (n > 1000){
@@ -157,11 +180,7 @@
     let cum = NaN;
     if (Number.isFinite(kMin) && kMin >= 0){
       kMin = Math.floor(kMin);
-      if (kMin <= n){
-        cum = pmf.slice(kMin).reduce((a,b)=>a+b,0);
-      } else {
-        cum = 0;
-      }
+      cum = (kMin <= n) ? pmf.slice(kMin).reduce((a,b)=>a+b,0) : 0;
     }
 
     draw([...Array(n+1).keys()], pmf, Number.isFinite(kMin) ? kMin : NaN);
@@ -186,23 +205,36 @@
     }
   }catch{}
 
-  flds.forEach((f,i)=>{
-    f.addEventListener('input', ()=>{
+  /* 入力制御（全選択 + Enter / Shift+Enter） */
+  flds.forEach((el,i)=>{
+    el.addEventListener('focus', ()=>{
+      setTimeout(()=>{
+        if (typeof el.select === 'function') el.select();
+      }, 0);
+    });
+
+    el.addEventListener('input', ()=>{
       calc();
       const d={};
       flds.forEach(x=>d[x.id]=x.value);
       localStorage.setItem(KEY, JSON.stringify(d));
     });
-    f.addEventListener('keydown', e=>{
-      if (e.key==='Enter' || e.key==='Tab'){
+
+    el.addEventListener('keydown', e=>{
+      if (e.key === 'Enter'){
         e.preventDefault();
-        if (flds[i+1]) flds[i+1].focus();
+        if (e.shiftKey){
+          if (flds[i-1]) flds[i-1].focus();
+        } else {
+          if (flds[i+1]) flds[i+1].focus();
+        }
       }
+      // Tab / Shift+Tab は標準動作
     });
   });
 
   calc();
-  flds[0].focus();
+  if (flds[0]) flds[0].focus();
 })();
 </script>
 </body>
