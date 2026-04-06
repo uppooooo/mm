@@ -1,259 +1,171 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <!-- 基本設定 -->
-  <meta charset="utf-8" />
-  <meta name="robots" content="noindex,nofollow,noarchive" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>詳細強度計算</title>
 
-  <!-- カラースキーム（OSのダーク/ライトに追随） -->
-  <meta name="color-scheme" content="light dark" />
-  <meta name="theme-color" content="#2563eb" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#1e40af" media="(prefers-color-scheme: dark)">
+  <!-- 共通CSS -->
+  ./styles.css
 
-  <!-- iPhone（ホーム画面追加でアプリ風に）※任意 -->
+  <!-- iPhone / UI 最適化 -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="format-detection" content="telephone=no, email=no, address=no">
-
-  <style>
-    :root{
-      --bg: #f7f8fb;
-      --panel:#fff;
-      --ink:#1f2937;
-      --muted:#6b7280;
-      --border:#e5e7eb;
-      --accent:#2563eb;
-      --accent-weak:#e7efff;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0}
-    body{
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",
-        "Hiragino Kaku Gothic ProN","Yu Gothic","YuGothic","Noto Sans JP",Meiryo,sans-serif;
-      background:var(--bg); color:var(--ink);
-    }
-    .wrap{
-      max-width:920px; margin:24px auto; padding:24px;
-      background:var(--panel); border:1px solid var(--border); border-radius:12px;
-      box-shadow:0 2px 12px rgba(0,0,0,.05);
-    }
-    h1{font-size:clamp(1.4rem,1.1rem + 1.2vw,2rem); margin:0 0 8px}
-    h2{
-      width:100%;
-      margin:18px 0 12px; font-size:clamp(1.1rem,1rem + .6vw,1.4rem);
-      border-left:4px solid var(--accent); padding-left:10px;
-    }
-    p{color:#333} /* 要件：p の color 指定 */
-
-    .grid{
-      display:grid; gap:12px 16px; align-items:center;
-      grid-template-columns:minmax(120px,1fr) minmax(140px,240px) 1fr;
-    }
-    @media (max-width:640px){ .grid{ grid-template-columns:1fr; } }
-
-    label{color:var(--muted)}
-    input[type="number"]{
-      width:100%; padding:10px 12px; font-size:1rem;
-      border:1px solid var(--border); border-radius:8px; background:#fff;
-    }
-    input:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-weak)}
-    .hint{font-size:.9rem; color:var(--muted)}
-    .result{
-      margin-top:16px; padding:16px; border:1px dashed var(--border);
-      border-radius:10px; background:#fbfdff;
-    }
-    .row{display:flex; gap:8px; align-items:baseline}
-    .val{font-weight:700}
-    .divider{height:1px; background:var(--border); margin:20px 0}
-
-    /* 要件：ul の height 指定（機能影響しない範囲で明示） */
-    ul{height:auto; padding-left:20px; margin:10px 0}
-    /* 要件：ol の background-color 指定 */
-    ol{background-color:#f8fafc; padding:12px 16px; border-radius:8px; margin:10px 0}
-    /* 要件：h1,h2,width/font-size は上で満たす、body の font-weight も明示 */
-    body{font-weight:400}
-    h1{ /* 要件：h1 の font-size を明示済み */}
-    h2{ /* 要件：h2 の width を明示（100%） */}
-  </style>
+  <meta name="format-detection" content="telephone=no">
 </head>
+
 <body>
-  <div class="wrap">
+  <div class="container">
     <header>
       <h1>詳細強度計算</h1>
-      <p class="hint">数値を入力するとリアルタイムで強度を算出し、前回値は自動保存します。iPhone では <kbd>Enter</kbd> で次項目に移動できます。</p>
+      <p>
+        数値を入力するとリアルタイムで強度を算出します。<br>
+        iPhoneでは <span class="kbd">Enter</span> で次の項目へ移動できます。
+      </p>
     </header>
 
-    <main role="main">
+    <main>
       <h2>入力</h2>
-      <form id="form" class="grid" novalidate>
-        <label for="level">レベル</label>
+
+      <form id="form" class="form-grid" novalidate>
+        <label class="label" for="level">レベル</label>
         <input id="level" name="level" class="fld" type="number"
-               inputmode="numeric" step="1" min="1" max="999"
-               placeholder="例）50" enterkeyhint="next" data-index="0" />
-        <span class="hint">1〜999</span>
+               min="1" max="999" step="1"
+               inputmode="numeric" data-index="0" enterkeyhint="next">
 
-        <label for="power">力</label>
+        <label class="label" for="power">力</label>
         <input id="power" name="power" class="fld" type="number"
-               inputmode="numeric" step="1" min="0" max="99999"
-               placeholder="例）1200" enterkeyhint="next" data-index="1" />
-        <span class="hint">0〜99,999</span>
+               min="0" max="99999" step="1"
+               inputmode="numeric" data-index="1" enterkeyhint="next">
 
-        <label for="agi">敏捷</label>
+        <label class="label" for="agi">敏捷</label>
         <input id="agi" name="agi" class="fld" type="number"
-               inputmode="numeric" step="1" min="0" max="99999"
-               placeholder="例）800" enterkeyhint="next" data-index="2" />
-        <span class="hint">0〜99,999</span>
+               min="0" max="99999" step="1"
+               inputmode="numeric" data-index="2" enterkeyhint="next">
 
-        <label for="dex">器用</label>
+        <label class="label" for="dex">器用</label>
         <input id="dex" name="dex" class="fld" type="number"
-               inputmode="numeric" step="1" min="0" max="99999"
-               placeholder="例）600" enterkeyhint="next" data-index="3" />
-        <span class="hint">0〜99,999</span>
+               min="0" max="99999" step="1"
+               inputmode="numeric" data-index="3" enterkeyhint="next">
 
-        <label for="luck">幸運</label>
+        <label class="label" for="luck">幸運</label>
         <input id="luck" name="luck" class="fld" type="number"
-               inputmode="numeric" step="1" min="0" max="99999"
-               placeholder="例）500" enterkeyhint="done" data-index="4" />
-        <span class="hint">0〜99,999</span>
+               min="0" max="99999" step="1"
+               inputmode="numeric" data-index="4" enterkeyhint="done">
       </form>
 
       <div class="divider"></div>
 
       <h2>結果</h2>
-      <section class="result" aria-live="polite" aria-atomic="true">
-        <div class="row">力強度：<span id="out_power" class="val">-</span></div>
-        <div class="row">敏捷強度：<span id="out_agi" class="val">-</span></div>
-        <div class="row">器用強度：<span id="out_dex" class="val">-</span></div>
-        <div class="row">幸運強度：<span id="out_luck" class="val">-</span></div>
-        <div class="row">平均強度：<span id="out_avg" class="val">-</span></div>
+
+      <section class="result-panel" aria-live="polite">
+        <div class="row">力強度：<span id="out_power" class="total">-</span></div>
+        <div class="row">敏捷強度：<span id="out_agi" class="total">-</span></div>
+        <div class="row">器用強度：<span id="out_dex" class="total">-</span></div>
+        <div class="row">幸運強度：<span id="out_luck" class="total">-</span></div>
+        <div class="row">平均強度：<span id="out_avg" class="total">-</span></div>
       </section>
 
-      <ol>
-        <li>入力すると<strong>即時計算</strong>します（ボタン不要）。</li>
-        <li><strong>前回入力は自動保存</strong>され、次回復元されます。</li>
-        <li>iPhone では <kbd>Enter</kbd> で<strong>次フィールドへ移動</strong>します。</li>
-      </ol>
-
       <ul>
-        <li><a href="https://uppooooo.github.io/mm/">トップページ</a></li>
+        <li>./index.htmlトップページ</a></li>
       </ul>
     </main>
   </div>
 
-  <script>
-    // ========= ユーティリティ =========
-    const $  = sel => document.querySelector(sel);
-    const $$ = sel => Array.from(document.querySelectorAll(sel));
+<script>
+(function(){
+  const $  = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll('.fld'));
+  const KEY = 'detail-strength.v1';
+  const inputs = $$('.fld').sort((a,b)=> +a.dataset.index - +b.dataset.index);
 
-    function toNum(v) { const n = Number(v); return Number.isFinite(n) ? n : NaN; }
-    function round(n, d=2){
-      if (!Number.isFinite(n)) return NaN;
-      const f = 10 ** d;
-      return (Math.round(n * f) / f).toFixed(d);
+  function num(v){
+    const n = Number(v);
+    return Number.isFinite(n) ? n : NaN;
+  }
+
+  function round(v){
+    return Number.isFinite(v)
+      ? (Math.round(v * 100) / 100).toFixed(2)
+      : '-';
+  }
+
+  function calc(){
+    const level = num($('#level').value);
+    if (!Number.isFinite(level) || level <= 0){
+      render('-', '-', '-', '-', '-');
+      return;
     }
 
-    // ========= 計算（元のロジックを踏襲） =========
-    function recalc(){
-      const level = toNum($('#level').value);
-      const powerIn = $('#power').value;
-      const agiIn   = $('#agi').value;
-      const dexIn   = $('#dex').value;
-      const luckIn  = $('#luck').value;
+    const values = [];
 
-      // レベル未入力や 0 は計算不可 → 表示をリセット
-      if (!Number.isFinite(level) || level <= 0){
-        render('-', '-', '-', '-', '-');
-        return;
+    const power = num($('#power').value);
+    const agi   = num($('#agi').value);
+    const dex   = num($('#dex').value);
+    const luck  = num($('#luck').value);
+
+    const p = Number.isFinite(power) ? power / (1 + level) : NaN;
+    const a = Number.isFinite(agi)   ? (agi - level) / Math.round(level / 2) : NaN;
+    const d = Number.isFinite(dex)   ? dex / Math.floor(level * 1.5 + 2) : NaN;
+    const l = Number.isFinite(luck)  ? luck / (1 + level) : NaN;
+
+    set('#out_power', p); if (Number.isFinite(p)) values.push(p);
+    set('#out_agi',   a); if (Number.isFinite(a)) values.push(a);
+    set('#out_dex',   d); if (Number.isFinite(d)) values.push(d);
+    set('#out_luck',  l); if (Number.isFinite(l)) values.push(l);
+
+    const avg = values.length
+      ? values.reduce((x,y)=>x+y,0) / values.length
+      : NaN;
+
+    set('#out_avg', avg);
+  }
+
+  function set(sel, v){
+    $(sel).textContent = round(v);
+  }
+
+  function render(a,b,c,d,e){
+    $('#out_power').textContent = a;
+    $('#out_agi').textContent   = b;
+    $('#out_dex').textContent   = c;
+    $('#out_luck').textContent  = d;
+    $('#out_avg').textContent   = e;
+  }
+
+  /* 復元 */
+  try{
+    const saved = localStorage.getItem(KEY);
+    if (saved){
+      const d = JSON.parse(saved);
+      inputs.forEach(f=>{
+        if (d[f.name] != null) f.value = d[f.name];
+      });
+    }
+  }catch(e){}
+
+  /* 入力監視 */
+  inputs.forEach((f,i)=>{
+    f.addEventListener('input', ()=>{
+      calc();
+      const d = {};
+      inputs.forEach(x=> d[x.name] = x.value);
+      localStorage.setItem(KEY, JSON.stringify(d));
+    });
+
+    f.addEventListener('keydown', e=>{
+      if (e.key === 'Enter' || e.key === 'Tab'){
+        e.preventDefault();
+        if (inputs[i+1]) inputs[i+1].focus();
       }
+    });
+  });
 
-      const res = [];
-
-      // 力
-      const power = (powerIn !== '') ? (toNum(powerIn) / (1 + level)) : NaN;
-      $('#out_power').textContent = Number.isFinite(power) ? round(power) : '-';
-      if (Number.isFinite(power)) res.push(power);
-
-      // 敏捷
-      const agi = (agiIn !== '') ? ((toNum(agiIn) - level) / Math.round(level / 2)) : NaN;
-      $('#out_agi').textContent = Number.isFinite(agi) ? round(agi) : '-';
-      if (Number.isFinite(agi)) res.push(agi);
-
-      // 器用
-      const dex = (dexIn !== '') ? (toNum(dexIn) / Math.floor((level * 1.5) + 2)) : NaN;
-      $('#out_dex').textContent = Number.isFinite(dex) ? round(dex) : '-';
-      if (Number.isFinite(dex)) res.push(dex);
-
-      // 幸運
-      const luck = (luckIn !== '') ? (toNum(luckIn) / (1 + level)) : NaN;
-      $('#out_luck').textContent = Number.isFinite(luck) ? round(luck) : '-';
-      if (Number.isFinite(luck)) res.push(luck);
-
-      // 平均（有効な値のみ）
-      const avg = res.length ? (res.reduce((a,b)=>a+b,0)/res.length) : NaN;
-      $('#out_avg').textContent = Number.isFinite(avg) ? round(avg) : '-';
-    }
-
-    function render(p,a,d,l,avg){
-      $('#out_power').textContent = p;
-      $('#out_agi').textContent = a;
-      $('#out_dex').textContent = d;
-      $('#out_luck').textContent = l;
-      $('#out_avg').textContent = avg;
-    }
-
-    // ========= 入力・保存・復元・フォーカス移動 =========
-    (function init(){
-      const STORAGE_KEY = 'detail-strength.v1';
-      const inputs = $$('.fld').sort((x,y)=> (+x.dataset.index) - (+y.dataset.index));
-
-      // 復元
-      try{
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw){
-          const data = JSON.parse(raw);
-          inputs.forEach(el => { if (data[el.name] != null) el.value = data[el.name]; });
-        }
-      }catch{}
-
-      // 初回計算
-      recalc();
-
-      // 入力 → 即時計算 + 保存
-      inputs.forEach(el=>{
-        el.addEventListener('input', ()=>{
-          recalc();
-          // 保存
-          const data = {};
-          inputs.forEach(i => data[i.name] = i.value);
-          try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch{}
-        }, {passive:true});
-
-        // Tab（物理）と Enter（iPhone仮想）で次へ
-        el.addEventListener('keydown', (e)=>{
-          if (e.key === 'Tab' || e.key === 'Enter'){
-            e.preventDefault();
-            const idx = inputs.indexOf(el);
-            if (idx >= 0 && idx < inputs.length - 1){
-              inputs[idx+1].focus();
-            }else{
-              // 最後は結果に視線誘導
-              $('#out_avg').scrollIntoView({behavior:'smooth', block:'center'});
-            }
-          }
-        });
-      });
-
-      // 最初のフォーカス
-      if (inputs.length) inputs[0].focus();
-
-      // 既存の Enter で計算（レガシー互換）：念のため残すが、recalc が常時走るため実質不要
-      document.addEventListener('keydown', function(event) {
-        if (event.key === 'Enter') { event.preventDefault(); recalc(); }
-      });
-    })();
-  </script>
+  calc();
+  inputs[0].focus();
+})();
+</script>
 </body>
 </html>
 ``
