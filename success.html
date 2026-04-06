@@ -1,322 +1,209 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <!-- 基本設定 -->
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>成功確率のグラフ</title>
 
-  <!-- 任意：検索避けたい場合は有効化
-  <meta name="robots" content="noindex,nofollow,noarchive" />
-  -->
+  <!-- 共通CSS -->
+  <link relcss
 
-  <!-- カラースキーム（OSのダーク/ライトに追随） -->
-  <meta name="color-scheme" content="light dark" />
-  <meta name="theme-color" content="#2563eb" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#1e40af" media="(prefers-color-scheme: dark)">
-
-  <!-- iPhone の見栄え（任意） -->
+  <!-- iPhone 表示最適化 -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="format-detection" content="telephone=no, email=no, address=no">
+  <meta name="format-detection" content="telephone=no">
 
-  <!-- Chart.js を遅延読み込み（初期描画をブロックしない） -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-
-  <style>
-    :root{
-      --bg:#f7f8fb; --panel:#fff; --ink:#0f172a; --muted:#64748b;
-      --border:#e5e7eb; --accent:#2563eb; --accent-weak:#e7efff;
-      --good:#22c55e; --warn:#f59e0b; --bad:#ef4444;
-      --bar:#94a3b8; --bar-strong:#60a5fa;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0}
-    body{
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",
-        "Hiragino Kaku Gothic ProN","Yu Gothic","YuGothic","Noto Sans JP",Meiryo,sans-serif;
-      background:var(--bg); color:var(--ink);
-    }
-    .wrap{
-      max-width:1000px; margin:24px auto; padding:24px;
-      background:var(--panel); border:1px solid var(--border); border-radius:12px;
-      box-shadow:0 2px 12px rgba(0,0,0,.05);
-    }
-    header h1{margin:0 0 8px; font-size:clamp(1.4rem,1.1rem + 1vw,2rem)}
-    p.hint{color:#333} /* 要件メモ：段落の color 明示（前回仕様に準拠） */
-
-    h2{
-      width:100%;
-      font-size:clamp(1.1rem,1rem + .6vw,1.4rem);
-      margin:20px 0 12px; border-left:4px solid var(--accent); padding-left:10px;
-    }
-
-    .grid{
-      display:grid; gap:12px 16px; align-items:center;
-      grid-template-columns:minmax(160px,1fr) minmax(160px,220px) 1fr;
-    }
-    @media (max-width:720px){ .grid{ grid-template-columns:1fr; } }
-
-    label{color:var(--muted)}
-    input[type="number"]{
-      width:100%; padding:10px 12px; font-size:1rem;
-      border:1px solid var(--border); border-radius:8px; background:#fff;
-    }
-    input:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-weak)}
-    .hintline{font-size:.9rem; color:var(--muted)}
-    .divider{height:1px; background:var(--border); margin:16px 0}
-
-    .result{
-      display:grid; grid-template-columns:repeat(3,1fr); gap:8px 16px;
-      margin:6px 0 2px;
-    }
-    @media (max-width:720px){ .result{ grid-template-columns:1fr 1fr; } }
-    .metric{padding:8px 10px; border:1px dashed var(--border); border-radius:8px; background:#fbfdff}
-    .metric .k{color:var(--muted); font-size:.9rem}
-    .metric .v{font-weight:700}
-
-    canvas{max-width:100%; background:#fff; border:1px solid var(--border); border-radius:10px}
-
-    /* ul/ol の仕様例（必要なら維持） */
-    ul{height:auto; padding-left:20px; margin:10px 0}
-    ol{background-color:#f8fafc; padding:12px 16px; border-radius:8px; margin:10px 0}
-
-    /* フッターリンク */
-    .links{margin-top:14px}
-  </style>
-</head>
-<body>
-  <div class="wrap">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" deferbody>
+  <div class="container">
     <header>
       <h1>成功確率のグラフ</h1>
-      <p class="hint">入力すると<strong>リアルタイム</strong>にグラフと統計を更新します。前回値は自動保存。iPhoneでは <kbd>Enter</kbd> で次項目に移動できます。</p>
+      <p>入力するとリアルタイムで確率分布と統計を表示します。</p>
     </header>
 
-    <main role="main">
+    <main>
       <h2>入力</h2>
-      <form id="form" class="grid" novalidate>
-        <label for="successRate">成功確率（%）</label>
+
+      <!-- 入力フォーム -->
+      <form class="form-grid" novalidate>
+        <label class="label" for="successRate">成功確率（%）</label>
         <input id="successRate" name="successRate" class="fld" type="number"
-               inputmode="decimal" step="0.01" min="0" max="100"
-               placeholder="例）25" enterkeyhint="next" data-index="0" />
-        <span class="hintline">0〜100（小数可）</span>
+               min="0" max="100" step="0.01"
+               inputmode="decimal" data-index="0" enterkeyhint="next">
 
-        <label for="trialCount">試行回数（回）</label>
+        <label class="label" for="trialCount">試行回数</label>
         <input id="trialCount" name="trialCount" class="fld" type="number"
-               inputmode="numeric" step="1" min="0" max="1000"
-               placeholder="例）100" enterkeyhint="next" data-index="1" />
-        <span class="hintline">0〜1,000（負荷対策のため上限）</span>
+               min="0" max="1000" step="1"
+               inputmode="numeric" data-index="1" enterkeyhint="next">
 
-        <label for="minSuccess">最小成功数（回）</label>
+        <label class="label" for="minSuccess">最小成功数</label>
         <input id="minSuccess" name="minSuccess" class="fld" type="number"
-               inputmode="numeric" step="1" min="0"
-               placeholder="例）30" enterkeyhint="done" data-index="2" />
-        <span class="hintline">未入力なら集計しません</span>
+               min="0" step="1"
+               inputmode="numeric" data-index="2" enterkeyhint="done">
       </form>
 
       <div class="divider"></div>
 
       <h2>結果</h2>
-      <section class="result" aria-live="polite" aria-atomic="true">
-        <div class="metric"><div class="k">成功期待数</div><div id="exp" class="v">-</div></div>
-        <div class="metric"><div class="k">最小成功数以上の確率</div><div id="cum" class="v">-</div></div>
-        <div class="metric"><div class="k">分散 / 標準偏差</div><div id="varstd" class="v">-</div></div>
+
+      <!-- 数値結果 -->
+      <section class="result-panel" aria-live="polite">
+        <div class="row">成功期待数：<span id="exp" class="total">-</span></div>
+        <div class="row">最小成功数以上の確率：<span id="cum" class="total">-</span></div>
+        <div class="row">分散 / 標準偏差：<span id="varstd" class="total">-</span></div>
       </section>
-      <p id="note" class="hintline" aria-live="polite"></p>
 
-      <canvas id="chart" height="240" aria-label="成功数の確率分布（棒グラフ）" role="img"></canvas>
+      <p id="note"></p>
 
-      <div class="links">
-        <ul>
-          <li><a href="https://uppooooo.github.io/mm/">トップページ</a></li>
-        </ul>
-      </div>
+      <!-- グラフ -->
+      <canvas id="chart" height="260"></canvas>
+
+      <ul>
+        <li>./index.htmlトップページ</a></li>
+      </ul>
     </main>
   </div>
 
-  <script defer>
-    // ========== ユーティリティ ==========
-    const $  = (s)=>document.querySelector(s);
-    const $$ = (s)=>Array.from(document.querySelectorAll(s));
-    const fmt = new Intl.NumberFormat('ja-JP', { maximumFractionDigits: 4 });
+<script>
+(function(){
+  const $  = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll('.fld'));
+  const KEY = 'success-graph.v1';
+  const flds = $$('.fld').sort((a,b)=>+a.dataset.index-+b.dataset.index);
 
-    function clamp(v, min, max){ return Math.min(Math.max(v, min), max); }
-    function toNum(v){ const n = Number(v); return Number.isFinite(n) ? n : NaN; }
+  let chart;
 
-    // ========== 安定な二項分布 PMF（全k=0..n） ==========
-    // p0 = (1-p)^n,  p(k) = p(k-1) * ((n-k+1)/k) * (p/(1-p))
-    function binomialPMFAll(n, p){
-      const pmf = new Array(n+1).fill(0);
-      if (n === 0){
-        pmf[0] = 1; return pmf;
+  function num(v){
+    const n = Number(v);
+    return Number.isFinite(n) ? n : NaN;
+  }
+
+  // 二項分布（再帰）
+  function binomialPMFAll(n, p){
+    const pmf = new Array(n+1).fill(0);
+    if (n === 0){ pmf[0] = 1; return pmf; }
+    if (p <= 0){ pmf[0] = 1; return pmf; }
+    if (p >= 1){ pmf[n] = 1; return pmf; }
+
+    const q = 1 - p;
+    let pk = Math.pow(q, n);
+    pmf[0] = pk;
+
+    for (let k = 1; k <= n; k++){
+      pk = pk * ((n - (k-1)) / k) * (p / q);
+      pmf[k] = pk;
+    }
+    return pmf;
+  }
+
+  function draw(labels, probs, minSuccess){
+    const ctx = $('#chart').getContext('2d');
+    if (chart) chart.destroy();
+
+    chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          data: probs.map(v => v * 100),
+          backgroundColor: probs.map((_,k)=>(
+            Number.isFinite(minSuccess) && k >= minSuccess
+              ? 'rgba(99,102,241,.7)'
+              : 'rgba(148,163,184,.6)'
+          ))
+        }]
+      },
+      options: {
+        animation: false,
+        plugins: { legend: { display:false } },
+        scales: {
+          x: { title:{ display:true, text:'成功数' } },
+          y: { title:{ display:true, text:'確率(%)' }, beginAtZero:true }
+        }
       }
-      if (p <= 0){ pmf[0] = 1; return pmf; }
-      if (p >= 1){ pmf[n] = 1; return pmf; }
+    });
+  }
 
-      const q = 1 - p;
-      let pk = Math.pow(q, n); // k=0
-      pmf[0] = pk;
+  function calc(){
+    let pPct = num($('#successRate').value);
+    let n    = num($('#trialCount').value);
+    let kMin = num($('#minSuccess').value);
 
-      const ratio = p / q;
-      for (let k=1; k<=n; k++){
-        pk = pk * ((n - (k-1)) / k) * ratio; // 再帰式
-        pmf[k] = pk;
-      }
-      return pmf;
+    $('#note').textContent = '';
+
+    if (!Number.isFinite(pPct) || pPct < 0 || pPct > 100){
+      render('-', '-', '-');
+      return;
+    }
+    if (!Number.isFinite(n) || n < 0){
+      render('-', '-', '-');
+      return;
     }
 
-    // ========== グラフ ==========
-    let chart;
-
-    function draw(labels, probs, minSuccess){
-      const ctx = $('#chart').getContext('2d');
-
-      // 背景色：minSuccess 未満は薄色、以上は強調
-      const bg = probs.map((_,k)=> (Number.isFinite(minSuccess) && k >= minSuccess) ? 'rgba(96,165,250,.75)' : 'rgba(148,163,184,.6)');
-      const border = probs.map((_,k)=> (Number.isFinite(minSuccess) && k >= minSuccess) ? 'rgba(37,99,235,1)' : 'rgba(100,116,139,1)');
-
-      if (chart) chart.destroy();
-      chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels,
-          datasets: [{
-            label: '成功確率 (%)',
-            data: probs.map(x => x*100),
-            backgroundColor: bg,
-            borderColor: border,
-            borderWidth: 1
-          }]
-        },
-        options: {
-          animation: false,
-          responsive: true,
-          maintainAspectRatio: false,
-          parsing: false,
-          scales: {
-            x: {
-              title: { display: true, text: '成功数' },
-              ticks: { autoSkip: true, maxRotation: 0 }
-            },
-            y: {
-              title: { display: true, text: '確率 (%)' },
-              beginAtZero: true
-            }
-          },
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: (ctx)=> ` ${ctx.label} 回: ${fmt.format(ctx.raw)} %`
-              }
-            }
-          }
-        }
-      });
+    if (n > 1000){
+      n = 1000;
+      $('#trialCount').value = 1000;
+      $('#note').textContent = '試行回数は最大 1000 に制限しています。';
     }
 
-    // ========== 入力 → 計算 → 描画 ==========
-    (function init(){
-      const STORAGE_KEY = 'success-graph.v1';
-      const inputs = $$('.fld').sort((a,b)=> (+a.dataset.index) - (+b.dataset.index));
+    const p = pPct / 100;
+    const pmf = binomialPMFAll(n, p);
 
-      // 復元
-      try{
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw){
-          const data = JSON.parse(raw);
-          inputs.forEach(el => { if (data[el.name] != null) el.value = data[el.name]; });
-        }
-      }catch{}
+    const exp = p * n;
+    const variance = n * p * (1 - p);
+    const std = Math.sqrt(variance);
 
-      function recalc(){
-        let pPct = toNum($('#successRate').value);
-        let n    = toNum($('#trialCount').value);
-        let kMin = toNum($('#minSuccess').value);
-
-        const note = $('#note');
-        note.textContent = '';
-
-        // 入力チェックと補正
-        if (!Number.isFinite(pPct) || pPct < 0 || pPct > 100){
-          render('-', '-', '-', '成功確率は 0〜100 を入力してください。');
-          if (chart) chart.destroy();
-          return;
-        }
-        if (!Number.isFinite(n) || n < 0){
-          render('-', '-', '-', '試行回数は 0 以上を入力してください。');
-          if (chart) chart.destroy();
-          return;
-        }
-
-        // パフォーマンス上限
-        if (n > 1000){
-          n = 1000;
-          $('#trialCount').value = 1000;
-          note.textContent = '試行回数は描画負荷のため最大 1,000 に制限しています。';
-        }
-
-        const p = pPct / 100;
-        const pmf = binomialPMFAll(n, p);            // 長さ n+1
-        const labels = Array.from({length:n+1}, (_,i)=> i);
-
-        // 期待値/分散/標準偏差
-        const exp = p * n;
-        const variance = n * p * (1 - p);
-        const std = Math.sqrt(variance);
-
-        // 最小成功数以上の累積確率
-        let cum = NaN;
-        if (Number.isFinite(kMin) && kMin >= 0){
-          kMin = Math.floor(kMin);
-          if (kMin > n) {
-            cum = 0;
-            note.textContent = (note.textContent ? note.textContent + ' ' : '') + '最小成功数が試行回数を超えています（結果は 0%）。';
-          } else {
-            cum = pmf.slice(kMin).reduce((a,b)=>a+b,0);
-          }
-        }
-
-        // 描画
-        draw(labels, pmf, Number.isFinite(kMin) ? kMin : NaN);
-
-        // 表示
-        const cumPct = Number.isFinite(cum) ? `${fmt.format(cum*100)} %` : '—';
-        render(`${fmt.format(exp)}`,
-               `${cumPct}`,
-               `${fmt.format(variance)} / ${fmt.format(std)}`,
-               note.textContent);
-
-        // 保存
-        const data = {};
-        inputs.forEach(i => data[i.name] = i.value);
-        try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch{}
+    let cum = NaN;
+    if (Number.isFinite(kMin) && kMin >= 0){
+      kMin = Math.floor(kMin);
+      if (kMin <= n){
+        cum = pmf.slice(kMin).reduce((a,b)=>a+b,0);
+      } else {
+        cum = 0;
       }
+    }
 
-      function render(exp, cum, varstd, note){
-        $('#exp').textContent = exp;
-        $('#cum').textContent = cum;
-        $('#varstd').textContent = varstd;
-        if (note) $('#note').textContent = note;
+    draw([...Array(n+1).keys()], pmf, Number.isFinite(kMin) ? kMin : NaN);
+
+    $('#exp').textContent = exp.toFixed(2);
+    $('#cum').textContent = Number.isFinite(cum) ? (cum*100).toFixed(2)+'%' : '-';
+    $('#varstd').textContent = `${variance.toFixed(2)} / ${std.toFixed(2)}`;
+  }
+
+  function render(a,b,c){
+    $('#exp').textContent = a;
+    $('#cum').textContent = b;
+    $('#varstd').textContent = c;
+  }
+
+  /* 復元 */
+  try{
+    const raw = localStorage.getItem(KEY);
+    if (raw){
+      const d = JSON.parse(raw);
+      flds.forEach(f=>{ if (d[f.id]!=null) f.value=d[f.id]; });
+    }
+  }catch{}
+
+  flds.forEach((f,i)=>{
+    f.addEventListener('input', ()=>{
+      calc();
+      const d={};
+      flds.forEach(x=>d[x.id]=x.value);
+      localStorage.setItem(KEY, JSON.stringify(d));
+    });
+    f.addEventListener('keydown', e=>{
+      if (e.key==='Enter' || e.key==='Tab'){
+        e.preventDefault();
+        if (flds[i+1]) flds[i+1].focus();
       }
+    });
+  });
 
-      // 入力→即時計算
-      inputs.forEach(el=>{
-        el.addEventListener('input', recalc, {passive:true});
-        // iPhone: Enter で次へ（Tab 相当）
-        el.addEventListener('keydown', (e)=>{
-          if (e.key === 'Enter' || e.key === 'Tab'){
-            e.preventDefault();
-            const idx = inputs.indexOf(el);
-            if (idx >= 0 && idx < inputs.length - 1) inputs[idx+1].focus();
-          }
-        });
-      });
-
-      // 初期計算 & 初期フォーカス
-      recalc();
-      if (inputs.length) inputs[0].focus();
-    })();
-  </script>
+  calc();
+  flds[0].focus();
+})();
+</script>
 </body>
 </html>
