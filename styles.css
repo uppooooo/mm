@@ -22,6 +22,14 @@ html, body {
   color: var(--ink);
 }
 
+body {
+  font-weight: 400;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    "Hiragino Kaku Gothic ProN", "Yu Gothic", "YuGothic", "Noto Sans JP",
+    Meiryo, sans-serif;
+}
+
 .container {
   max-width: 960px;
   margin: 24px auto;
@@ -33,21 +41,15 @@ html, body {
 }
 
 /* =========================
-   必須指定の明示（※要件準拠）
+   Typography（要件準拠）
    ========================= */
+p { color: #333; }
 
-/* 段落 p：色（color） */
-p {
-  color: #333333;
-}
-
-/* h1：文字サイズ（font-size） */
 h1 {
   font-size: clamp(1.8rem, 1.2rem + 2vw, 2.6rem);
   margin: 0 0 12px;
 }
 
-/* h2：横幅（width） */
 h2 {
   width: 100%;
   margin: 24px 0 12px;
@@ -56,14 +58,12 @@ h2 {
   padding-left: 10px;
 }
 
-/* ul：高さ（height） */
 ul {
   height: auto;
   padding-left: 24px;
   margin: 8px 0 16px;
 }
 
-/* ol：背景色（background-color） */
 ol {
   background-color: #f8fafc;
   padding: 12px 16px;
@@ -71,36 +71,48 @@ ol {
   border-radius: 8px;
 }
 
-/* body：文字の太さ（font-weight） */
-body {
-  font-weight: 400;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-    "Hiragino Kaku Gothic ProN", "Yu Gothic", "YuGothic", "Noto Sans JP",
-    Meiryo, sans-serif;
-}
-
 /* =========================
-   Form / Calculator UI
+   Form Grid（共通土台）
    ========================= */
-
-/* ---- 基本：2列フォーム（従来通り） ---- */
 .form-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
   gap: 12px 16px;
   align-items: center;
 }
 
+/* ---------- 列数指定 ---------- */
+
+/* 1列（縦並び） */
+.form-grid.cols-1 {
+  grid-template-columns: 1fr;
+}
+
+/* 2列（ラベル + 入力） */
+.form-grid.cols-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* 3列（項目名 + メイン + サブ） */
+.form-grid.cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* モバイルはすべて縦並び */
 @media (max-width: 520px) {
-  .form-grid {
+  .form-grid.cols-1,
+  .form-grid.cols-2,
+  .form-grid.cols-3 {
     grid-template-columns: 1fr;
   }
 }
 
+/* =========================
+   Labels + Inputs
+   ========================= */
 .label {
   color: var(--muted);
   font-size: 0.95rem;
+  font-weight: 600;
 }
 
 /* 入力欄 共通 */
@@ -124,36 +136,8 @@ select:focus {
   background: #f8fbff;
 }
 
-/* =========================
-   3列フォーム（MIX計算機用）
-   行＝意味 / 列＝対象 を揃える
-   ========================= */
-
-/*
-  3要素が連続する行（ラベル＋入力＋入力）の場合、
-  列をすべて等幅にする
-*/
-.form-grid > :nth-child(3n+1),
-.form-grid > :nth-child(3n+2),
-.form-grid > :nth-child(3n+3) {
-  grid-column: auto;
-}
-
-.form-grid {
-  /* 最大3列まで均等配分 */
-  grid-template-columns: repeat(3, 1fr);
-}
-
-/* ヘッダー行（メイン / サブ）を強調 */
-.form-grid > .label {
-  text-align: center;
-  font-weight: 600;
-}
-
-/* 入力欄を箱として分かりやすく */
-.form-grid input.fld {
+.form-grid.cols-3 input.fld {
   text-align: right;
-  background-color: #ffffff;
 }
 
 /* =========================
@@ -167,21 +151,18 @@ select:focus {
   border-radius: 10px;
 }
 
-/* 補助：並び / 区切り */
 .row {
   display: flex;
   gap: 12px;
   align-items: center;
 }
 
-/* 分割線 */
 .divider {
   height: 1px;
   background: var(--border);
   margin: 20px 0;
 }
 
-/* 結果の強調 */
 .total {
   font-weight: 700;
   font-size: 1.2rem;
@@ -190,7 +171,7 @@ select:focus {
 
 /* キー表示 */
 .kbd {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   background: #eef2ff;
   border: 1px solid #e0e7ff;
   color: #3730a3;
@@ -198,27 +179,4 @@ select:focus {
   border-radius: 6px;
   font-size: .9rem;
 }
-
-/* =========================
-   縦並びフォーム（MIX確率計算用）
-   ========================= */
-
-.vertical-form {
-  display: block; /* grid を無効化 */
-}
-
-.vertical-form .field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 14px;
-}
-
-.vertical-form .label {
-  text-align: left;
-  font-weight: 600;
-}
-
-.vertical-form .fld {
-  width: 100%;
-}
+``
