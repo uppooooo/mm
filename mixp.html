@@ -23,27 +23,47 @@
     </header>
 
     <main>
-      <!-- 入力フォーム（縦並び） -->
-<form class="form-grid cols-1" novalidate>
-  <div class="field">
-    <label class="label" for="p">成功確率（%）</label>
-    <input id="p" class="fld" type="number" data-index="0">
-  </div>
+      <!-- 入力フォーム（縦並び：1列） -->
+      <form class="form-grid cols-1" novalidate>
+        <div class="field">
+          <label class="label" for="p">成功確率（%）</label>
+          <input
+            id="p"
+            class="fld"
+            type="number"
+            min="0"
+            max="100"
+            step="1"
+            inputmode="numeric"
+            data-index="0"
+          >
+        </div>
 
-  <div class="field">
-    <label class="label" for="n">MIX回数</label>
-    <input id="n" class="fld" type="number" data-index="1">
-  </div>
+        <div class="field">
+          <label class="label" for="n">MIX回数</label>
+          <input
+            id="n"
+            class="fld"
+            type="number"
+            min="1"
+            step="1"
+            inputmode="numeric"
+            data-index="1"
+          >
+        </div>
 
-  <div class="field">
-    <label class="label" for="k">成功回数</label>
-    <input id="k" class="fld" type="number" data-index="2">
-  </div>
-</form>
-``
-      <input id="k" class="fld" type="number"
-               min="0" step="1"
-               inputmode="numeric" data-index="2">
+        <div class="field">
+          <label class="label" for="k">成功回数</label>
+          <input
+            id="k"
+            class="fld"
+            type="number"
+            min="0"
+            step="1"
+            inputmode="numeric"
+            data-index="2"
+          >
+        </div>
       </form>
 
       <!-- 結果表示 -->
@@ -75,8 +95,8 @@
     if (p < 0 || p > 1 || k < 0 || k > n) return 0;
     if (n === 0) return k === 0 ? 1 : 0;
 
-    let q = 1 - p;
-    let pk = Math.pow(q, n); // k = 0
+    const q = 1 - p;
+    let pk = Math.pow(q, n); // k=0
     for (let i = 1; i <= k; i++){
       pk = pk * ((n - (i - 1)) / i) * (p / q);
     }
@@ -110,14 +130,16 @@
     }
   }catch{}
 
-  /* 入力制御（全選択 + Enter/Shift+Enter） */
+  /* 入力制御 */
   flds.forEach((el,i)=>{
-    // フォーカス時：全選択（iOS対策）
+    // フォーカス時は全選択（iOS対策含む）
     el.addEventListener('focus', ()=>{
-      setTimeout(()=>el.select(), 0);
+      setTimeout(()=>{
+        if (typeof el.select === 'function') el.select();
+      }, 0);
     });
 
-    // 入力：再計算 + 保存
+    // 入力時：計算＋保存
     el.addEventListener('input', ()=>{
       calc();
       const d = {};
@@ -125,7 +147,7 @@
       localStorage.setItem(KEY, JSON.stringify(d));
     });
 
-    // Enter / Shift+Enter
+    // Enter / Shift+Enter 移動
     el.addEventListener('keydown', e=>{
       if (e.key === 'Enter'){
         e.preventDefault();
@@ -135,7 +157,7 @@
           if (flds[i+1]) flds[i+1].focus();
         }
       }
-      // Tab / Shift+Tab はブラウザ標準
+      // Tab / Shift+Tab は標準動作
     });
   });
 
