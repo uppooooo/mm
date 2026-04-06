@@ -9,7 +9,7 @@
   <!-- 共通CSS -->
   <link rel="stylesheet" href="./styles.css">
 
-  <!-- iPhone 表示最適化 -->
+  <!-- iPhone 最適化 -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="format-detection" content="telephone=no">
@@ -23,27 +23,27 @@
     </header>
 
     <main>
-      <!-- 入力フォーム -->
-      <form id="form" class="form-grid" novalidate>
-        <label class="label">MC定価</label>
+      <!-- 入力フォーム（1項目＝1行） -->
+      <form class="form-grid" novalidate>
+        <label class="label" for="basePrice">MC定価</label>
         <input id="basePrice" name="basePrice" class="fld" type="number"
-               step="any" value="320" data-index="0" enterkeyhint="next">
+               step="any" value="320" data-index="0">
 
-        <label class="label">購入数</label>
+        <label class="label" for="purchaseQuantity">購入数</label>
         <input id="purchaseQuantity" name="purchaseQuantity" class="fld" type="number"
-               value="1" data-index="1" enterkeyhint="next">
+               value="1" data-index="1">
 
-        <label class="label">100MC =</label>
+        <label class="label" for="market">100MC =</label>
         <input id="market" name="market" class="fld" type="number"
-               step="0.1" value="14.0" data-index="2" enterkeyhint="next">
+               step="0.1" value="14.0" data-index="2">
 
-        <label class="label">セット個数</label>
+        <label class="label" for="quantity">セット個数</label>
         <input id="quantity" name="quantity" class="fld" type="number"
-               value="100" data-index="3" enterkeyhint="done">
+               value="100" data-index="3">
       </form>
 
       <!-- セール -->
-      <p style="margin-top:12px;" class="label">セール</p>
+      <p class="label" style="margin-top:14px;">セール</p>
       <div class="row">
         <label><input type="radio" name="discount" value="0" checked> 0%</label>
         <label><input type="radio" name="discount" value="0.2"> 20%</label>
@@ -67,6 +67,7 @@
   const $ = s => document.querySelector(s);
   const $$ = s => Array.from(document.querySelectorAll('.fld'));
   const KEY = 'mc-calc.v1';
+  const flds = $$('.fld').sort((a,b)=>+a.dataset.index-+b.dataset.index);
 
   function n(v){
     const x = Number(v);
@@ -97,47 +98,53 @@
     const raw = localStorage.getItem(KEY);
     if (raw){
       const data = JSON.parse(raw);
-      Object.keys(data).forEach(k=>{
-        const el = document.getElementById(k);
-        if (el) el.value = data[k];
+      flds.forEach(f=>{
+        if (data[f.id] != null) f.value = data[f.id];
       });
       const r = document.querySelector(`input[name="discount"][value="${data.discount}"]`);
       if (r) r.checked = true;
     }
-  }catch(e){}
+  }catch{}
 
-  /* 入力監視 */
-  const flds = $$('.fld');
-  flds.forEach((f,i)=>{
-    f.addEventListener('input', ()=>{
-      calc();
-      save();
+  /* 入力・フォーカス・キー操作 */
+  flds.forEach((el,i)=>{
+    // フォーカス時は全選択（iOS Safari 対策）
+    el.addEventListener('focus', ()=>{
+      setTimeout(()=>el.select(), 0);
     });
-    f.addEventListener('keydown', e=>{
-      if (e.key === 'Enter' || e.key === 'Tab'){
+
+    // 入力時再計算＋保存
+    el.addEventListener('input', ()=>{
+      calc();
+      const d = {};
+      flds.forEach(x=>d[x.id]=x.value);
+      d.discount = document.querySelector('input[name="discount"]:checked').value;
+      localStorage.setItem(KEY, JSON.stringify(d));
+    });
+
+    // Enter / Shift+Enter で上下移動
+    el.addEventListener('keydown', e=>{
+      if (e.key === 'Enter'){
         e.preventDefault();
-        if (flds[i+1]) flds[i+1].focus();
+        if (e.shiftKey){
+          if (flds[i-1]) flds[i-1].focus();
+        } else {
+          if (flds[i+1]) flds[i+1].focus();
+        }
       }
+      // Tab / Shift+Tab はブラウザ標準
     });
   });
 
+  // セール変更
   document.querySelectorAll('input[name="discount"]').forEach(r=>{
     r.addEventListener('change', ()=>{
       calc();
-      save();
+      const d = {};
+      flds.forEach(x=>d[x.id]=x.value);
+      d.discount = document.querySelector('input[name="discount"]:checked').value;
+      localStorage.setItem(KEY, JSON.stringify(d));
     });
   });
 
-  function save(){
-    const d = {};
-    flds.forEach(f => d[f.id] = f.value);
-    d.discount = document.querySelector('input[name="discount"]:checked').value;
-    localStorage.setItem(KEY, JSON.stringify(d));
-  }
-
   calc();
-  flds[0].focus();
-})();
-</script>
-</body>
-</html>
