@@ -1,157 +1,90 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="robots" content="noindex,nofollow,noarchive" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>MC計算</title>
 
-  <!-- iPhone 表示最適化（共通仕様） -->
+  <!-- 共通CSS -->
+  <link rel="stylesheet" href="./styles.css">
+
+  <!-- iPhone 表示最適化 -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="format-detection" content="telephone=no">
-
-  <style>
-    :root{
-      --bg:#f7f8fb;
-      --panel:#ffffff;
-      --ink:#1f2937;
-      --muted:#6b7280;
-      --border:#e5e7eb;
-      --accent:#2563eb;
-      --accent-weak:#e7efff;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0}
-    body{
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,
-        "Hiragino Kaku Gothic ProN","Yu Gothic","YuGothic","Noto Sans JP",Meiryo,sans-serif;
-      background:var(--bg);
-      color:var(--ink);
-      font-weight:400;
-    }
-    .wrap{
-      max-width:640px;
-      margin:24px auto;
-      padding:24px;
-      background:var(--panel);
-      border:1px solid var(--border);
-      border-radius:12px;
-      box-shadow:0 2px 12px rgba(0,0,0,.05);
-    }
-    h1{
-      font-size:clamp(1.4rem,1.1rem + 1vw,2rem);
-      margin:0 0 8px;
-      color:#888;
-    }
-    p{color:#333}
-
-    .grid{
-      display:grid;
-      grid-template-columns:1fr 160px;
-      gap:12px 16px;
-      align-items:center;
-      margin-top:12px;
-    }
-    @media (max-width:520px){
-      .grid{grid-template-columns:1fr}
-    }
-
-    label{color:var(--muted)}
-    input[type="number"]{
-      width:100%;
-      padding:10px 12px;
-      font-size:1rem;
-      border-radius:8px;
-      border:1px solid var(--border);
-      background:#fff;
-    }
-    input:focus{
-      outline:none;
-      border-color:var(--accent);
-      box-shadow:0 0 0 3px var(--accent-weak);
-    }
-
-    .radio-group{
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-    }
-
-    .result{
-      margin-top:20px;
-      padding:16px;
-      background:#fbfdff;
-      border:1px dashed var(--border);
-      border-radius:10px;
-    }
-    .row{margin-bottom:6px; font-weight:600}
-
-    ul{height:auto; padding-left:20px; margin-top:16px}
-  </style>
 </head>
 
 <body>
-<div class="wrap">
-  <header>
-    <h1>MC計算</h1>
-    <p>※ 半角数字で入力してください（リアルタイム計算）</p>
-  </header>
+  <div class="container">
+    <header>
+      <h1>MC計算</h1>
+      <p>※ 半角数字で入力してください（リアルタイム計算）</p>
+    </header>
 
-  <main>
-    <form id="form" class="grid" novalidate>
-      <label>MC定価</label>
-      <input id="basePrice" name="basePrice" class="fld" type="number" step="any" value="320" data-index="0" enterkeyhint="next">
+    <main>
+      <!-- 入力フォーム -->
+      <form id="form" class="form-grid" novalidate>
+        <label class="label">MC定価</label>
+        <input id="basePrice" name="basePrice" class="fld" type="number"
+               step="any" value="320" data-index="0" enterkeyhint="next">
 
-      <label>購入数</label>
-      <input id="purchaseQuantity" name="purchaseQuantity" class="fld" type="number" value="1" data-index="1" enterkeyhint="next">
+        <label class="label">購入数</label>
+        <input id="purchaseQuantity" name="purchaseQuantity" class="fld" type="number"
+               value="1" data-index="1" enterkeyhint="next">
 
-      <label>100MC =</label>
-      <input id="market" name="market" class="fld" type="number" step="0.1" value="14.0" data-index="2" enterkeyhint="next">
+        <label class="label">100MC =</label>
+        <input id="market" name="market" class="fld" type="number"
+               step="0.1" value="14.0" data-index="2" enterkeyhint="next">
 
-      <label>セット個数</label>
-      <input id="quantity" name="quantity" class="fld" type="number" value="100" data-index="3" enterkeyhint="done">
-    </form>
+        <label class="label">セット個数</label>
+        <input id="quantity" name="quantity" class="fld" type="number"
+               value="100" data-index="3" enterkeyhint="done">
+      </form>
 
-    <p style="margin-top:12px;color:var(--muted)">セール</p>
-    <div class="radio-group">
-      <label><input type="radio" name="discount" value="0" checked> 0%</label>
-      <label><input type="radio" name="discount" value="0.2"> 20%</label>
-      <label><input type="radio" name="discount" value="0.3"> 30%</label>
-    </div>
+      <!-- セール -->
+      <p style="margin-top:12px;" class="label">セール</p>
+      <div class="row">
+        <label><input type="radio" name="discount" value="0" checked> 0%</label>
+        <label><input type="radio" name="discount" value="0.2"> 20%</label>
+        <label><input type="radio" name="discount" value="0.3"> 30%</label>
+      </div>
 
-    <section class="result" aria-live="polite">
-      <div class="row" id="totalResult">価格：- GP</div>
-      <div class="row" id="unitResult">単価：- GP</div>
-    </section>
+      <!-- 結果 -->
+      <section class="result-panel" aria-live="polite">
+        <div class="row" id="totalResult">価格：- GP</div>
+        <div class="row total" id="unitResult">単価：- GP</div>
+      </section>
 
-    <ul>
-      <li><a href="https://uppooooo.github.io/mm/">トップページ</a></li>
-    </ul>
-  </main>
-</div>
+      <ul>
+        <li><a href="./index.html">トップページ</a></li>
+      </ul>
+    </main>
+  </div>
 
 <script>
 (function(){
-  const $ = s=>document.querySelector(s);
-  const $$ = s=>Array.from(document.querySelectorAll(s));
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll('.fld'));
   const KEY = 'mc-calc.v1';
-  const flds = $$('.fld').sort((a,b)=>+a.dataset.index-+b.dataset.index);
 
-  function n(v){ const x=Number(v); return Number.isFinite(x)?x:NaN; }
+  function n(v){
+    const x = Number(v);
+    return Number.isFinite(x) ? x : NaN;
+  }
 
   function calc(){
     const base = n($('#basePrice').value);
     const market = n($('#market').value);
-    const qty = n($('#quantity').value);
-    const buy = n($('#purchaseQuantity').value);
+    const quantity = n($('#quantity').value);
+    const purchase = n($('#purchaseQuantity').value);
     const discount = n(document.querySelector('input[name="discount"]:checked').value);
 
-    if([base,market,qty,buy,discount].some(isNaN)) return;
+    if ([base, market, quantity, purchase, discount].some(isNaN)) return;
 
     const discounted = 1 - discount;
-    const total = base * discounted * market * buy * 10000;
-    const unit = total / qty / buy;
+    const total = base * discounted * market * purchase * 10000;
+    const unit = total / quantity / purchase;
 
     $('#totalResult').textContent =
       `価格：${Math.floor(total).toLocaleString()} GP`;
@@ -159,47 +92,47 @@
       `単価：${Math.floor(unit).toLocaleString()} GP`;
   }
 
-  // 復元
+  /* 前回入力の復元 */
   try{
-    const r=localStorage.getItem(KEY);
-    if(r){
-      const d=JSON.parse(r);
-      flds.forEach(f=>{ if(d[f.id]!=null) f.value=d[f.id]; });
-      const dis=d.discount;
-      if(dis!=null){
-        const el=document.querySelector(`input[name="discount"][value="${dis}"]`);
-        if(el) el.checked=true;
-      }
+    const raw = localStorage.getItem(KEY);
+    if (raw){
+      const data = JSON.parse(raw);
+      Object.keys(data).forEach(k=>{
+        const el = document.getElementById(k);
+        if (el) el.value = data[k];
+      });
+      const r = document.querySelector(`input[name="discount"][value="${data.discount}"]`);
+      if (r) r.checked = true;
     }
-  }catch{}
+  }catch(e){}
 
-  // 入力監視
-  flds.forEach(f=>{
-    f.addEventListener('input',()=>{
+  /* 入力監視 */
+  const flds = $$('.fld');
+  flds.forEach((f,i)=>{
+    f.addEventListener('input', ()=>{
       calc();
       save();
     });
-    f.addEventListener('keydown',e=>{
-      if(e.key==='Enter'||e.key==='Tab'){
+    f.addEventListener('keydown', e=>{
+      if (e.key === 'Enter' || e.key === 'Tab'){
         e.preventDefault();
-        const i=flds.indexOf(f);
-        if(i<flds.length-1) flds[i+1].focus();
+        if (flds[i+1]) flds[i+1].focus();
       }
     });
   });
 
-  $$('input[name="discount"]').forEach(r=>{
-    r.addEventListener('change',()=>{
+  document.querySelectorAll('input[name="discount"]').forEach(r=>{
+    r.addEventListener('change', ()=>{
       calc();
       save();
     });
   });
 
   function save(){
-    const d={};
-    flds.forEach(f=>d[f.id]=f.value);
-    d.discount=document.querySelector('input[name="discount"]:checked').value;
-    localStorage.setItem(KEY,JSON.stringify(d));
+    const d = {};
+    flds.forEach(f => d[f.id] = f.value);
+    d.discount = document.querySelector('input[name="discount"]:checked').value;
+    localStorage.setItem(KEY, JSON.stringify(d));
   }
 
   calc();
@@ -208,4 +141,3 @@
 </script>
 </body>
 </html>
-``
