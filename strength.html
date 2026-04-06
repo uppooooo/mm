@@ -1,144 +1,79 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="robots" content="noindex,nofollow,noarchive" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>強度計算</title>
 
-  <!-- iPhone 表示最適化（共通仕様） -->
+  <!-- 共通CSS -->
+  ./styles.css
+
+  <!-- iPhone 表示最適化 -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="format-detection" content="telephone=no">
-
-  <style>
-    :root{
-      --bg:#f7f8fb;
-      --panel:#ffffff;
-      --ink:#1f2937;
-      --muted:#6b7280;
-      --border:#e5e7eb;
-      --accent:#2563eb;
-      --accent-weak:#e7efff;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0}
-    body{
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,
-        "Hiragino Kaku Gothic ProN","Yu Gothic","YuGothic","Noto Sans JP",Meiryo,sans-serif;
-      background:var(--bg);
-      color:var(--ink);
-      font-weight:400;
-    }
-    .wrap{
-      max-width:520px;
-      margin:24px auto;
-      padding:24px;
-      background:var(--panel);
-      border:1px solid var(--border);
-      border-radius:12px;
-      box-shadow:0 2px 12px rgba(0,0,0,.05);
-    }
-    h1{
-      font-size:clamp(1.4rem,1.1rem + 1vw,2rem);
-      margin:0 0 8px;
-      color:#888;
-    }
-    p{color:#333}
-
-    .grid{
-      display:grid;
-      grid-template-columns:1fr 160px;
-      gap:12px 16px;
-      align-items:center;
-      margin-top:12px;
-    }
-    @media (max-width:520px){
-      .grid{grid-template-columns:1fr}
-    }
-
-    label{color:var(--muted)}
-    input[type="number"], select{
-      width:100%;
-      padding:10px 12px;
-      font-size:1rem;
-      border-radius:8px;
-      border:1px solid var(--border);
-      background:#fff;
-      text-align:right;
-    }
-    select{ text-align:left }
-    input:focus, select:focus{
-      outline:none;
-      border-color:var(--accent);
-      box-shadow:0 0 0 3px var(--accent-weak);
-    }
-
-    .result{
-      margin-top:20px;
-      padding:16px;
-      background:#fbfdff;
-      border:1px dashed var(--border);
-      border-radius:10px;
-      font-size:1.1rem;
-      font-weight:700;
-    }
-
-    ul{height:auto; padding-left:20px; margin-top:16px}
-  </style>
 </head>
 
 <body>
-<div class="wrap">
-  <header>
-    <h1>強度計算</h1>
-    <p>※ 半角数字で入力してください（リアルタイム計算）</p>
-  </header>
+  <div class="container">
+    <header>
+      <h1>強度計算</h1>
+      <p>※ 半角数字で入力してください（リアルタイム計算）</p>
+    </header>
 
-  <main>
-    <form class="grid" novalidate>
-      <label>レベル</label>
-      <input id="level" class="fld" type="number" min="0" max="999"
-             inputmode="numeric" data-index="0" enterkeyhint="next">
+    <main>
+      <!-- 入力フォーム -->
+      <form class="form-grid" novalidate>
+        <label class="label" for="level">レベル</label>
+        <input id="level" class="fld" type="number"
+               min="0" max="999"
+               inputmode="numeric" data-index="0" enterkeyhint="next">
 
-      <label>力</label>
-      <input id="power" class="fld" type="number"
-             inputmode="numeric" data-index="1" enterkeyhint="next">
+        <label class="label" for="power">力</label>
+        <input id="power" class="fld" type="number"
+               inputmode="numeric" data-index="1" enterkeyhint="next">
 
-      <label>幸運</label>
-      <input id="luck" class="fld" type="number"
-             inputmode="numeric" data-index="2" enterkeyhint="next">
+        <label class="label" for="luck">幸運</label>
+        <input id="luck" class="fld" type="number"
+               inputmode="numeric" data-index="2" enterkeyhint="next">
 
-      <label>特性</label>
-      <select id="trait" class="fld" data-index="3" enterkeyhint="done">
-        <option value="other">力以外</option>
-        <option value="power">力</option>
-      </select>
-    </form>
+        <label class="label" for="trait">特性</label>
+        <select id="trait" class="fld" data-index="3" enterkeyhint="done">
+          <option value="other">力以外</option>
+          <option value="power">力</option>
+        </select>
+      </form>
 
-    <section class="result" aria-live="polite">
-      強度：<span id="strength">0.00</span>
-    </section>
+      <!-- 結果表示 -->
+      <section class="result-panel" aria-live="polite">
+        <div class="row total">
+          強度：<span id="strength">0.00</span>
+        </div>
+      </section>
 
-    <ul>
-      <li><a href="https://uppooooo.github.io/mm/">トップページ</a></li>
-    </ul>
-  </main>
-</div>
+      <ul>
+        <li>./index.htmlトップページ</a></li>
+      </ul>
+    </main>
+  </div>
 
 <script>
 (function(){
   const $ = s => document.querySelector(s);
-  const $$ = s => Array.from(document.querySelectorAll(s));
+  const $$ = s => Array.from(document.querySelectorAll('.fld'));
   const KEY = 'strength-trait.v1';
-  const flds = $$('.fld').sort((a,b)=>+a.dataset.index-+b.dataset.index);
+  const flds = $$('.fld').sort((a,b)=> +a.dataset.index - +b.dataset.index);
 
-  function n(v){ const x=Number(v); return Number.isFinite(x)?x:NaN; }
+  function num(v){
+    const n = Number(v);
+    return Number.isFinite(n) ? n : NaN;
+  }
 
   function calc(){
-    const level = n($('#level').value);
-    const power = n($('#power').value);
-    const luck  = n($('#luck').value);
+    const level = num($('#level').value);
+    const power = num($('#power').value);
+    const luck  = num($('#luck').value);
     const trait = $('#trait').value;
 
     if (isNaN(level)){
@@ -146,8 +81,8 @@
       return;
     }
 
-    let strength;
     // 元コードと完全一致の仕様
+    let strength;
     if (trait === 'power'){
       strength = luck / (1 + level);
     } else {
@@ -158,29 +93,30 @@
       Number.isFinite(strength) ? strength.toFixed(2) : '0.00';
   }
 
-  // 復元
+  /* 前回入力の復元 */
   try{
-    const r = localStorage.getItem(KEY);
-    if (r){
-      const d = JSON.parse(r);
+    const saved = localStorage.getItem(KEY);
+    if (saved){
+      const d = JSON.parse(saved);
       flds.forEach(f=>{
         if (d[f.id] != null) f.value = d[f.id];
       });
     }
-  }catch{}
+  }catch(e){}
 
-  flds.forEach(f=>{
+  /* 入力監視 */
+  flds.forEach((f,i)=>{
     f.addEventListener('input', ()=>{
       calc();
       const d = {};
-      flds.forEach(x=>d[x.id] = x.value);
+      flds.forEach(x => d[x.id] = x.value);
       localStorage.setItem(KEY, JSON.stringify(d));
     });
+
     f.addEventListener('keydown', e=>{
       if (e.key === 'Enter' || e.key === 'Tab'){
         e.preventDefault();
-        const i = flds.indexOf(f);
-        if (i < flds.length - 1) flds[i + 1].focus();
+        if (flds[i+1]) flds[i+1].focus();
       }
     });
   });
@@ -191,4 +127,3 @@
 </script>
 </body>
 </html>
-``
