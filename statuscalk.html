@@ -1,86 +1,185 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="robots" content="noindex,nofollow,noarchive" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>ステータス計算</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        padding: 20px;
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>ステータス計算</title>
+
+  <!-- iPhone 表示最適化（共通仕様） -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+
+  <style>
+    :root{
+      --bg:#f7f8fb;
+      --panel:#ffffff;
+      --ink:#1f2937;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --accent:#2563eb;
+      --accent-weak:#e7efff;
     }
-    label {
-        display: inline-block;
-        width: 100px;
+    *{box-sizing:border-box}
+    html,body{margin:0}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,
+        "Hiragino Kaku Gothic ProN","Yu Gothic","YuGothic","Noto Sans JP",Meiryo,sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+      font-weight:400;
     }
-    input {
-        width: 70px; /* コンパクトに調整 */
-        margin-bottom: 10px;
-        text-align: right;
+    .wrap{
+      max-width:520px;
+      margin:24px auto;
+      padding:24px;
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:12px;
+      box-shadow:0 2px 12px rgba(0,0,0,.05);
     }
-    .result {
-        margin-top: 15px;
+    h1{
+      font-size:clamp(1.4rem,1.1rem + 1vw,2rem);
+      margin:0 0 8px;
+      color:#888;
     }
-</style>
+    p{color:#333}
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 160px;
+      gap:12px 16px;
+      align-items:center;
+      margin-top:12px;
+    }
+    @media (max-width:520px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    label{color:var(--muted)}
+    input[type="number"]{
+      width:100%;
+      padding:10px 12px;
+      font-size:1rem;
+      border-radius:8px;
+      border:1px solid var(--border);
+      background:#fff;
+      text-align:right;
+    }
+    input:focus{
+      outline:none;
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px var(--accent-weak);
+    }
+
+    .result{
+      margin-top:20px;
+      padding:16px;
+      background:#fbfdff;
+      border:1px dashed var(--border);
+      border-radius:10px;
+    }
+    .row{margin-bottom:6px; font-weight:600}
+
+    ul{height:auto; padding-left:20px; margin-top:16px}
+  </style>
 </head>
-<meta name="viewport" content="width=device-width, 
-　initial-scale=1.0, user-scalable=yes">
 
 <body>
+<div class="wrap">
+  <header>
+    <h1>ステータス計算</h1>
+    <p>※ 半角数字で入力してください（リアルタイム計算）</p>
+  </header>
 
-<h2>ステータス計算</h2>
+  <main>
+    <form class="grid" novalidate>
+      <label>レベル</label>
+      <input id="level" class="fld" type="number" step="1" max="9999"
+             inputmode="numeric" data-index="0" enterkeyhint="next">
 
-<form onsubmit="calculate(); return false;">
-    <div>
-        <label>レベル：</label>
-        <input type="number" id="level" step="1" max="9999">
-    </div>
+      <label>強度</label>
+      <input id="power" class="fld" type="number" step="0.01" max="9999"
+             inputmode="decimal" data-index="1" enterkeyhint="done">
+    </form>
 
-    <div>
-        <label>強度：</label>
-        <input type="number" id="power" step="0.01" max="9999">
-    </div>
+    <section class="result" aria-live="polite">
+      <div class="row">力：<span id="str">-</span></div>
+      <div class="row">敏捷：<span id="agi">-</span></div>
+      <div class="row">器用：<span id="dex">-</span></div>
+      <div class="row">幸運：<span id="luk">-</span></div>
+    </section>
 
-    <button type="submit">計算</button>
-</form>
-
-<div class="result">
-    <p>力：<span id="str"></span></p>
-    <p>敏捷：<span id="agi"></span></p>
-    <p>器用：<span id="dex"></span></p>
-    <p>幸運：<span id="luk"></span></p>
+    <ul>
+      <li>https://uppooooo.github.io/mm/</li>
+    </ul>
+  </main>
 </div>
 
 <script>
-function roundDown(value) {
-    return Math.floor(value);
-}
+(function(){
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+  const KEY = 'status-calc.v1';
+  const flds = $$('.fld').sort((a,b)=>+a.dataset.index-+b.dataset.index);
 
-function calculate() {
-    const B3 = parseInt(document.getElementById("level").value);
-    const C3 = parseFloat(document.getElementById("power").value);
+  function n(v){ const x = Number(v); return Number.isFinite(x) ? x : NaN; }
+  function floor(v){ return Math.floor(v); }
 
-    if (isNaN(B3) || isNaN(C3)) {
-        alert("値を入力してください");
-        return;
+  function calc(){
+    const B3 = n($('#level').value);
+    const C3 = n($('#power').value);
+
+    if (isNaN(B3) || isNaN(C3)){
+      $('#str').textContent = '-';
+      $('#agi').textContent = '-';
+      $('#dex').textContent = '-';
+      $('#luk').textContent = '-';
+      return;
     }
 
+    // 元コードと完全同一の計算式
     const str = Math.round((B3 + 1) * C3);
     const agi = Math.round(Math.round(B3 / 2) * C3 + B3);
-    const dex = Math.round(roundDown(B3 * 1.5 + 2) * C3);
+    const dex = Math.round(floor(B3 * 1.5 + 2) * C3);
     const luk = Math.round((B3 + 1) * C3);
 
-    document.getElementById("str").textContent = str;
-    document.getElementById("agi").textContent = agi;
-    document.getElementById("dex").textContent = dex;
-    document.getElementById("luk").textContent = luk;
-}
+    $('#str').textContent = str.toLocaleString();
+    $('#agi').textContent = agi.toLocaleString();
+    $('#dex').textContent = dex.toLocaleString();
+    $('#luk').textContent = luk.toLocaleString();
+  }
+
+  // 復元
+  try{
+    const r = localStorage.getItem(KEY);
+    if (r){
+      const d = JSON.parse(r);
+      flds.forEach(f=>{ if(d[f.id] != null) f.value = d[f.id]; });
+    }
+  }catch{}
+
+  // 入力監視
+  flds.forEach(f=>{
+    f.addEventListener('input', ()=>{
+      calc();
+      const d = {};
+      flds.forEach(x=>d[x.id] = x.value);
+      localStorage.setItem(KEY, JSON.stringify(d));
+    });
+    f.addEventListener('keydown', e=>{
+      if (e.key === 'Enter' || e.key === 'Tab'){
+        e.preventDefault();
+        const i = flds.indexOf(f);
+        if (i < flds.length - 1) flds[i + 1].focus();
+      }
+    });
+  });
+
+  calc();
+  flds[0].focus();
+})();
 </script>
-
-    <ul>
-        <li><a href="https://uppooooo.github.io/mm/">トップページ</a></li>
-    </ul>
-
 </body>
 </html>
