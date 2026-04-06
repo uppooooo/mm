@@ -1,85 +1,193 @@
-
-
-<!DOCTYPE HTML>
+<!doctype html>
 <html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>MIX確率計算</title>
 
-<HTML>
-<HEAD>
-<TITLE>MIX確率計算</TITLE>
-<meta charset="UTF-8">
-<meta name="robots" content="noindex,nofollow,noarchive" />
+  <!-- iPhone 表示最適化（共通仕様） -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
 
-</HEAD>
-<meta name="viewport" content="width=device-width, 
-　initial-scale=1.0, user-scalable=yes">
+  <style>
+    :root{
+      --bg:#f7f8fb;
+      --panel:#ffffff;
+      --ink:#1f2937;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --accent:#2563eb;
+      --accent-weak:#e7efff;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,
+        "Hiragino Kaku Gothic ProN","Yu Gothic","YuGothic","Noto Sans JP",Meiryo,sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+      font-weight:400;
+    }
+    .wrap{
+      max-width:640px;
+      margin:24px auto;
+      padding:24px;
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:12px;
+      box-shadow:0 2px 12px rgba(0,0,0,.05);
+    }
+    h1{
+      font-size:clamp(1.4rem,1.1rem + 1vw,2rem);
+      margin:0 0 8px;
+      color:#888;
+    }
+    p{color:#333}
 
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 160px;
+      gap:12px 16px;
+      align-items:center;
+      margin-top:12px;
+    }
+    @media (max-width:520px){
+      .grid{grid-template-columns:1fr}
+    }
 
+    label{color:var(--muted)}
+    input[type="number"]{
+      width:100%;
+      padding:10px 12px;
+      font-size:1rem;
+      border-radius:8px;
+      border:1px solid var(--border);
+      background:#fff;
+    }
+    input:focus{
+      outline:none;
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px var(--accent-weak);
+    }
 
-<BODY>
-<H1><font color="#888888">MIX確率計算</font></H1>
-<P><font color="#888888">※半角入力<BR>
-<br>
+    .result{
+      margin-top:20px;
+      padding:16px;
+      background:#fbfdff;
+      border:1px dashed var(--border);
+      border-radius:10px;
+    }
+    .row{margin-bottom:6px; font-weight:600}
 
-    <label for="successProbability">成功確率: </label>
-    <input type="text" id="successProbability" min="0" max="100" step="1" size="5">％
+    ul{height:auto; padding-left:20px; margin-top:16px}
+  </style>
+</head>
 
-    <br>
-    <label for="trials">MIX回数: </label>
-    <input type="text" id="trials" min="1" size="5">回
-<br>
-    <label for="successes">成功回数: </label>
-    <input type="text" id="successes" min="0" size="5">回
-    <br>
+<body>
+<div class="wrap">
+  <header>
+    <h1>MIX確率計算</h1>
+    <p>※ 半角数字で入力してください（リアルタイム計算）</p>
+  </header>
 
-    <button onclick="calculate()">計算</button>
+  <main>
+    <form class="grid" novalidate>
+      <label>成功確率（%）</label>
+      <input id="p" class="fld" type="number" min="0" max="100" step="1" data-index="0" enterkeyhint="next">
 
-    <br>
-    <p>確率: <span id="result"></span>％</p>
-    <p>確率(1回以上成功する確率): <span id="result2"></span>％</p>
+      <label>MIX回数</label>
+      <input id="n" class="fld" type="number" min="1" step="1" data-index="1" enterkeyhint="next">
 
-    <script>
-        function calculate() {
-            const successes = parseInt(document.getElementById("successes").value);
-            const trials = parseInt(document.getElementById("trials").value);
-            const successProbability = parseFloat(document.getElementById("successProbability").value);
+      <label>成功回数</label>
+      <input id="k" class="fld" type="number" min="0" step="1" data-index="2" enterkeyhint="done">
+    </form>
 
-            if (isNaN(successes) || isNaN(trials) || isNaN(successProbability)) {
-                alert("数字を入力してください。");
-                return;
-            }
+    <section class="result" aria-live="polite">
+      <div class="row" id="r1">指定回数成功する確率：- ％</div>
+      <div class="row" id="r2">1回以上成功する確率：- ％</div>
+    </section>
 
-            if (successProbability < 0 || successProbability > 100) {
-                alert("成功確率は0～100%の間で入力してください。");
-                return;
-            }
+    <ul>
+      <li>https://uppooooo.github.io/mm/</li>
+    </ul>
+  </main>
+</div>
 
-            const probability =100*( binomialDistribution(successes, trials, successProbability/100));
-            document.getElementById("result").innerText = probability.toFixed(1);
-            const probability2 = 100*(1-(binomialDistribution(0, trials, successProbability/100)));
-            document.getElementById("result2").innerText = probability2.toFixed(1);
-        }
+<script>
+(function(){
+  const $ = s=>document.querySelector(s);
+  const $$ = s=>Array.from(document.querySelectorAll(s));
+  const KEY = 'mix-prob.v1';
+  const flds = $$('.fld').sort((a,b)=>+a.dataset.index-+b.dataset.index);
 
-        function binomialDistribution(x, n, p) {
-            const combinations = factorial(n) / (factorial(x) * factorial(n - x));
-            const probability = combinations * Math.pow(p, x) * Math.pow(1 - p, n - x);
-            return probability;
-        }
+  function n(v){ const x=Number(v); return Number.isFinite(x)?x:NaN; }
 
-        function factorial(num) {
-            if (num === 0 || num === 1) {
-                return 1;
-            } else {
-                return num * factorial(num - 1);
-            }
-        }
-            const probability2 = combinations * Math.pow(p, x) * Math.pow(1 - p, n - x);
+  // 安定な二項分布（再帰式）
+  function binomP(n, k, p){
+    if (p < 0 || p > 1 || k < 0 || k > n) return 0;
+    if (n === 0) return k === 0 ? 1 : 0;
 
-       
+    let q = 1 - p;
+    let pk = Math.pow(q, n); // k=0
+    if (k === 0) return pk;
 
-    </script>
-<ul>
- <li><a href="https://uppooooo.github.io/mm/">トップページ</a></li>
-</ul>
+    for (let i = 1; i <= k; i++){
+      pk = pk * ((n - (i - 1)) / i) * (p / q);
+    }
+    return pk;
+  }
 
-</BODY>
-</HTML>
+  function calc(){
+    const p = n($('#p').value) / 100;
+    const nT = n($('#n').value);
+    const k = n($('#k').value);
+
+    if([p,nT,k].some(isNaN) || p<0 || p>1 || nT<1 || k<0){
+      $('#r1').textContent = '指定回数成功する確率：- ％';
+      $('#r2').textContent = '1回以上成功する確率：- ％';
+      return;
+    }
+
+    const probExact = binomP(nT, k, p) * 100;
+    const probAtLeast1 = (1 - Math.pow(1 - p, nT)) * 100;
+
+    $('#r1').textContent =
+      `指定回数成功する確率：${probExact.toFixed(1)} ％`;
+    $('#r2').textContent =
+      `1回以上成功する確率：${probAtLeast1.toFixed(1)} ％`;
+  }
+
+  // 復元
+  try{
+    const r = localStorage.getItem(KEY);
+    if(r){
+      const d = JSON.parse(r);
+      flds.forEach(f=>{ if(d[f.id]!=null) f.value=d[f.id]; });
+    }
+  }catch{}
+
+  // 入力監視
+  flds.forEach(f=>{
+    f.addEventListener('input', ()=>{
+      calc();
+      const d={};
+      flds.forEach(x=>d[x.id]=x.value);
+      localStorage.setItem(KEY, JSON.stringify(d));
+    });
+    f.addEventListener('keydown', e=>{
+      if(e.key==='Enter'||e.key==='Tab'){
+        e.preventDefault();
+        const i=flds.indexOf(f);
+        if(i<flds.length-1) flds[i+1].focus();
+      }
+    });
+  });
+
+  calc();
+  flds[0].focus();
+})();
+</script>
+</body>
+</html>
