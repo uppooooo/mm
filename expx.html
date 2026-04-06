@@ -159,13 +159,24 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     });
 
-    el.addEventListener('keydown', e=>{
-      if (e.key === 'Enter' || e.key === 'Tab'){
-        e.preventDefault();
-        const idx = inputs.indexOf(el);
-        if (idx < inputs.length - 1){
-          inputs[idx + 1].focus();
-        }
+
+el.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    // Enter は常に「次」
+    e.preventDefault();
+    const idx = inputs.indexOf(el);
+    if (idx < inputs.length - 1) {
+      inputs[idx + 1].focus();
+    }
+  }
+  else if (e.key === 'Tab' && !e.shiftKey) {
+    // Tab（Shiftなし）だけ次へ
+    e.preventDefault();
+    const idx = inputs.indexOf(el);
+    if (idx < inputs.length - 1) {
+      inputs[idx + 1].focus();
+    }
+
       }
     });
   });
