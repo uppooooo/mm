@@ -23,30 +23,28 @@
     </header>
 
     <main>
-      <!-- 入力フォーム -->
-      <form id="form" class="form-grid" novalidate>
-        <label class="label" for="a">マスター</label>
+      <form class="form-grid" novalidate>
+        <label class="label">マスター</label>
         <input id="a" name="a" class="fld" type="number"
                inputmode="numeric" data-index="0" enterkeyhint="next">
 
-        <label class="label" for="b">メイト1</label>
+        <label class="label">メイト1</label>
         <input id="b" name="b" class="fld" type="number"
                inputmode="numeric" data-index="1" enterkeyhint="next">
 
-        <label class="label" for="c">メイト2</label>
+        <label class="label">メイト2</label>
         <input id="c" name="c" class="fld" type="number"
                inputmode="numeric" data-index="2" enterkeyhint="next">
 
-        <label class="label" for="d">メイト3</label>
+        <label class="label">メイト3</label>
         <input id="d" name="d" class="fld" type="number"
                inputmode="numeric" data-index="3" enterkeyhint="next">
 
-        <label class="label" for="e">敵レベル</label>
+        <label class="label">敵レベル</label>
         <input id="e" name="e" class="fld" type="number"
                inputmode="numeric" data-index="4" enterkeyhint="done">
       </form>
 
-      <!-- 結果表示 -->
       <section class="result-panel" aria-live="polite">
         <div class="row" id="averageResult">メイト平均レベル: -</div>
         <div class="row" id="differenceResult">レベル差: -</div>
@@ -62,9 +60,9 @@
 <script>
 (function(){
   const $ = s => document.querySelector(s);
-  const $$ = s => Array.from(document.querySelectorAll(s));
+  const $$ = s => Array.from(document.querySelectorAll('.fld'));
   const STORAGE_KEY = 'exp-ratio.v1';
-  const inputs = $$('.fld').sort((a,b)=> +a.dataset.index - +b.dataset.index);
+  const inputs = $$('.fld').sort((a,b)=>+a.dataset.index-+b.dataset.index);
 
   function toNum(v){
     const n = Number(v);
@@ -78,15 +76,13 @@
     const d = toNum($('#d').value);
     const e = toNum($('#e').value);
 
-    let sum = 0;
-    let count = 0;
+    let sum = 0, count = 0;
+    if (!isNaN(a)){ sum+=a; count++; }
+    if (!isNaN(b) && Math.abs(a-b)<=15){ sum+=b; count++; }
+    if (!isNaN(c) && Math.abs(a-c)<=15){ sum+=c; count++; }
+    if (!isNaN(d) && Math.abs(a-d)<=15){ sum+=d; count++; }
 
-    if (!isNaN(a)){ sum += a; count++; }
-    if (!isNaN(b) && Math.abs(a - b) <= 15){ sum += b; count++; }
-    if (!isNaN(c) && Math.abs(a - c) <= 15){ sum += c; count++; }
-    if (!isNaN(d) && Math.abs(a - d) <= 15){ sum += d; count++; }
-
-    if (count === 0 || isNaN(e)){
+    if (count===0 || isNaN(e)){
       $('#averageResult').textContent = '条件を満たす値を入力してください。';
       $('#differenceResult').textContent = '';
       $('#ratioResult').textContent = '';
@@ -96,93 +92,60 @@
     const avg = sum / count;
     const diff = e - avg;
 
-    let text = '';
-    let ratio = '';
+    let text='', ratio='';
+    if (diff<=-9){ text='灰色'; ratio='12.5%'; }
+    else if (diff<=-4){ text='緑色'; ratio='25.0%'; }
+    else if (diff<=-1){ text='黄４'; ratio='50.0%'; }
+    else if (diff<=2){ text='黄３'; ratio='75.0%'; }
+    else if (diff<=4){ text='黄２'; ratio='90.0%'; }
+    else if (diff<=7){ text='黄１'; ratio='100.0%'; }
+    else if (diff<14){ text='橙色'; ratio='100.0%'; }
+    else{ text='赤色'; ratio='100.0%'; }
 
-    if (diff <= -9){
-      text = '灰色';
-      ratio = '12.5%';
-    }
-    else if (diff <= -4){
-      text = '緑色';
-      ratio = '25.0%';
-    }
-    else if (diff <= -1){
-      text = '黄４';
-      ratio = '50.0%';
-    }
-    else if (diff <= 2){
-      text = '黄３';
-      ratio = '75.0%';
-    }
-    else if (diff <= 4){
-      text = '黄２';
-      ratio = '90.0%';
-    }
-    else if (diff <= 7){
-      text = '黄１';
-      ratio = '100.0%';
-    }
-    else if (diff < 14){
-      text = '橙色';
-      ratio = '100.0%';
-    }
-    else{
-      text = '赤色';
-      ratio = '100.0%';
-    }
-
-    $('#averageResult').textContent =
-      `メイト平均レベル: ${avg.toFixed(2)}`;
-    $('#differenceResult').textContent =
-      `レベル差: ${diff.toFixed(2)} (${text})`;
-    $('#ratioResult').textContent =
-      `経験値倍率: ${ratio}`;
+    $('#averageResult').textContent = `メイト平均レベル: ${avg.toFixed(2)}`;
+    $('#differenceResult').textContent = `レベル差: ${diff.toFixed(2)} (${text})`;
+    $('#ratioResult').textContent = `経験値倍率: ${ratio}`;
   }
 
-  /* 前回入力の復元 */
+  /* 復元 */
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw){
       const data = JSON.parse(raw);
-      inputs.forEach(i=>{
-        if (data[i.name] != null) i.value = data[i.name];
-      });
+      inputs.forEach(i=>{ if(data[i.name]!=null) i.value=data[i.name]; });
     }
-  }catch(e){}
+  }catch{}
 
-  inputs.forEach(el=>{
+  inputs.forEach((el,i)=>{
+    // 入力時
     el.addEventListener('input', ()=>{
       calc();
-      const data = {};
-      inputs.forEach(i => data[i.name] = i.value);
+      const data={};
+      inputs.forEach(x=>data[x.name]=x.value);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     });
 
+    // フォーカス時に全選択（iOS対応）
+    el.addEventListener('focus', ()=>{
+      setTimeout(()=>el.select(), 0);
+    });
 
-el.addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    // Enter は常に「次」
-    e.preventDefault();
-    const idx = inputs.indexOf(el);
-    if (idx < inputs.length - 1) {
-      inputs[idx + 1].focus();
-    }
-  }
-  else if (e.key === 'Tab' && !e.shiftKey) {
-    // Tab（Shiftなし）だけ次へ
-    e.preventDefault();
-    const idx = inputs.indexOf(el);
-    if (idx < inputs.length - 1) {
-      inputs[idx + 1].focus();
-    }
-
+    // キー操作
+    el.addEventListener('keydown', e=>{
+      if (e.key==='Enter') {
+        e.preventDefault();
+        if (inputs[i+1]) inputs[i+1].focus();
       }
+      else if (e.key==='Tab' && !e.shiftKey) {
+        e.preventDefault();
+        if (inputs[i+1]) inputs[i+1].focus();
+      }
+      // Shift+Tab は何もしない → ブラウザ標準で「戻る」
     });
   });
 
   calc();
-  inputs[0].focus();
+  if (inputs[0]) inputs[0].focus();
 })();
 </script>
 </body>
