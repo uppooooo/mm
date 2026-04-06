@@ -23,22 +23,22 @@
     </header>
 
     <main>
-      <!-- 見出し行（2列） -->
-      <div class="form-grid">
-        <div></div>
-        <div class="label">現在Lv</div>
-        <div class="label">基本Lv</div>
-      </div>
-
-      <!-- 入力フォーム（メイン／サブ 各2列） -->
+      <!-- 入力（意味が揃う配置） -->
       <form class="form-grid" novalidate>
-        <label class="label">メイン</label>
-        <input id="A" class="fld" type="number" inputmode="numeric" data-index="0">
-        <input id="B" class="fld" type="number" inputmode="numeric" data-index="1">
+        <!-- ヘッダー行 -->
+        <div></div>
+        <div class="label">メイン</div>
+        <div class="label">サブ</div>
 
-        <label class="label">サブ</label>
-        <input id="C" class="fld" type="number" inputmode="numeric" data-index="2">
-        <input id="D" class="fld" type="number" inputmode="numeric" data-index="3">
+        <!-- 基本Lv 行 -->
+        <label class="label">基本Lv</label>
+        <input id="B" class="fld" type="number" inputmode="numeric" data-index="0">
+        <input id="D" class="fld" type="number" inputmode="numeric" data-index="1">
+
+        <!-- 現在Lv 行 -->
+        <label class="label">現在Lv</label>
+        <input id="A" class="fld" type="number" inputmode="numeric" data-index="2">
+        <input id="C" class="fld" type="number" inputmode="numeric" data-index="3">
       </form>
 
       <!-- 結果 -->
@@ -67,17 +67,16 @@
   }
 
   function calc(){
-    const A = n($('#A').value);
-    const B = n($('#B').value);
-    const C = n($('#C').value);
-    const D = n($('#D').value);
+    const A = n($('#A').value); // メイン現在
+    const B = n($('#B').value); // メイン基本
+    const C = n($('#C').value); // サブ現在
+    const D = n($('#D').value); // サブ基本
 
     if ([A,B,C,D].some(isNaN)){
       $('#E').textContent = '-';
       return;
     }
 
-    // 元仕様と完全同一ロジック
     const result =
       Math.floor((A + C) / 2) +
       Math.floor((
@@ -93,25 +92,25 @@
     const raw = localStorage.getItem(KEY);
     if (raw){
       const d = JSON.parse(raw);
-      flds.forEach(f=>{ if(d[f.id]!=null) f.value=d[f.id]; });
+      flds.forEach(f => { if (d[f.id] != null) f.value = d[f.id]; });
     }
   }catch{}
 
   flds.forEach((el,i)=>{
-    /* フォーカス時は常に全選択（iOS対応） */
+    /* フォーカス時は全選択 */
     el.addEventListener('focus', ()=>{
       setTimeout(()=>el.select(), 0);
     });
 
-    /* 入力時の再計算＋保存 */
+    /* 入力時 */
     el.addEventListener('input', ()=>{
       calc();
-      const d={};
+      const d = {};
       flds.forEach(x=>d[x.id]=x.value);
       localStorage.setItem(KEY, JSON.stringify(d));
     });
 
-    /* Enter / Shift+Enter の上下移動 */
+    /* Enter / Shift+Enter 移動 */
     el.addEventListener('keydown', e=>{
       if (e.key === 'Enter'){
         e.preventDefault();
@@ -122,7 +121,6 @@
         }
       }
     });
-    /* Tab / Shift+Tab は標準動作 */
   });
 
   calc();
