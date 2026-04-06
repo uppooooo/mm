@@ -7,7 +7,9 @@
   <title>取得経験値倍率計算</title>
 
   <!-- 共通CSS -->
-  <link rel="stylesheet" href="./styles-->
+  <link rel="stylesheet" href="./styles.css">
+
+  <!-- iPhone 最適化 -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="format-detection" content="telephone=no">
@@ -52,7 +54,7 @@
       </section>
 
       <ul>
-        <li><a href="https://github.io/mm/</li>
+        <li><a href="https://uppooooo.github.io/mm/">トップページ</a></li>
       </ul>
     </main>
   </div>
@@ -62,7 +64,7 @@
   const $ = s => document.querySelector(s);
   const $$ = s => Array.from(document.querySelectorAll(s));
   const STORAGE_KEY = 'exp-ratio.v1';
-  const inputs = $$('.fld').sort((a,b)=>+a.dataset.index-+b.dataset.index);
+  const inputs = $$('.fld').sort((a,b)=> +a.dataset.index - +b.dataset.index);
 
   function toNum(v){
     const n = Number(v);
@@ -76,7 +78,8 @@
     const d = toNum($('#d').value);
     const e = toNum($('#e').value);
 
-    let sum = 0, count = 0;
+    let sum = 0;
+    let count = 0;
 
     if (!isNaN(a)){ sum += a; count++; }
     if (!isNaN(b) && Math.abs(a - b) <= 15){ sum += b; count++; }
@@ -93,39 +96,41 @@
     const avg = sum / count;
     const diff = e - avg;
 
-    let text = '', ratio = '';
-   if (diff <= -9){
-  text = '灰色';
-  ratio = '12.5%';
-}
-else if (diff <= -4){
-  text = '緑色';
-  ratio = '25.0%';
-}
-else if (diff <= -1){
-  text = '黄４';
-  ratio = '50.0%';
-}
-else if (diff <= 2){
-  text = '黄３';
-  ratio = '75.0%';
-}
-else if (diff <= 4){
-  text = '黄２';
-  ratio = '90.0%';
-}
-else if (diff <= 7){
-  text = '黄１';
-  ratio = '100.0%';
-}
-else if (diff < 14){
-  text = '橙色';
-  ratio = '100.0%';
-}
-else{
-  text = '赤色';
-  ratio = '100.0%';
-}
+    let text = '';
+    let ratio = '';
+
+    if (diff <= -9){
+      text = '灰色';
+      ratio = '12.5%';
+    }
+    else if (diff <= -4){
+      text = '緑色';
+      ratio = '25.0%';
+    }
+    else if (diff <= -1){
+      text = '黄４';
+      ratio = '50.0%';
+    }
+    else if (diff <= 2){
+      text = '黄３';
+      ratio = '75.0%';
+    }
+    else if (diff <= 4){
+      text = '黄２';
+      ratio = '90.0%';
+    }
+    else if (diff <= 7){
+      text = '黄１';
+      ratio = '100.0%';
+    }
+    else if (diff < 14){
+      text = '橙色';
+      ratio = '100.0%';
+    }
+    else{
+      text = '赤色';
+      ratio = '100.0%';
+    }
 
     $('#averageResult').textContent =
       `メイト平均レベル: ${avg.toFixed(2)}`;
@@ -140,25 +145,27 @@ else{
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw){
       const data = JSON.parse(raw);
-      inputs.forEach(i => {
+      inputs.forEach(i=>{
         if (data[i.name] != null) i.value = data[i.name];
       });
     }
-  }catch{}
+  }catch(e){}
 
-  inputs.forEach(el => {
-    el.addEventListener('input', () => {
+  inputs.forEach(el=>{
+    el.addEventListener('input', ()=>{
       calc();
       const data = {};
       inputs.forEach(i => data[i.name] = i.value);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     });
 
-    el.addEventListener('keydown', e => {
+    el.addEventListener('keydown', e=>{
       if (e.key === 'Enter' || e.key === 'Tab'){
         e.preventDefault();
-        const i = inputs.indexOf(el);
-        if (i < inputs.length - 1) inputs[i + 1].focus();
+        const idx = inputs.indexOf(el);
+        if (idx < inputs.length - 1){
+          inputs[idx + 1].focus();
+        }
       }
     });
   });
