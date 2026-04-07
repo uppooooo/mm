@@ -7,7 +7,7 @@
   <title>成功確率のグラフ</title>
 
   <!-- 共通CSS -->
-  ./styles.css
+  <link rel="stylesheet" href="./styles.css">
 
   <!-- iPhone 表示最適化 -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,7 +15,7 @@
   <meta name="format-detection" content="telephone=no">
 
   <!-- Chart.js（同期ロード） -->
-  https://cdn.jsdelivr.net/npm/chart.js
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -30,13 +30,16 @@
 
     <form class="form-grid cols-1" novalidate>
       <label class="label" for="successRate">成功確率（%）</label>
-      <input id="successRate" class="fld" type="number" min="0" max="100" step="0.01" data-index="0">
+      <input id="successRate" class="fld" type="number"
+             min="0" max="100" step="0.01" data-index="0">
 
       <label class="label" for="trialCount">試行回数</label>
-      <input id="trialCount" class="fld" type="number" min="0" max="1000" step="1" data-index="1">
+      <input id="trialCount" class="fld" type="number"
+             min="0" max="1000" step="1" data-index="1">
 
       <label class="label" for="minSuccess">最小成功数</label>
-      <input id="minSuccess" class="fld" type="number" min="0" step="1" data-index="2">
+      <input id="minSuccess" class="fld" type="number"
+             min="0" step="1" data-index="2">
     </form>
 
     <div class="divider"></div>
@@ -57,21 +60,24 @@
     <canvas id="chart" height="260"></canvas>
 
     <ul>
-      <li>./index.html></li>
+      <li><a href="./index.html">トップページ</a></li>
     </ul>
   </main>
 </div>
 
 <script>
 (function(){
-  const $ = s => document.querySelector(s);
+  const $ = id => document.getElementById(id);
   const flds = Array.from(document.querySelectorAll('.fld'))
     .sort((a,b)=>+a.dataset.index-+b.dataset.index);
 
   let chart;
-  const KEY = 'success-graph.v1';
+  const KEY = 'success-graph.v2';
 
-  const num = v => Number.isFinite(+v) ? +v : NaN;
+  const num = v => Number.isFinite(v) ? v : NaN;
+  const numFromInput = el =>
+    el && el.value.trim() !== '' && Number.isFinite(+el.value)
+      ? +el.value : NaN;
 
   function binomialPMFAll(n,p){
     const pmf = new Array(n+1).fill(0);
@@ -91,7 +97,7 @@
   }
 
   function draw(labels, probs, minK){
-    const ctx = document.getElementById('chart').getContext('2d');
+    const ctx = $('chart').getContext('2d');
     if (chart) chart.destroy();
 
     chart = new Chart(ctx,{
@@ -119,20 +125,20 @@
   }
 
   function calc(){
-    const pPct = num(successRate.value);
-    const n = num(trialCount.value);
-    let k = num(minSuccess.value);
-    note.textContent = '';
+    const pPct = numFromInput($('successRate'));
+    const n    = numFromInput($('trialCount'));
+    let kMin   = numFromInput($('minSuccess'));
+    $('note').textContent = '';
 
     if(!Number.isFinite(pPct)||pPct<0||pPct>100||!Number.isFinite(n)||n<0){
-      exp.textContent='-';
-      cum.textContent='-';
+      $('exp').textContent='-';
+      $('cum').textContent='-';
       return;
     }
 
     if(n>1000){
-      trialCount.value = 1000;
-      note.textContent = '試行回数は最大1000に制限しています。';
+      $('trialCount').value = 1000;
+      $('note').textContent = '試行回数は最大1000に制限しています。';
     }
 
     const p = pPct/100;
@@ -140,38 +146,30 @@
     const expected = p*n;
 
     let cumulative='-';
-    if(Number.isFinite(k)&&k>=0){
-      k = Math.floor(k);
-      cumulative = k<=n
-        ? (pmf.slice(k).reduce((a,b)=>a+b,0)*100).toFixed(2)+'%'
-        : '0.00%';
+    if(Number.isFinite(kMin)&&kMin>=0){
+      kMin=Math.floor(kMin);
+      cumulative =
+        kMin<=n
+          ? (pmf.slice(kMin).reduce((a,b)=>a+b,0)*100).toFixed(2)+'%'
+          : '0.00%';
     }
 
-    exp.textContent = expected.toFixed(2);
-    cum.textContent = cumulative;
-    draw([...Array(n+1).keys()], pmf, Number.isFinite(k)?k:NaN);
+    $('exp').textContent = expected.toFixed(2);
+    $('cum').textContent = cumulative;
+    draw([...Array(n+1).keys()], pmf, Number.isFinite(kMin)?kMin:NaN);
   }
 
   try{
     const d = JSON.parse(localStorage.getItem(KEY));
-    if (d) flds.forEach(f=>d[f.id]!=null&&(f.value=d[f.id]));
+    if(d) flds.forEach(f=>d[f.id]!=null&&(f.value=d[f.id]));
   }catch{}
 
-  flds.forEach((el,i)=>{
+  flds.forEach(el=>{
     el.addEventListener('focus',()=>setTimeout(()=>el.select?.(),0));
-
     el.addEventListener('input',()=>{
       calc();
-      const d={};
-      flds.forEach(x=>d[x.id]=x.value);
+      const d={}; flds.forEach(x=>d[x.id]=x.value);
       localStorage.setItem(KEY,JSON.stringify(d));
-    });
-
-    el.addEventListener('keydown',e=>{
-      if(e.key==='Enter'){
-        e.preventDefault();
-        (e.shiftKey?flds[i-1]:flds[i+1])?.focus();
-      }
     });
   });
 
