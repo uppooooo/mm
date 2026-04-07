@@ -23,7 +23,7 @@
   </header>
 
   <main>
-    <!-- 入力（3行3列：意味が直感的に揃う配置） -->
+    <!-- 入力（TAB順＝思考順） -->
     <form class="form-grid cols-3" novalidate>
 
       <!-- ヘッダー行 -->
@@ -31,15 +31,19 @@
       <div class="label">メイン</div>
       <div class="label">サブ</div>
 
-      <!-- 現在Lv 行 -->
-      <label class="label">現在Lv</label>
-      <input id="A" class="fld" type="number" inputmode="numeric" data-index="0">
-      <input id="C" class="fld" type="number" inputmode="numeric" data-index="1">
-
       <!-- 基本Lv 行 -->
       <label class="label">基本Lv</label>
-      <input id="B" class="fld" type="number" inputmode="numeric" data-index="2">
-      <input id="D" class="fld" type="number" inputmode="numeric" data-index="3">
+      <!-- メイン基本 -->
+      <input id="B" class="fld" type="number" inputmode="numeric" data-index="0">
+      <!-- サブ基本 -->
+      <input id="D" class="fld" type="number" inputmode="numeric" data-index="2">
+
+      <!-- 現在Lv 行 -->
+      <label class="label">現在Lv</label>
+      <!-- メイン現在 -->
+      <input id="A" class="fld" type="number" inputmode="numeric" data-index="1">
+      <!-- サブ現在 -->
+      <input id="C" class="fld" type="number" inputmode="numeric" data-index="3">
 
     </form>
 
@@ -62,7 +66,7 @@
   const inputs = Array.from(document.querySelectorAll('.fld'))
     .sort((a,b)=>+a.dataset.index-+b.dataset.index);
 
-  const KEY = 'mix-calc.v1';
+  const KEY = 'mix-calc.v2';
 
   function n(v){
     const x = Number(v);
@@ -111,10 +115,11 @@
       localStorage.setItem(KEY, JSON.stringify(d));
     });
 
+    // Enter は TAB と同じ前進
     el.addEventListener('keydown', e=>{
       if (e.key === 'Enter'){
         e.preventDefault();
-        (e.shiftKey ? inputs[i-1] : inputs[i+1])?.focus();
+        inputs[i+1]?.focus();
       }
     });
   });
