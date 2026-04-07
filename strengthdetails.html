@@ -4,42 +4,63 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>詳細強度計算</title>
-  <link rel="stylesheet" href="./styles.css">
+  ./styles.css
 </head>
 
 <body>
 <div class="container">
   <header>
     <h1>詳細強度計算（速のみ）</h1>
+    <p>レベルとステータスを入力すると強度を算出します。</p>
   </header>
 
   <main>
+    <h2>入力</h2>
+
     <form class="form-grid cols-1" novalidate>
 
-      <div class="row"><label class="label">Lv</label>
-        <input id="level" class="fld" type="number"></div>
+      <div class="row">
+        <label class="label" style="min-width:4.5em;">Lv</label>
+        <input id="level" class="fld" type="number" inputmode="numeric">
+      </div>
 
-      <div class="row"><label class="label">力</label>
-        <input id="power" class="fld" type="number"></div>
+      <div class="row">
+        <label class="label" style="min-width:4.5em;">力</label>
+        <input id="power" class="fld" type="number" inputmode="numeric">
+      </div>
 
-      <div class="row"><label class="label">敏捷</label>
-        <input id="agi" class="fld" type="number"></div>
+      <div class="row">
+        <label class="label" style="min-width:4.5em;">敏捷</label>
+        <input id="agi" class="fld" type="number" inputmode="numeric">
+      </div>
 
-      <div class="row"><label class="label">器用</label>
-        <input id="dex" class="fld" type="number"></div>
+      <div class="row">
+        <label class="label" style="min-width:4.5em;">器用</label>
+        <input id="dex" class="fld" type="number" inputmode="numeric">
+      </div>
 
-      <div class="row"><label class="label">幸運</label>
-        <input id="luck" class="fld" type="number"></div>
+      <div class="row">
+        <label class="label" style="min-width:4.5em;">幸運</label>
+        <input id="luck" class="fld" type="number" inputmode="numeric">
+      </div>
 
     </form>
 
-    <section class="result-panel">
-      <div>力強度：<span id="out_power">-</span></div>
-      <div>敏捷強度：<span id="out_agi">-</span></div>
-      <div>器用強度：<span id="out_dex">-</span></div>
-      <div>幸運強度：<span id="out_luck">-</span></div>
-      <div>平均強度：<span id="out_avg">-</span></div>
+    <div class="divider"></div>
+
+    <h2>結果</h2>
+
+    <section class="result-panel" aria-live="polite">
+      <div class="row">力強度：<span id="out_power" class="total">-</span></div>
+      <div class="row">敏捷強度：<span id="out_agi" class="total">-</span></div>
+      <div class="row">器用強度：<span id="out_dex" class="total">-</span></div>
+      <div class="row">幸運強度：<span id="out_luck" class="total">-</span></div>
+      <div class="row">平均強度：<span id="out_avg" class="total">-</span></div>
     </section>
+
+    <ul>
+      <li>./index.htmlトップページ</a></li>
+    </ul>
   </main>
 </div>
 
@@ -94,6 +115,7 @@
 
   document.querySelectorAll('.fld').forEach(el=>{
     el.addEventListener('input', calc);
+    el.addEventListener('focus',()=>setTimeout(()=>el.select?.(),0));
   });
 
 })();
