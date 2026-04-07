@@ -23,37 +23,48 @@
   </header>
 
   <main>
-    <!-- 入力フォーム（意味順に再配置） -->
+    <!-- 入力フォーム（1行レイアウト＋意味順） -->
     <form class="form-grid cols-1" novalidate>
 
       <!-- 100MC -->
-      <label class="label" for="market">100MC =</label>
-      <input id="market" class="fld" type="number"
-             step="0.1" value="14.0" data-index="0">
+      <div class="row">
+        <label class="label" style="min-width:7em;">100MC =</label>
+        <input id="market" class="fld" type="number"
+               step="0.1" value="14.0" data-index="0">
+      </div>
+
+      <!-- セール（100MC と MC定価の間） -->
+      <div class="row">
+        <label class="label" style="min-width:7em;">セール</label>
+        <div class="row">
+          <label><input type="radio" name="discount" value="0" checked> 0%</label>
+          <label><input type="radio" name="discount" value="0.2"> 20%</label>
+          <label><input type="radio" name="discount" value="0.3"> 30%</label>
+        </div>
+      </div>
 
       <!-- MC定価 -->
-      <label class="label" for="basePrice">MC定価</label>
-      <input id="basePrice" class="fld" type="number"
-             step="any" value="320" data-index="1">
+      <div class="row">
+        <label class="label" style="min-width:7em;">MC定価</label>
+        <input id="basePrice" class="fld" type="number"
+               step="any" value="320" data-index="1">
+      </div>
 
       <!-- 購入数 -->
-      <label class="label" for="purchaseQuantity">購入数</label>
-      <input id="purchaseQuantity" class="fld" type="number"
-             value="1" data-index="2">
+      <div class="row">
+        <label class="label" style="min-width:7em;">購入数</label>
+        <input id="purchaseQuantity" class="fld" type="number"
+               value="1" data-index="2">
+      </div>
 
       <!-- セット -->
-      <label class="label" for="quantity">セット個数</label>
-      <input id="quantity" class="fld" type="number"
-             value="100" data-index="3">
-    </form>
+      <div class="row">
+        <label class="label" style="min-width:7em;">セット個数</label>
+        <input id="quantity" class="fld" type="number"
+               value="100" data-index="3">
+      </div>
 
-    <!-- セール -->
-    <p class="label" style="margin-top:14px;">セール</p>
-    <div class="row">
-      <label><input type="radio" name="discount" value="0" checked> 0%</label>
-      <label><input type="radio" name="discount" value="0.2"> 20%</label>
-      <label><input type="radio" name="discount" value="0.3"> 30%</label>
-    </div>
+    </form>
 
     <!-- 結果 -->
     <section class="result-panel" aria-live="polite">
@@ -75,8 +86,7 @@
   const flds = Array.from(document.querySelectorAll('.fld'))
     .sort((a,b)=>+a.dataset.index-+b.dataset.index);
 
-  const KEY = 'mc-calc.v2';
-
+  const KEY = 'mc-calc.v3';
   const n = v => Number.isFinite(+v) ? +v : NaN;
 
   function calc(){
@@ -84,55 +94,47 @@
     const market = n($('#market').value);
     const quantity = n($('#quantity').value);
     const purchase = n($('#purchaseQuantity').value);
-    const discount = n(document.querySelector('input[name="discount"]:checked').value);
+    const discount =
+      n(document.querySelector('input[name="discount"]:checked').value);
 
     if ([base, market, quantity, purchase, discount].some(isNaN)) return;
 
-    /* MC価格（純MC） */
     const mcPrice = base * (1 - discount) * purchase;
-
-    /* GP換算 */
     const totalGp = mcPrice * market * 10000;
     const unitGp  = totalGp / quantity / purchase;
 
     $('#mcResult').textContent =
       `MC価格：${Math.floor(mcPrice).toLocaleString()} MC`;
-
     $('#totalResult').textContent =
       `価格：${Math.floor(totalGp).toLocaleString()} GP`;
-
     $('#unitResult').textContent =
       `単価：${Math.floor(unitGp).toLocaleString()} GP`;
   }
 
-  /* 保存復元 */
+  /* 復元 */
   try{
     const raw = localStorage.getItem(KEY);
     if(raw){
       const d = JSON.parse(raw);
-      flds.forEach(f=>{ if(d[f.id]!=null) f.value=d[f.id]; });
+      flds.forEach(f => d[f.id] != null && (f.value = d[f.id]));
       const r = document.querySelector(
         `input[name="discount"][value="${d.discount}"]`
       );
-      if(r) r.checked = true;
+      if (r) r.checked = true;
     }
   }catch{}
 
   /* イベント */
   flds.forEach((el,i)=>{
-    el.addEventListener('focus',()=>setTimeout(()=>el.select(),0));
+    el.addEventListener('focus',
+      ()=>setTimeout(()=>el.select(),0));
     el.addEventListener('input',()=>{
       calc();
       const d={};
       flds.forEach(x=>d[x.id]=x.value);
-      d.discount=document.querySelector('input[name="discount"]:checked').value;
+      d.discount =
+        document.querySelector('input[name="discount"]:checked').value;
       localStorage.setItem(KEY,JSON.stringify(d));
-    });
-    el.addEventListener('keydown',e=>{
-      if(e.key==='Enter'){
-        e.preventDefault();
-        (e.shiftKey?flds[i-1]:flds[i+1])?.focus();
-      }
     });
   });
 
@@ -141,7 +143,8 @@
       calc();
       const d={};
       flds.forEach(x=>d[x.id]=x.value);
-      d.discount=document.querySelector('input[name="discount"]:checked').value;
+      d.discount =
+        document.querySelector('input[name="discount"]:checked').value;
       localStorage.setItem(KEY,JSON.stringify(d));
     });
   });
