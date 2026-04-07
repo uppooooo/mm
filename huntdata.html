@@ -115,7 +115,7 @@
     .sort((a,b)=>+a.dataset.index-+b.dataset.index);
 
   const n = v => Number.isFinite(+v) ? +v : NaN;
-  const KEY = 'hunt-data.v2';
+  const KEY = 'hunt-data.v3';
 
   function calc(){
     const time = n($('#time').value);
@@ -128,54 +128,50 @@
     if (!time || !Number.isFinite(gpi) || !Number.isFinite(gpf)) return;
 
     const diffGp = gpf - gpi;
+
+    /* ★ 平均取得GP（空白は除外） */
+    const values = [];
+    for (let i = 1; i <= 5; i++) {
+      const v = n($('#gp' + i).value);
+      if (Number.isFinite(v)) values.push(v);
+    }
+    const avg = values.length
+      ? values.reduce((a,b)=>a+b,0) / values.length
+      : 0;
+
     const gpMin = Math.floor(diffGp / time);
     const gpHour = gpMin * 60;
 
-    let sum=0,cnt=0;
-    for(let i=1;i<=5;i++){
-      const v=n($('#gp'+i).value);
-      if(Number.isFinite(v)){ sum+=v; cnt++; }
-    }
-    const avg=cnt?sum/cnt:0;
+    const hunts = avg ? Math.floor(diffGp / avg) : 0;
+    const huntsMin = Math.floor(hunts / time);
+    const huntsHour = huntsMin * 60;
 
-    const hunts=avg?Math.floor(diffGp/avg):0;
-    const huntsMin=Math.floor(hunts/time);
-    const huntsHour=huntsMin*60;
+    const expGain = expf - expi;
+    const expHour = (expGain / time) * 60;
+    const totalExp = expv * hunts;
 
-    const expGain=expf-expi;
-    const expHour=(expGain/time)*60;
-    const totalExp=expv*hunts;
+    $('#r_avg').textContent = `平均取得GP／匹：${avg.toLocaleString()}`;
+    $('#r_total').textContent = `総取得GP：${diffGp.toLocaleString()}`;
+    $('#r_gp_min').textContent = `取得GP／分：${gpMin.toLocaleString()}`;
+    $('#r_gp_hour').textContent = `取得GP／時：${gpHour.toLocaleString()}`;
 
-    $('#r_avg').textContent=`平均取得GP／匹：${avg.toLocaleString()}`;
-    $('#r_total').textContent=`総取得GP：${diffGp.toLocaleString()}`;
-    $('#r_gp_min').textContent=`取得GP／分：${gpMin.toLocaleString()}`;
-    $('#r_gp_hour').textContent=`取得GP／時：${gpHour.toLocaleString()}`;
+    $('#r_hunts').textContent = `総狩り数：${hunts.toLocaleString()}`;
+    $('#r_hunts_min').textContent = `狩り数／分：${huntsMin.toLocaleString()}`;
+    $('#r_hunts_hour').textContent = `狩り数／時：${huntsHour.toLocaleString()}`;
 
-    $('#r_hunts').textContent=`総狩り数：${hunts.toLocaleString()}`;
-    $('#r_hunts_min').textContent=`狩り数／分：${huntsMin.toLocaleString()}`;
-    $('#r_hunts_hour').textContent=`狩り数／時：${huntsHour.toLocaleString()}`;
-
-    $('#r_exp').textContent=`取得経験値（%）：${expGain.toFixed(2)}`;
-    $('#r_exp_hour').textContent=`取得経験値／時（%）：${expHour.toFixed(2)}`;
-    $('#r_exp_total').textContent=`総獲得経験値：${totalExp.toLocaleString()}`;
+    $('#r_exp').textContent = `取得経験値（%）：${expGain.toFixed(2)}`;
+    $('#r_exp_hour').textContent = `取得経験値／時（%）：${expHour.toFixed(2)}`;
+    $('#r_exp_total').textContent = `総獲得経験値：${totalExp.toLocaleString()}`;
   }
 
+  /* 保存復元 */
   try{
-    const d=JSON.parse(localStorage.getItem(KEY));
-    if(d) flds.forEach(f=>d[f.id]!=null&&(f.value=d[f.id]));
+    const d = JSON.parse(localStorage.getItem(KEY));
+    if (d) flds.forEach(f => d[f.id] != null && (f.value = d[f.id]));
   }catch{}
 
-  flds.forEach((el,i)=>{
-    el.addEventListener('focus',()=>setTimeout(()=>el.select?.(),0));
-    el.addEventListener('input',()=>{
-      calc();
-      const d={}; flds.forEach(x=>d[x.id]=x.value);
-      localStorage.setItem(KEY,JSON.stringify(d));
-    });
-  });
-
+  flds.forEach(el => el.addEventListener('input', calc));
   calc();
-  flds[0]?.focus();
 })();
 </script>
 </body>
