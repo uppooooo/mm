@@ -16,50 +16,53 @@
 </head>
 
 <body>
-  <div class="container">
-    <header>
-      <h1>MIX計算機</h1>
-      <p>半角数字で入力してください。</p>
-    </header>
+<div class="container">
+  <header>
+    <h1>MIX計算機</h1>
+    <p>半角数字で入力してください。</p>
+  </header>
 
-    <main>
-      <!-- 入力（意味が揃う配置） -->
-      <form class="form-grid cols-3" novalidate>
-        <!-- ヘッダー行 -->
-        <div></div>
-        <div class="label">メイン</div>
-        <div class="label">サブ</div>
+  <main>
+    <!-- 入力（3行3列：意味が直感的に揃う配置） -->
+    <form class="form-grid cols-3" novalidate>
 
-        <!-- 基本Lv 行 -->
-        <label class="label">基本Lv</label>
-        <input id="B" class="fld" type="number" inputmode="numeric" data-index="0">
-        <input id="D" class="fld" type="number" inputmode="numeric" data-index="1">
+      <!-- ヘッダー行 -->
+      <div></div>
+      <div class="label">メイン</div>
+      <div class="label">サブ</div>
 
-        <!-- 現在Lv 行 -->
-        <label class="label">現在Lv</label>
-        <input id="A" class="fld" type="number" inputmode="numeric" data-index="2">
-        <input id="C" class="fld" type="number" inputmode="numeric" data-index="3">
-      </form>
+      <!-- 現在Lv 行 -->
+      <label class="label">現在Lv</label>
+      <input id="A" class="fld" type="number" inputmode="numeric" data-index="0">
+      <input id="C" class="fld" type="number" inputmode="numeric" data-index="1">
 
-      <!-- 結果 -->
-      <section class="result-panel" aria-live="polite">
-        <div class="row total">
-          完成Lv：<span id="E">-</span>
-        </div>
-      </section>
+      <!-- 基本Lv 行 -->
+      <label class="label">基本Lv</label>
+      <input id="B" class="fld" type="number" inputmode="numeric" data-index="2">
+      <input id="D" class="fld" type="number" inputmode="numeric" data-index="3">
 
-      <ul>
-        <li><a href="https://uppooooo.github.io/mm/">トップページ</a></li>
-      </ul>
-    </main>
-  </div>
+    </form>
+
+    <!-- 結果 -->
+    <section class="result-panel" aria-live="polite">
+      <div class="row total">
+        完成Lv：<span id="E">-</span>
+      </div>
+    </section>
+
+    <ul>
+      <li><a href="https://uppooooo.github.io/mm/">トップページ</a></li>
+    </ul>
+  </main>
+</div>
 
 <script>
 (function(){
   const $ = s => document.querySelector(s);
-  const $$ = s => Array.from(document.querySelectorAll('.fld'));
+  const inputs = Array.from(document.querySelectorAll('.fld'))
+    .sort((a,b)=>+a.dataset.index-+b.dataset.index);
+
   const KEY = 'mix-calc.v1';
-  const flds = $$('.fld').sort((a,b)=>+a.dataset.index-+b.dataset.index);
 
   function n(v){
     const x = Number(v);
@@ -92,39 +95,32 @@
     const raw = localStorage.getItem(KEY);
     if (raw){
       const d = JSON.parse(raw);
-      flds.forEach(f => { if (d[f.id] != null) f.value = d[f.id]; });
+      inputs.forEach(f => { if (d[f.id] != null) f.value = d[f.id]; });
     }
   }catch{}
 
-  flds.forEach((el,i)=>{
-    /* フォーカス時は全選択 */
+  inputs.forEach((el,i)=>{
     el.addEventListener('focus', ()=>{
       setTimeout(()=>el.select(), 0);
     });
 
-    /* 入力時 */
     el.addEventListener('input', ()=>{
       calc();
       const d = {};
-      flds.forEach(x=>d[x.id]=x.value);
+      inputs.forEach(x=>d[x.id]=x.value);
       localStorage.setItem(KEY, JSON.stringify(d));
     });
 
-    /* Enter / Shift+Enter 移動 */
     el.addEventListener('keydown', e=>{
       if (e.key === 'Enter'){
         e.preventDefault();
-        if (e.shiftKey){
-          if (flds[i-1]) flds[i-1].focus();
-        } else {
-          if (flds[i+1]) flds[i+1].focus();
-        }
+        (e.shiftKey ? inputs[i-1] : inputs[i+1])?.focus();
       }
     });
   });
 
   calc();
-  if (flds[0]) flds[0].focus();
+  inputs[0]?.focus();
 })();
 </script>
 </body>
