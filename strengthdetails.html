@@ -23,37 +23,31 @@
   <main>
     <h2>入力</h2>
 
-    <!-- 入力フォーム（iPhoneでも1行） -->
     <form class="form-grid cols-1" novalidate>
 
       <div class="row">
-        <label class="label" for="level" style="min-width:4.5em;">Lv</label>
-        <input id="level" name="level" class="fld" type="number"
-               min="1" max="999" inputmode="numeric" data-index="0">
+        <label class="label" style="min-width:4.5em;">Lv</label>
+        <input id="level" class="fld" type="number" min="1" inputmode="numeric" data-index="0">
       </div>
 
       <div class="row">
-        <label class="label" for="power" style="min-width:4.5em;">力</label>
-        <input id="power" name="power" class="fld" type="number"
-               min="0" max="99999" inputmode="numeric" data-index="1">
+        <label class="label" style="min-width:4.5em;">力</label>
+        <input id="power" class="fld" type="number" min="0" inputmode="numeric" data-index="1">
       </div>
 
       <div class="row">
-        <label class="label" for="agi" style="min-width:4.5em;">敏捷</label>
-        <input id="agi" name="agi" class="fld" type="number"
-               min="0" max="99999" inputmode="numeric" data-index="2">
+        <label class="label" style="min-width:4.5em;">敏捷</label>
+        <input id="agi" class="fld" type="number" min="0" inputmode="numeric" data-index="2">
       </div>
 
       <div class="row">
-        <label class="label" for="dex" style="min-width:4.5em;">器用</label>
-        <input id="dex" name="dex" class="fld" type="number"
-               min="0" max="99999" inputmode="numeric" data-index="3">
+        <label class="label" style="min-width:4.5em;">器用</label>
+        <input id="dex" class="fld" type="number" min="0" inputmode="numeric" data-index="3">
       </div>
 
       <div class="row">
-        <label class="label" for="luck" style="min-width:4.5em;">幸運</label>
-        <input id="luck" name="luck" class="fld" type="number"
-               min="0" max="99999" inputmode="numeric" data-index="4">
+        <label class="label" style="min-width:4.5em;">幸運</label>
+        <input id="luck" class="fld" type="number" min="0" inputmode="numeric" data-index="4">
       </div>
 
     </form>
@@ -78,61 +72,79 @@
 
 <script>
 (function(){
-  const $ = s=>document.querySelector(s);
-  const inputs=[...document.querySelectorAll('.fld')]
+  const $ = s => document.querySelector(s);
+  const inputs = [...document.querySelectorAll('.fld')]
     .sort((a,b)=>+a.dataset.index-+b.dataset.index);
-  const KEY='detail-strength.v1';
 
-  const num=v=>Number.isFinite(+v)?+v:NaN;
-  const fix=v=>Number.isFinite(v)?v.toFixed(2):'-';
+  const KEY = 'detail-strength.v2';
+  const num = v => Number.isFinite(+v) ? +v : NaN;
+  const fmt = v => Number.isFinite(v) ? v.toFixed(2) : '-';
 
   function calc(){
-    const lv=num(level.value);
-    if(!Number.isFinite(lv)||lv<=0){ render('-', '-', '-', '-', '-'); return; }
+    const lv = num($('#level').value);
+    if (!Number.isFinite(lv) || lv <= 0) {
+      out_power.textContent = '-';
+      out_agi.textContent   = '-';
+      out_dex.textContent   = '-';
+      out_luck.textContent  = '-';
+      out_avg.textContent   = '-';
+      return;
+    }
 
-    const p=num(power.value)/(1+lv);
-    const a=num(agi.value)?(agi.value-lv)/Math.round(lv/2):NaN;
-    const d=num(dex.value)?dex.value/Math.floor(lv*1.5+2):NaN;
-    const l=num(luck.value)/(1+lv);
+    const results = [];
 
-    const vals=[p,a,d,l].filter(Number.isFinite);
-    const avg=vals.length?vals.reduce((x,y)=>x+y,0)/vals.length:NaN;
+    const power = num($('#power').value);
+    if (Number.isFinite(power)) {
+      const v = power / (1 + lv);
+      out_power.textContent = fmt(v);
+      results.push(v);
+    } else out_power.textContent = '-';
 
-    out_power.textContent=fix(p);
-    out_agi.textContent=fix(a);
-    out_dex.textContent=fix(d);
-    out_luck.textContent=fix(l);
-    out_avg.textContent=fix(avg);
+    const agi = num($('#agi').value);
+    if (Number.isFinite(agi)) {
+      const v = (agi - lv) / Math.round(lv / 2);
+      out_agi.textContent = fmt(v);
+      results.push(v);
+    } else out_agi.textContent = '-';
+
+    const dex = num($('#dex').value);
+    if (Number.isFinite(dex)) {
+      const v = dex / Math.floor(lv * 1.5 + 2);
+      out_dex.textContent = fmt(v);
+      results.push(v);
+    } else out_dex.textContent = '-';
+
+    const luck = num($('#luck').value);
+    if (Number.isFinite(luck)) {
+      const v = luck / (1 + lv);
+      out_luck.textContent = fmt(v);
+      results.push(v);
+    } else out_luck.textContent = '-';
+
+    const avg = results.length
+      ? results.reduce((a,b)=>a+b,0) / results.length
+      : NaN;
+
+    out_avg.textContent = fmt(avg);
   }
 
-  function render(a,b,c,d,e){
-    out_power.textContent=a;
-    out_agi.textContent=b;
-    out_dex.textContent=c;
-    out_luck.textContent=d;
-    out_avg.textContent=e;
-  }
-
+  /* 復元 */
   try{
-    const d=JSON.parse(localStorage.getItem(KEY));
-    if(d) inputs.forEach(x=>d[x.name]!=null&&(x.value=d[x.name]));
+    const d = JSON.parse(localStorage.getItem(KEY));
+    if (d) inputs.forEach(x => d[x.id] != null && (x.value = d[x.id]));
   }catch{}
 
-  inputs.forEach((el,i)=>{
+  inputs.forEach(el => {
     el.addEventListener('focus',()=>setTimeout(()=>el.select?.(),0));
     el.addEventListener('input',()=>{
       calc();
-      const d={}; inputs.forEach(x=>d[x.name]=x.value);
+      const d={}; inputs.forEach(x=>d[x.id]=x.value);
       localStorage.setItem(KEY,JSON.stringify(d));
-    });
-    el.addEventListener('keydown',e=>{
-      if(e.key==='Enter'){ e.preventDefault();
-        (e.shiftKey?inputs[i-1]:inputs[i+1])?.focus();
-      }
     });
   });
 
-  calc(); inputs[0]?.focus();
+  calc();
+  inputs[0]?.focus();
 })();
 </script>
 </body>
