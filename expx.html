@@ -16,65 +16,77 @@
 </head>
 
 <body>
-  <div class="container">
-    <header>
-      <h1>取得経験値倍率計算</h1>
-      <p>レベルを半角数字で入力してください。</p>
-    </header>
+<div class="container">
+  <header>
+    <h1>取得経験値倍率計算</h1>
+    <p>レベルを半角数字で入力してください。</p>
+  </header>
 
-    <main>
-      <form class="form-grid cols-1" novalidate>
-        <label class="label">マスター</label>
+  <main>
+    <!-- 入力（iPhoneでも1行） -->
+    <form class="form-grid cols-1" novalidate>
+
+      <div class="row">
+        <label class="label" for="a" style="min-width:6em;">マスター</label>
         <input id="a" name="a" class="fld" type="number"
                inputmode="numeric" data-index="0" enterkeyhint="next">
+      </div>
 
-        <label class="label">メイト1</label>
+      <div class="row">
+        <label class="label" for="b" style="min-width:6em;">メイト1</label>
         <input id="b" name="b" class="fld" type="number"
                inputmode="numeric" data-index="1" enterkeyhint="next">
+      </div>
 
-        <label class="label">メイト2</label>
+      <div class="row">
+        <label class="label" for="c" style="min-width:6em;">メイト2</label>
         <input id="c" name="c" class="fld" type="number"
                inputmode="numeric" data-index="2" enterkeyhint="next">
+      </div>
 
-        <label class="label">メイト3</label>
+      <div class="row">
+        <label class="label" for="d" style="min-width:6em;">メイト3</label>
         <input id="d" name="d" class="fld" type="number"
                inputmode="numeric" data-index="3" enterkeyhint="next">
+      </div>
 
-        <label class="label">敵レベル</label>
+      <div class="row">
+        <label class="label" for="e" style="min-width:6em;">敵レベル</label>
         <input id="e" name="e" class="fld" type="number"
                inputmode="numeric" data-index="4" enterkeyhint="done">
-      </form>
+      </div>
 
-      <section class="result-panel" aria-live="polite">
-        <div class="row" id="averageResult">メイト平均レベル: -</div>
-        <div class="row" id="differenceResult">レベル差: -</div>
-        <div class="row total" id="ratioResult">経験値倍率: -</div>
-      </section>
+    </form>
 
-      <ul>
-        <li><a href="https://uppooooo.github.io/mm/">トップページ</a></li>
-      </ul>
-    </main>
-  </div>
+    <!-- 結果 -->
+    <section class="result-panel" aria-live="polite">
+      <div class="row" id="averageResult">メイト平均レベル: -</div>
+      <div class="row" id="differenceResult">レベル差: -</div>
+      <div class="row total" id="ratioResult">経験値倍率: -</div>
+    </section>
+
+    <ul>
+      <li><a href="https://uppooooo.github.io/mm/">トップページ</a></li>
+    </ul>
+  </main>
+</div>
 
 <script>
 (function(){
   const $ = s => document.querySelector(s);
-  const $$ = s => Array.from(document.querySelectorAll('.fld'));
-  const STORAGE_KEY = 'exp-ratio.v1';
-  const inputs = $$('.fld').sort((a,b)=>+a.dataset.index-+b.dataset.index);
+  const inputs = Array.from(document.querySelectorAll('.fld'))
+    .sort((a,b)=>+a.dataset.index-+b.dataset.index);
 
-  function toNum(v){
-    const n = Number(v);
-    return Number.isFinite(n) ? n : NaN;
-  }
+  const STORAGE_KEY = 'exp-ratio.v1';
+
+  const toNum = v => Number.isFinite(+v) ? +v : NaN;
 
   function calc(){
-    const a = toNum($('#a').value);
-    const b = toNum($('#b').value);
-    const c = toNum($('#c').value);
-    const d = toNum($('#d').value);
-    const e = toNum($('#e').value);
+    const a = toNum(aInput.value);
+    const b = toNum(bInput.value);
+    const c = toNum(cInput.value);
+    const d = toNum(dInput.value);
+    const e = toNum(eInput.value);
 
     let sum = 0, count = 0;
     if (!isNaN(a)){ sum+=a; count++; }
@@ -83,9 +95,9 @@
     if (!isNaN(d) && Math.abs(a-d)<=15){ sum+=d; count++; }
 
     if (count===0 || isNaN(e)){
-      $('#averageResult').textContent = '条件を満たす値を入力してください。';
-      $('#differenceResult').textContent = '';
-      $('#ratioResult').textContent = '';
+      averageResult.textContent = '条件を満たす値を入力してください。';
+      differenceResult.textContent = '';
+      ratioResult.textContent = '';
       return;
     }
 
@@ -102,50 +114,46 @@
     else if (diff<14){ text='橙色'; ratio='100.0%'; }
     else{ text='赤色'; ratio='100.0%'; }
 
-    $('#averageResult').textContent = `メイト平均レベル: ${avg.toFixed(2)}`;
-    $('#differenceResult').textContent = `レベル差: ${diff.toFixed(2)} (${text})`;
-    $('#ratioResult').textContent = `経験値倍率: ${ratio}`;
+    averageResult.textContent = `メイト平均レベル: ${avg.toFixed(2)}`;
+    differenceResult.textContent = `レベル差: ${diff.toFixed(2)} (${text})`;
+    ratioResult.textContent = `経験値倍率: ${ratio}`;
   }
 
-  /* 復元 */
+  // DOM参照キャッシュ
+  const aInput = document.getElementById('a');
+  const bInput = document.getElementById('b');
+  const cInput = document.getElementById('c');
+  const dInput = document.getElementById('d');
+  const eInput = document.getElementById('e');
+
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw){
       const data = JSON.parse(raw);
-      inputs.forEach(i=>{ if(data[i.name]!=null) i.value=data[i.name]; });
+      inputs.forEach(i=>{ if (data[i.name]!=null) i.value=data[i.name]; });
     }
   }catch{}
 
   inputs.forEach((el,i)=>{
-    // 入力時
-    el.addEventListener('input', ()=>{
+    el.addEventListener('focus',()=>setTimeout(()=>el.select?.(),0));
+
+    el.addEventListener('input',()=>{
       calc();
       const data={};
       inputs.forEach(x=>data[x.name]=x.value);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     });
 
-    // フォーカス時に全選択（iOS対応）
-    el.addEventListener('focus', ()=>{
-      setTimeout(()=>el.select(), 0);
-    });
-
-    // キー操作
     el.addEventListener('keydown', e=>{
-      if (e.key==='Enter') {
+      if (e.key==='Enter'){
         e.preventDefault();
-        if (inputs[i+1]) inputs[i+1].focus();
+        inputs[i+1]?.focus();
       }
-      else if (e.key==='Tab' && !e.shiftKey) {
-        e.preventDefault();
-        if (inputs[i+1]) inputs[i+1].focus();
-      }
-      // Shift+Tab は何もしない → ブラウザ標準で「戻る」
     });
   });
 
   calc();
-  if (inputs[0]) inputs[0].focus();
+  inputs[0]?.focus();
 })();
 </script>
 </body>
