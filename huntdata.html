@@ -16,168 +16,174 @@
 </head>
 
 <body>
-  <div class="container">
-    <header>
-      <h1>ハントデータ</h1>
-      <p>半角数字で入力してください。</p>
-    </header>
+<div class="container">
+  <header>
+    <h1>ハントデータ</h1>
+    <p>半角数字で入力してください。</p>
+  </header>
 
-    <main>
-      <!-- 入力 -->
-      <form class="form-grid cols-1" novalidate>
-        <label class="label">狩り時間（分）</label>
+  <main>
+    <!-- 入力（iPhoneでも1行） -->
+    <form class="form-grid cols-1" novalidate>
+
+      <div class="row">
+        <label class="label" for="time" style="min-width:8em;">狩り時間（分）</label>
         <input id="time" name="time" class="fld" type="number" data-index="0">
+      </div>
 
-        <label class="label">初期GP</label>
+      <div class="row">
+        <label class="label" for="gpi" style="min-width:8em;">初期GP</label>
         <input id="gpi" name="gpi" class="fld" type="number" data-index="1">
+      </div>
 
-        <label class="label">最終GP</label>
+      <div class="row">
+        <label class="label" for="gpf" style="min-width:8em;">最終GP</label>
         <input id="gpf" name="gpf" class="fld" type="number" data-index="2">
+      </div>
 
-        <label class="label">取得GP／匹 ①</label>
+      <div class="row">
+        <label class="label" for="gp1" style="min-width:8em;">取得GP／匹①</label>
         <input id="gp1" name="gp1" class="fld" type="number" data-index="3">
+      </div>
 
-        <label class="label">取得GP／匹 ②</label>
+      <div class="row">
+        <label class="label" for="gp2" style="min-width:8em;">取得GP／匹②</label>
         <input id="gp2" name="gp2" class="fld" type="number" data-index="4">
+      </div>
 
-        <label class="label">取得GP／匹 ③</label>
+      <div class="row">
+        <label class="label" for="gp3" style="min-width:8em;">取得GP／匹③</label>
         <input id="gp3" name="gp3" class="fld" type="number" data-index="5">
+      </div>
 
-        <label class="label">取得GP／匹 ④</label>
+      <div class="row">
+        <label class="label" for="gp4" style="min-width:8em;">取得GP／匹④</label>
         <input id="gp4" name="gp4" class="fld" type="number" data-index="6">
+      </div>
 
-        <label class="label">取得GP／匹 ⑤</label>
+      <div class="row">
+        <label class="label" for="gp5" style="min-width:8em;">取得GP／匹⑤</label>
         <input id="gp5" name="gp5" class="fld" type="number" data-index="7">
+      </div>
 
-        <label class="label">獲得経験値／匹</label>
+      <div class="row">
+        <label class="label" for="exp" style="min-width:8em;">経験値／匹</label>
         <input id="exp" name="exp" class="fld" type="number" data-index="8">
+      </div>
 
-        <label class="label">初期経験値（%）</label>
+      <div class="row">
+        <label class="label" for="expi" style="min-width:8em;">初期経験値（%）</label>
         <input id="expi" name="expi" class="fld" type="number" step="0.01" data-index="9">
+      </div>
 
-        <label class="label">最終経験値（%）</label>
+      <div class="row">
+        <label class="label" for="expf" style="min-width:8em;">最終経験値（%）</label>
         <input id="expf" name="expf" class="fld" type="number" step="0.01" data-index="10">
-      </form>
+      </div>
 
-      <!-- 結果 -->
-      <section class="result-panel" aria-live="polite">
-        <div class="row">【取得GP】</div>
-        <div class="row" id="r_avg">平均取得GP／匹：-</div>
-        <div class="row" id="r_total">総取得GP：-</div>
-        <div class="row" id="r_gp_min">取得GP／分：-</div>
-        <div class="row" id="r_gp_hour">取得GP／時：-</div>
+    </form>
 
-        <div class="row">【狩り数】</div>
-        <div class="row" id="r_hunts">総狩り数：-</div>
-        <div class="row" id="r_hunts_min">狩り数／分：-</div>
-        <div class="row" id="r_hunts_hour">狩り数／時：-</div>
+    <!-- 結果 -->
+    <section class="result-panel" aria-live="polite">
+      <div class="row">【取得GP】</div>
+      <div class="row" id="r_avg">平均取得GP／匹：-</div>
+      <div class="row" id="r_total">総取得GP：-</div>
+      <div class="row" id="r_gp_min">取得GP／分：-</div>
+      <div class="row" id="r_gp_hour">取得GP／時：-</div>
 
-        <div class="row">【獲得経験値】</div>
-        <div class="row" id="r_exp">取得経験値（%）：-</div>
-        <div class="row" id="r_exp_hour">取得経験値／時（%）：-</div>
-        <div class="row" id="r_exp_total">総獲得経験値：-</div>
-      </section>
+      <div class="row">【狩り数】</div>
+      <div class="row" id="r_hunts">総狩り数：-</div>
+      <div class="row" id="r_hunts_min">狩り数／分：-</div>
+      <div class="row" id="r_hunts_hour">狩り数／時：-</div>
 
-      <ul>
-        <li><a href="https://uppooooo.github.io/mm/">トップページ</a></li>
-      </ul>
-    </main>
-  </div>
+      <div class="row">【獲得経験値】</div>
+      <div class="row" id="r_exp">取得経験値（%）：-</div>
+      <div class="row" id="r_exp_hour">取得経験値／時（%）：-</div>
+      <div class="row" id="r_exp_total">総獲得経験値：-</div>
+    </section>
+
+    <ul>
+      <li><a href="https://uppooooo.github.io/mm/">トップページ</a></li>
+    </ul>
+  </main>
+</div>
 
 <script>
 (function(){
   const $ = s => document.querySelector(s);
-  const $$ = s => Array.from(document.querySelectorAll('.fld'));
+  const flds = Array.from(document.querySelectorAll('.fld'))
+    .sort((a,b)=>+a.dataset.index-+b.dataset.index);
   const KEY = 'hunt-data.v1';
-  const flds = $$('.fld').sort((a,b)=>+a.dataset.index-+b.dataset.index);
 
-  function n(v){
-    const x = Number(v);
-    return Number.isFinite(x) ? x : NaN;
-  }
+  const n = v => Number.isFinite(+v) ? +v : NaN;
 
   function calc(){
-    const time = n($('#time').value);
-    const gpi  = n($('#gpi').value);
-    const gpf  = n($('#gpf').value);
-    const expi = n($('#expi').value);
-    const expf = n($('#expf').value);
-    const exp  = n($('#exp').value);
+    const time = n(time.value);
+    const gpi  = n(gpi.value);
+    const gpf  = n(gpf.value);
+    const expi = n(expi.value);
+    const expf = n(expf.value);
+    const expv = n(exp.value);
 
-    if (!time || isNaN(gpi) || isNaN(gpf)) return;
+    if (!time || !Number.isFinite(gpi) || !Number.isFinite(gpf)) return;
 
     const diffGp = gpf - gpi;
     const gpMin = Math.floor(diffGp / time);
     const gpHour = gpMin * 60;
 
-    let sum = 0, cnt = 0;
-    for (let i=1;i<=5;i++){
-      const v = n($('#gp'+i).value);
-      if (!isNaN(v)){ sum+=v; cnt++; }
+    let sum=0,cnt=0;
+    for(let i=1;i<=5;i++){
+      const v=n(document.getElementById('gp'+i).value);
+      if(Number.isFinite(v)){ sum+=v; cnt++; }
     }
-    const avg = cnt ? sum/cnt : 0;
+    const avg=cnt?sum/cnt:0;
 
-    const hunts = avg ? Math.floor(diffGp / avg) : 0;
-    const huntsMin = Math.floor(hunts / time);
-    const huntsHour = huntsMin * 60;
+    const hunts=avg?Math.floor(diffGp/avg):0;
+    const huntsMin=Math.floor(hunts/time);
+    const huntsHour=huntsMin*60;
 
-    const expGain = expf - expi;
-    const expHour = (expGain / time) * 60;
-    const totalExp = exp * hunts;
+    const expGain=expf-expi;
+    const expHour=(expGain/time)*60;
+    const totalExp=expv*hunts;
 
-    $('#r_avg').textContent = `平均取得GP／匹：${avg.toLocaleString()}`;
-    $('#r_total').textContent = `総取得GP：${diffGp.toLocaleString()}`;
-    $('#r_gp_min').textContent = `取得GP／分：${gpMin.toLocaleString()}`;
-    $('#r_gp_hour').textContent = `取得GP／時：${gpHour.toLocaleString()}`;
+    r_avg.textContent=`平均取得GP／匹：${avg.toLocaleString()}`;
+    r_total.textContent=`総取得GP：${diffGp.toLocaleString()}`;
+    r_gp_min.textContent=`取得GP／分：${gpMin.toLocaleString()}`;
+    r_gp_hour.textContent=`取得GP／時：${gpHour.toLocaleString()}`;
 
-    $('#r_hunts').textContent = `総狩り数：${hunts.toLocaleString()}`;
-    $('#r_hunts_min').textContent = `狩り数／分：${huntsMin.toLocaleString()}`;
-    $('#r_hunts_hour').textContent = `狩り数／時：${huntsHour.toLocaleString()}`;
+    r_hunts.textContent=`総狩り数：${hunts.toLocaleString()}`;
+    r_hunts_min.textContent=`狩り数／分：${huntsMin.toLocaleString()}`;
+    r_hunts_hour.textContent=`狩り数／時：${huntsHour.toLocaleString()}`;
 
-    $('#r_exp').textContent = `取得経験値（%）：${expGain.toFixed(2)}`;
-    $('#r_exp_hour').textContent = `取得経験値／時（%）：${expHour.toFixed(2)}`;
-    $('#r_exp_total').textContent = `総獲得経験値：${totalExp.toLocaleString()}`;
+    r_exp.textContent=`取得経験値（%）：${expGain.toFixed(2)}`;
+    r_exp_hour.textContent=`取得経験値／時（%）：${expHour.toFixed(2)}`;
+    r_exp_total.textContent=`総獲得経験値：${totalExp.toLocaleString()}`;
   }
 
-  /* 復元 */
   try{
-    const raw = localStorage.getItem(KEY);
-    if (raw){
-      const d = JSON.parse(raw);
-      flds.forEach(f=>{ if(d[f.name]!=null) f.value=d[f.name]; });
-    }
+    const d=JSON.parse(localStorage.getItem(KEY));
+    if(d) flds.forEach(f=>d[f.name]!=null&&(f.value=d[f.name]));
   }catch{}
 
   flds.forEach((el,i)=>{
-    // フォーカス時は必ず全選択
-    el.addEventListener('focus', ()=>{
-      setTimeout(()=>el.select(), 0);
-    });
-
-    // 入力計算
-    el.addEventListener('input', ()=>{
+    el.addEventListener('focus',()=>setTimeout(()=>el.select?.(),0));
+    el.addEventListener('input',()=>{
       calc();
-      const d={};
-      flds.forEach(x=>d[x.name]=x.value);
-      localStorage.setItem(KEY, JSON.stringify(d));
+      const d={}; flds.forEach(x=>d[x.name]=x.value);
+      localStorage.setItem(KEY,JSON.stringify(d));
     });
-
-    // Enter / Shift+Enter で上下移動
-    el.addEventListener('keydown', e=>{
-      if (e.key === 'Enter'){
+    el.addEventListener('keydown',e=>{
+      if(e.key==='Enter'){
         e.preventDefault();
-        if (e.shiftKey){
-          if (flds[i-1]) flds[i-1].focus();
-        } else {
-          if (flds[i+1]) flds[i+1].focus();
-        }
+        (e.shiftKey?flds[i-1]:flds[i+1])?.focus();
       }
     });
   });
 
   calc();
-  if (flds[0]) flds[0].focus();
+  flds[0]?.focus();
 })();
 </script>
 </body>
 </html>
+``
