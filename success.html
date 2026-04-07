@@ -7,235 +7,183 @@
   <title>成功確率のグラフ</title>
 
   <!-- 共通CSS -->
-  <link rel="stylesheet" href="./styles.css">
+  <link relcss
 
   <!-- iPhone 表示最適化 -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="format-detection" content="telephone=no">
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <!-- Chart.js（defer しない） -->
+  <script src="httpsvr.net/npm/chart.js
 </head>
 
 <body>
   <div class="container">
     <header>
       <h1>成功確率のグラフ</h1>
-      <p>入力すると確率分布と統計を表示します。</p>
+      <p>入力すると確率分布を表示します。</p>
     </header>
 
     <main>
       <h2>入力</h2>
 
-      <!-- 入力フォーム（縦並び） -->
       <form class="form-grid cols-1" novalidate>
         <label class="label" for="successRate">成功確率（%）</label>
-        <input
-          id="successRate"
-          name="successRate"
-          class="fld"
-          type="number"
-          min="0"
-          max="100"
-          step="0.01"
-          inputmode="decimal"
-          data-index="0"
-        >
+        <input id="successRate" class="fld" type="number" min="0" max="100" step="0.01" data-index="0">
 
         <label class="label" for="trialCount">試行回数</label>
-        <input
-          id="trialCount"
-          name="trialCount"
-          class="fld"
-          type="number"
-          min="0"
-          max="1000"
-          step="1"
-          inputmode="numeric"
-          data-index="1"
-        >
+        <input id="trialCount" class="fld" type="number" min="0" max="1000" step="1" data-index="1">
 
         <label class="label" for="minSuccess">最小成功数</label>
-        <input
-          id="minSuccess"
-          name="minSuccess"
-          class="fld"
-          type="number"
-          min="0"
-          step="1"
-          inputmode="numeric"
-          data-index="2"
-        >
+        <input id="minSuccess" class="fld" type="number" min="0" step="1" data-index="2">
       </form>
 
       <div class="divider"></div>
 
       <h2>結果</h2>
 
-      <!-- 数値結果 -->
       <section class="result-panel" aria-live="polite">
         <div class="row">成功期待数：<span id="exp" class="total">-</span></div>
         <div class="row">最小成功数以上の確率：<span id="cum" class="total">-</span></div>
-        <div class="row">分散 / 標準偏差：<span id="varstd" class="total">-</span></div>
       </section>
 
       <p id="note"></p>
 
-      <!-- グラフ -->
       <canvas id="chart" height="260"></canvas>
 
       <ul>
-        <li><a href="./index.html">トップページ</a></li>
+        <li><a href="./index.html></li>
       </ul>
     </main>
   </div>
 
-<script>
-(function(){
-  const $  = s => document.querySelector(s);
-  const $$ = s => Array.from(document.querySelectorAll('.fld'));
-  const KEY = 'success-graph.v1';
-  const flds = $$('.fld').sort((a,b)=>+a.dataset.index - +b.dataset.index);
+  <script>
+  (function(){
+    const $ = s => document.querySelector(s);
+    const flds = Array.from(document.querySelectorAll('.fld'))
+      .sort((a,b)=>+a.dataset.index-+b.dataset.index);
 
-  let chart;
+    const KEY = 'success-graph.v2';
+    let chart;
 
-  function num(v){
-    const n = Number(v);
-    return Number.isFinite(n) ? n : NaN;
-  }
+    const num = v => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : NaN;
+    };
 
-  /* 二項分布（再帰） */
-  function binomialPMFAll(n, p){
-    const pmf = new Array(n+1).fill(0);
-    if (n === 0){ pmf[0] = 1; return pmf; }
-    if (p <= 0){ pmf[0] = 1; return pmf; }
-    if (p >= 1){ pmf[n] = 1; return pmf; }
+    function binomialPMFAll(n,p){
+      const pmf = new Array(n+1).fill(0);
+      if (n===0){ pmf[0]=1; return pmf; }
+      if (p<=0){ pmf[0]=1; return pmf; }
+      if (p>=1){ pmf[n]=1; return pmf; }
 
-    const q = 1 - p;
-    let pk = Math.pow(q, n);
-    pmf[0] = pk;
-
-    for (let k=1; k<=n; k++){
-      pk = pk * ((n - (k-1)) / k) * (p / q);
-      pmf[k] = pk;
+      const q=1-p;
+      let pk=Math.pow(q,n);
+      pmf[0]=pk;
+      for(let k=1;k<=n;k++){
+        pk=pk*((n-(k-1))/k)*(p/q);
+        pmf[k]=pk;
+      }
+      return pmf;
     }
-    return pmf;
-  }
 
-  function draw(labels, probs, minSuccess){
-    const ctx = $('#chart').getContext('2d');
-    if (chart) chart.destroy();
+    function draw(labels, probs, minSuccess){
+      const ctx = $('#chart').getContext('2d');
+      if (chart) chart.destroy();
 
-    chart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels,
-        datasets: [{
-          data: probs.map(v => v * 100),
-          backgroundColor: probs.map((_,k)=>(
-            Number.isFinite(minSuccess) && k >= minSuccess
-              ? 'rgba(99,102,241,.7)'
-              : 'rgba(148,163,184,.6)'
-          ))
-        }]
-      },
-      options: {
-        animation: false,
-        plugins: { legend: { display:false } },
-        scales: {
-          x: { title:{ display:true, text:'成功数' } },
-          y: { title:{ display:true, text:'確率(%)' }, beginAtZero:true }
+      chart = new Chart(ctx,{
+        type:'bar',
+        data:{
+          labels,
+          datasets:[{
+            data: probs.map(v=>v*100),
+            backgroundColor: probs.map((_,k)=>
+              Number.isFinite(minSuccess)&&k>=minSuccess
+                ? 'rgba(99,102,241,.7)'
+                : 'rgba(148,163,184,.6)'
+            )
+          }]
+        },
+        options:{
+          animation:false,
+          plugins:{ legend:{display:false} },
+          scales:{
+            x:{ title:{display:true,text:'成功数'} },
+            y:{ title:{display:true,text:'確率(%)'}, beginAtZero:true }
+          }
+        }
+      });
+    }
+
+    function calc(){
+      const pPct=num($('#successRate').value);
+      const n=num($('#trialCount').value);
+      let kMin=num($('#minSuccess').value);
+      $('#note').textContent='';
+
+      if(!Number.isFinite(pPct)||pPct<0||pPct>100||!Number.isFinite(n)||n<0){
+        $('#exp').textContent='-';
+        $('#cum').textContent='-';
+        return;
+      }
+
+      if(n>1000){
+        $('#trialCount').value=1000;
+        $('#note').textContent='試行回数は最大1000に制限しています。';
+      }
+
+      const p=pPct/100;
+      const pmf=binomialPMFAll(n,p);
+      const exp=p*n;
+
+      let cum='-';
+      if(Number.isFinite(kMin)&&kMin>=0){
+        kMin=Math.floor(kMin);
+        if(kMin<=n){
+          cum=(pmf.slice(kMin).reduce((a,b)=>a+b,0)*100).toFixed(2)+'%';
+        }else{
+          cum='0.00%';
         }
       }
-    });
-  }
 
-  function calc(){
-    let pPct = num($('#successRate').value);
-    let n    = num($('#trialCount').value);
-    let kMin = num($('#minSuccess').value);
-    $('#note').textContent = '';
+      draw([...Array(n+1).keys()],pmf,Number.isFinite(kMin)?kMin:NaN);
 
-    if (!Number.isFinite(pPct) || pPct < 0 || pPct > 100){
-      render('-', '-', '-'); return;
-    }
-    if (!Number.isFinite(n) || n < 0){
-      render('-', '-', '-'); return;
+      $('#exp').textContent=exp.toFixed(2);
+      $('#cum').textContent=cum;
     }
 
-    if (n > 1000){
-      n = 1000;
-      $('#trialCount').value = 1000;
-      $('#note').textContent = '試行回数は最大 1000 に制限しています。';
-    }
-
-    const p = pPct / 100;
-    const pmf = binomialPMFAll(n, p);
-
-    const exp = p * n;
-    const variance = n * p * (1 - p);
-    const std = Math.sqrt(variance);
-
-    let cum = NaN;
-    if (Number.isFinite(kMin) && kMin >= 0){
-      kMin = Math.floor(kMin);
-      cum = (kMin <= n) ? pmf.slice(kMin).reduce((a,b)=>a+b,0) : 0;
-    }
-
-    draw([...Array(n+1).keys()], pmf, Number.isFinite(kMin) ? kMin : NaN);
-
-    $('#exp').textContent = exp.toFixed(2);
-    $('#cum').textContent = Number.isFinite(cum) ? (cum*100).toFixed(2)+'%' : '-';
-    $('#varstd').textContent = `${variance.toFixed(2)} / ${std.toFixed(2)}`;
-  }
-
-  function render(a,b,c){
-    $('#exp').textContent = a;
-    $('#cum').textContent = b;
-    $('#varstd').textContent = c;
-  }
-
-  /* 復元 */
-  try{
-    const raw = localStorage.getItem(KEY);
-    if (raw){
-      const d = JSON.parse(raw);
-      flds.forEach(f=>{ if (d[f.id]!=null) f.value=d[f.id]; });
-    }
-  }catch{}
-
-  /* 入力制御（全選択 + Enter / Shift+Enter） */
-  flds.forEach((el,i)=>{
-    el.addEventListener('focus', ()=>{
-      setTimeout(()=>{
-        if (typeof el.select === 'function') el.select();
-      }, 0);
-    });
-
-    el.addEventListener('input', ()=>{
-      calc();
-      const d={};
-      flds.forEach(x=>d[x.id]=x.value);
-      localStorage.setItem(KEY, JSON.stringify(d));
-    });
-
-    el.addEventListener('keydown', e=>{
-      if (e.key === 'Enter'){
-        e.preventDefault();
-        if (e.shiftKey){
-          if (flds[i-1]) flds[i-1].focus();
-        } else {
-          if (flds[i+1]) flds[i+1].focus();
-        }
+    try{
+      const raw=localStorage.getItem(KEY);
+      if(raw){
+        const d=JSON.parse(raw);
+        flds.forEach(f=>{ if(d[f.id]!=null) f.value=d[f.id]; });
       }
-      // Tab / Shift+Tab は標準動作
-    });
-  });
+    }catch{}
 
-  calc();
-  if (flds[0]) flds[0].focus();
-})();
-</script>
+    flds.forEach((el,i)=>{
+      el.addEventListener('focus',()=>setTimeout(()=>{
+        if(el.select) el.select();
+      },0));
+
+      el.addEventListener('input',()=>{
+        calc();
+        const d={};
+        flds.forEach(x=>d[x.id]=x.value);
+        localStorage.setItem(KEY,JSON.stringify(d));
+      });
+
+      el.addEventListener('keydown',e=>{
+        if(e.key==='Enter'){
+          e.preventDefault();
+          (e.shiftKey?flds[i-1]:flds[i+1])?.focus();
+        }
+      });
+    });
+
+    calc();
+    flds[0]?.focus();
+  })();
+  </script>
 </body>
 </html>
