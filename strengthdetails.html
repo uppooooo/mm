@@ -6,216 +6,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>詳細強度計算</title>
 
-  <!-- 共通CSS -->
   <link rel="stylesheet" href="./styles.css">
 
-  <!-- iPhone / UI 最適化 -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="format-detection" content="telephone=no">
 </head>
 
 <body>
-  <div class="container">
-    <header>
-      <h1>詳細強度計算（速のみ）</h1>
-      <p>
-        レベルとステータスを入力すると強度を算出します。<br>
-              </p>
-    </header>
+<div class="container">
+  <header>
+    <h1>詳細強度計算（速のみ）</h1>
+    <p>レベルとステータスを入力すると強度を算出します。</p>
+  </header>
 
-    <main>
-      <h2>入力</h2>
+  <main>
+    <h2>入力</h2>
 
-      <!-- 入力フォーム（縦並び） -->
-      <form class="form-grid cols-1" novalidate>
-        <label class="label" for="level">レベル</label>
-        <input
-          id="level"
-          name="level"
-          class="fld"
-          type="number"
-          min="1"
-          max="999"
-          step="1"
-          inputmode="numeric"
-          data-index="0"
-        >
+    <!-- 入力フォーム（iPhoneでも1行） -->
+    <form class="form-grid cols-1" novalidate>
 
-        <label class="label" for="power">力</label>
-        <input
-          id="power"
-          name="power"
-          class="fld"
-          type="number"
-          min="0"
-          max="99999"
-          step="1"
-          inputmode="numeric"
-          data-index="1"
-        >
+      <div class="row">
+        <label class="label" for="level" style="min-width:4.5em;">Lv</label>
+        <input id="level" name="level" class="fld" type="number"
+               min="1" max="999" inputmode="numeric" data-index="0">
+      </div>
 
-        <label class="label" for="agi">敏捷</label>
-        <input
-          id="agi"
-          name="agi"
-          class="fld"
-          type="number"
-          min="0"
-          max="99999"
-          step="1"
-          inputmode="numeric"
-          data-index="2"
-        >
+      <div class="row">
+        <label class="label" for="power" style="min-width:4.5em;">力</label>
+        <input id="power" name="power" class="fld" type="number"
+               min="0" max="99999" inputmode="numeric" data-index="1">
+      </div>
 
-        <label class="label" for="dex">器用</label>
-        <input
-          id="dex"
-          name="dex"
-          class="fld"
-          type="number"
-          min="0"
-          max="99999"
-          step="1"
-          inputmode="numeric"
-          data-index="3"
-        >
-
-        <label class="label" for="luck">幸運</label>
-        <input
-          id="luck"
-          name="luck"
-          class="fld"
-          type="number"
-          min="0"
-          max="99999"
-          step="1"
-          inputmode="numeric"
-          data-index="4"
-        >
-      </form>
-
-      <div class="divider"></div>
-
-      <h2>結果</h2>
-
-      <section class="result-panel" aria-live="polite">
-        <div class="row">力強度：<span id="out_power" class="total">-</span></div>
-        <div class="row">敏捷強度：<span id="out_agi" class="total">-</span></div>
-        <div class="row">器用強度：<span id="out_dex" class="total">-</span></div>
-        <div class="row">幸運強度：<span id="out_luck" class="total">-</span></div>
-        <div class="row">平均強度：<span id="out_avg" class="total">-</span></div>
-      </section>
-
-      <ul>
-        <li><a href="./index.html">トップページ</a></li>
-      </ul>
-    </main>
-  </div>
-
-<script>
-(function(){
-  const $  = s => document.querySelector(s);
-  const $$ = s => Array.from(document.querySelectorAll('.fld'));
-  const KEY = 'detail-strength.v1';
-  const inputs = $$('.fld').sort((a,b)=>+a.dataset.index-+b.dataset.index);
-
-  function num(v){
-    const n = Number(v);
-    return Number.isFinite(n) ? n : NaN;
-  }
-
-  function round(v){
-    return Number.isFinite(v)
-      ? (Math.round(v * 100) / 100).toFixed(2)
-      : '-';
-  }
-
-  function calc(){
-    const level = num($('#level').value);
-    if (!Number.isFinite(level) || level <= 0){
-      render('-', '-', '-', '-', '-');
-      return;
-    }
-
-    const values = [];
-
-    const power = num($('#power').value);
-    const agi   = num($('#agi').value);
-    const dex   = num($('#dex').value);
-    const luck  = num($('#luck').value);
-
-    const p = Number.isFinite(power) ? power / (1 + level) : NaN;
-    const a = Number.isFinite(agi) ? (agi - level) / Math.round(level / 2) : NaN;
-    const d = Number.isFinite(dex) ? dex / Math.floor(level * 1.5 + 2) : NaN;
-    const l = Number.isFinite(luck) ? luck / (1 + level) : NaN;
-
-    set('#out_power', p); if (Number.isFinite(p)) values.push(p);
-    set('#out_agi',   a); if (Number.isFinite(a)) values.push(a);
-    set('#out_dex',   d); if (Number.isFinite(d)) values.push(d);
-    set('#out_luck',  l); if (Number.isFinite(l)) values.push(l);
-
-    const avg = values.length
-      ? values.reduce((x,y)=>x+y,0) / values.length
-      : NaN;
-
-    set('#out_avg', avg);
-  }
-
-  function set(sel, v){
-    $(sel).textContent = round(v);
-  }
-
-  function render(a,b,c,d,e){
-    $('#out_power').textContent = a;
-    $('#out_agi').textContent   = b;
-    $('#out_dex').textContent   = c;
-    $('#out_luck').textContent  = d;
-    $('#out_avg').textContent   = e;
-  }
-
-  /* 復元 */
-  try{
-    const saved = localStorage.getItem(KEY);
-    if (saved){
-      const d = JSON.parse(saved);
-      inputs.forEach(f=>{ if (d[f.name] != null) f.value = d[f.name]; });
-    }
-  }catch{}
-
-  /* 入力制御（全選択 + Enter / Shift+Enter） */
-  inputs.forEach((el,i)=>{
-    // フォーカス時は全選択（iOS対策）
-    el.addEventListener('focus', ()=>{
-      setTimeout(()=>{
-        if (typeof el.select === 'function') el.select();
-      }, 0);
-    });
-
-    // 入力時
-    el.addEventListener('input', ()=>{
-      calc();
-      const d = {};
-      inputs.forEach(x=>d[x.name]=x.value);
-      localStorage.setItem(KEY, JSON.stringify(d));
-    });
-
-    // Enter / Shift+Enter 移動
-    el.addEventListener('keydown', e=>{
-      if (e.key === 'Enter'){
-        e.preventDefault();
-        if (e.shiftKey){
-          if (inputs[i-1]) inputs[i-1].focus();
-        } else {
-          if (inputs[i+1]) inputs[i+1].focus();
-        }
-      }
-    });
-  });
-
-  calc();
-  if (inputs[0]) inputs[0].focus();
-})();
-</script>
-</body>
-</html>
