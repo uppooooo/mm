@@ -24,37 +24,20 @@
     <h2>入力</h2>
 
     <form class="form-grid cols-1" novalidate>
+      <div class="row"><label class="label" style="min-width:4.5em;">Lv</label>
+        <input id="level" class="fld" type="number" min="1" data-index="0"></div>
 
-      <div class="row">
-        <label class="label" style="min-width:4.5em;">Lv</label>
-        <input id="level" class="fld" type="number"
-               min="1" inputmode="numeric" data-index="0">
-      </div>
+      <div class="row"><label class="label" style="min-width:4.5em;">力</label>
+        <input id="power" class="fld" type="number" min="0" data-index="1"></div>
 
-      <div class="row">
-        <label class="label" style="min-width:4.5em;">力</label>
-        <input id="power" class="fld" type="number"
-               min="0" inputmode="numeric" data-index="1">
-      </div>
+      <div class="row"><label class="label" style="min-width:4.5em;">敏捷</label>
+        <input id="agi" class="fld" type="number" min="0" data-index="2"></div>
 
-      <div class="row">
-        <label class="label" style="min-width:4.5em;">敏捷</label>
-        <input id="agi" class="fld" type="number"
-               min="0" inputmode="numeric" data-index="2">
-      </div>
+      <div class="row"><label class="label" style="min-width:4.5em;">器用</label>
+        <input id="dex" class="fld" type="number" min="0" data-index="3"></div>
 
-      <div class="row">
-        <label class="label" style="min-width:4.5em;">器用</label>
-        <input id="dex" class="fld" type="number"
-               min="0" inputmode="numeric" data-index="3">
-      </div>
-
-      <div class="row">
-        <label class="label" style="min-width:4.5em;">幸運</label>
-        <input id="luck" class="fld" type="number"
-               min="0" inputmode="numeric" data-index="4">
-      </div>
-
+      <div class="row"><label class="label" style="min-width:4.5em;">幸運</label>
+        <input id="luck" class="fld" type="number" min="0" data-index="4"></div>
     </form>
 
     <div class="divider"></div>
@@ -62,102 +45,64 @@
     <h2>結果</h2>
 
     <section class="result-panel" aria-live="polite">
-      <div class="row">力強度：<span id="out_power" class="total">-</span></div>
-      <div class="row">敏捷強度：<span id="out_agi" class="total">-</span></div>
-      <div class="row">器用強度：<span id="out_dex" class="total">-</span></div>
-      <div class="row">幸運強度：<span id="out_luck" class="total">-</span></div>
-      <div class="row">平均強度：<span id="out_avg" class="total">-</span></div>
+      <div class="row">力強度：<span id="out_power">-</span></div>
+      <div class="row">敏捷強度：<span id="out_agi">-</span></div>
+      <div class="row">器用強度：<span id="out_dex">-</span></div>
+      <div class="row">幸運強度：<span id="out_luck">-</span></div>
+      <div class="row">平均強度：<span id="out_avg">-</span></div>
     </section>
-
-    <ul>
-      <li><a href="./index.html">トップページ</a></li>
-    </ul>
   </main>
 </div>
 
 <script>
 (function(){
   const $ = s => document.querySelector(s);
-  const inputs = Array.from(document.querySelectorAll('.fld'))
-    .sort((a,b)=>+a.dataset.index-+b.dataset.index);
-
-  const KEY = 'detail-strength.v3';
   const num = v => Number.isFinite(+v) ? +v : NaN;
   const fmt = v => Number.isFinite(v) ? v.toFixed(2) : '-';
 
   function calc(){
     const lv = num($('#level').value);
     if (!Number.isFinite(lv) || lv <= 0){
-      out_power.textContent = '-';
-      out_agi.textContent   = '-';
-      out_dex.textContent   = '-';
-      out_luck.textContent  = '-';
-      out_avg.textContent   = '-';
+      ['out_power','out_agi','out_dex','out_luck','out_avg']
+        .forEach(id => $( '#' + id).textContent = '-');
       return;
     }
 
-    const values = [];
+    const strengths = [];
 
-    const power = num($('#power').value);
-    if (Number.isFinite(power)) {
-      const v = power / (1 + lv);
-      out_power.textContent = fmt(v);
-      values.push(v);
-    } else {
-      out_power.textContent = '-';
+    function calcStat(id, fn, outId){
+      const raw = num($(id).value);
+      if (!Number.isFinite(raw)) {
+        $(outId).textContent = '-';
+        return;
+      }
+      const v = fn(raw);
+      if (!Number.isFinite(v)) {
+        $(outId).textContent = '-';
+        return;
+      }
+      $(outId).textContent = fmt(v);
+      strengths.push(v);
     }
 
-    const agi = num($('#agi').value);
-    if (Number.isFinite(agi)) {
-      const v = (agi - lv) / Math.round(lv / 2);
-      out_agi.textContent = fmt(v);
-      values.push(v);
-    } else {
-      out_agi.textContent = '-';
-    }
+    calcStat('#power', v => v / (1 + lv), '#out_power');
+    calcStat('#agi',   v => (v - lv) / Math.round(lv / 2), '#out_agi');
+    calcStat('#dex',   v => v / Math.floor(lv * 1.5 + 2), '#out_dex');
+    calcStat('#luck',  v => v / (1 + lv), '#out_luck');
 
-    const dex = num($('#dex').value);
-    if (Number.isFinite(dex)) {
-      const v = dex / Math.floor(lv * 1.5 + 2);
-      out_dex.textContent = fmt(v);
-      values.push(v);
-    } else {
-      out_dex.textContent = '-';
-    }
-
-    const luck = num($('#luck').value);
-    if (Number.isFinite(luck)) {
-      const v = luck / (1 + lv);
-      out_luck.textContent = fmt(v);
-      values.push(v);
-    } else {
-      out_luck.textContent = '-';
-    }
-
-    const avg = values.length
-      ? values.reduce((a,b)=>a+b,0) / values.length
+    const avg = strengths.length
+      ? strengths.reduce((a,b)=>a+b,0) / strengths.length
       : NaN;
 
-    out_avg.textContent = fmt(avg);
+    $('#out_avg').textContent = fmt(avg);
   }
 
-  try{
-    const d = JSON.parse(localStorage.getItem(KEY));
-    if (d) inputs.forEach(x => d[x.id] != null && (x.value = d[x.id]));
-  }catch{}
-
-  inputs.forEach(el=>{
+  document.querySelectorAll('.fld').forEach(el=>{
+    el.addEventListener('input', calc);
     el.addEventListener('focus',()=>setTimeout(()=>el.select?.(),0));
-    el.addEventListener('input',()=>{
-      calc();
-      const d={};
-      inputs.forEach(x=>d[x.id]=x.value);
-      localStorage.setItem(KEY, JSON.stringify(d));
-    });
   });
 
   calc();
-  inputs[0]?.focus();
 })();
 </script>
 </body>
