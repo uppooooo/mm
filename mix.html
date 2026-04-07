@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>MIX計算機</title>
 
-  <!-- 共通CSS（修正済み） -->
+  <!-- 共通CSS -->
   <link rel="stylesheet" href="./styles.css">
 
   <!-- iPhone 最適化 -->
@@ -23,7 +23,7 @@
   </header>
 
   <main>
-    <!-- 入力（横並び × 2行） -->
+    <!-- 入力 -->
     <form class="form-grid cols-3" novalidate>
 
       <!-- ヘッダー -->
@@ -31,15 +31,21 @@
       <div class="label">現在Lv</div>
       <div class="label">基本Lv</div>
 
-      <!-- メイン行 -->
+      <!-- メイン -->
       <div class="label">メイン</div>
       <input id="A" class="fld" type="number" inputmode="numeric" data-index="0">
       <input id="B" class="fld" type="number" inputmode="numeric" data-index="1">
 
-      <!-- サブ行 -->
+      <div></div>
+      <div id="warn-main" class="label" style="grid-column: 2 / span 2; color:#dc2626;"></div>
+
+      <!-- サブ -->
       <div class="label">サブ</div>
       <input id="C" class="fld" type="number" inputmode="numeric" data-index="2">
       <input id="D" class="fld" type="number" inputmode="numeric" data-index="3">
+
+      <div></div>
+      <div id="warn-sub" class="label" style="grid-column: 2 / span 2; color:#dc2626;"></div>
 
     </form>
 
@@ -62,18 +68,38 @@
   const inputs = Array.from(document.querySelectorAll('.fld'))
     .sort((a,b)=>+a.dataset.index-+b.dataset.index);
 
-  const KEY = 'mix-calc.v3';
+  const KEY = 'mix-calc.v4';
 
-  function n(v){
-    const x = Number(v);
-    return Number.isFinite(x) ? x : NaN;
+  const n = v => Number.isFinite(+v) ? +v : NaN;
+
+  function checkWarnings(){
+    const A = n($('#A').value);
+    const B = n($('#B').value);
+    const C = n($('#C').value);
+    const D = n($('#D').value);
+
+    // メイン警告
+    if (Number.isFinite(A) && Number.isFinite(B) && A < B) {
+      $('#warn-main').textContent = '現在レベルが基本レベル未満です。';
+    } else {
+      $('#warn-main').textContent = '';
+    }
+
+    // サブ警告
+    if (Number.isFinite(C) && Number.isFinite(D) && C < D) {
+      $('#warn-sub').textContent = '現在レベルが基本レベル未満です。';
+    } else {
+      $('#warn-sub').textContent = '';
+    }
   }
 
   function calc(){
-    const A = n($('#A').value); // メイン現在
-    const B = n($('#B').value); // メイン基本
-    const C = n($('#C').value); // サブ現在
-    const D = n($('#D').value); // サブ基本
+    const A = n($('#A').value);
+    const B = n($('#B').value);
+    const C = n($('#C').value);
+    const D = n($('#D').value);
+
+    checkWarnings();
 
     if ([A,B,C,D].some(isNaN)){
       $('#E').textContent = '-';
@@ -99,16 +125,15 @@
     }
   }catch{}
 
-  /* 入力イベント */
   inputs.forEach((el,i)=>{
-    el.addEventListener('focus', ()=>setTimeout(()=>el.select(),0));
-    el.addEventListener('input', ()=>{
+    el.addEventListener('focus',()=>setTimeout(()=>el.select(),0));
+    el.addEventListener('input',()=>{
       calc();
       const d={};
       inputs.forEach(x=>d[x.id]=x.value);
-      localStorage.setItem(KEY, JSON.stringify(d));
+      localStorage.setItem(KEY,JSON.stringify(d));
     });
-    el.addEventListener('keydown', e=>{
+    el.addEventListener('keydown',e=>{
       if(e.key==='Enter'){
         e.preventDefault();
         inputs[i+1]?.focus();
