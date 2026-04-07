@@ -23,8 +23,20 @@
     </header>
 
     <main>
-      <!-- 入力フォーム（縦並び：1項目＝1行） -->
+      <!-- 入力フォーム（特性を最上段に） -->
       <form class="form-grid cols-1" novalidate>
+
+        <!-- 特性（最上段） -->
+        <label class="label" for="trait">特性</label>
+        <select
+          id="trait"
+          class="fld"
+          data-index="0"
+        >
+          <option value="other">力以外</option>
+          <option value="power">力</option>
+        </select>
+
         <label class="label" for="level">レベル</label>
         <input
           id="level"
@@ -33,7 +45,7 @@
           min="0"
           max="999"
           inputmode="numeric"
-          data-index="0"
+          data-index="1"
         >
 
         <label class="label" for="power">力</label>
@@ -42,7 +54,7 @@
           class="fld"
           type="number"
           inputmode="numeric"
-          data-index="1"
+          data-index="2"
         >
 
         <label class="label" for="luck">幸運</label>
@@ -51,18 +63,8 @@
           class="fld"
           type="number"
           inputmode="numeric"
-          data-index="2"
-        >
-
-        <label class="label" for="trait">特性</label>
-        <select
-          id="trait"
-          class="fld"
           data-index="3"
         >
-          <option value="other">力以外</option>
-          <option value="power">力</option>
-        </select>
       </form>
 
       <!-- 結果表示 -->
@@ -78,88 +80,83 @@
     </main>
   </div>
 
-<script>
-(function(){
-  const $ = s => document.querySelector(s);
-  const $$ = s => Array.from(document.querySelectorAll('.fld'));
-  const KEY = 'strength-trait.v1';
-  const flds = $$('.fld').sort((a,b)=> +a.dataset.index - +b.dataset.index);
+  <script>
+  (function(){
+    const $ = s => document.querySelector(s);
+    const flds = Array.from(document.querySelectorAll('.fld'))
+      .sort((a,b)=> +a.dataset.index - +b.dataset.index);
 
-  function num(v){
-    const n = Number(v);
-    return Number.isFinite(n) ? n : NaN;
-  }
+    const KEY = 'strength-trait.v1';
 
-  function calc(){
-    const level = num($('#level').value);
-    const power = num($('#power').value);
-    const luck  = num($('#luck').value);
-    const trait = $('#trait').value;
-
-    if (isNaN(level)){
-      $('#strength').textContent = '0.00';
-      return;
+    function num(v){
+      const n = Number(v);
+      return Number.isFinite(n) ? n : NaN;
     }
 
-    let strength;
-    // 元仕様と完全一致
-    if (trait === 'power'){
-      strength = luck / (1 + level);
-    } else {
-      strength = power / (1 + level);
-    }
+    function calc(){
+      const level = num($('#level').value);
+      const power = num($('#power').value);
+      const luck  = num($('#luck').value);
+      const trait = $('#trait').value;
 
-    $('#strength').textContent =
-      Number.isFinite(strength) ? strength.toFixed(2) : '0.00';
-  }
-
-  /* 前回入力の復元 */
-  try{
-    const saved = localStorage.getItem(KEY);
-    if (saved){
-      const d = JSON.parse(saved);
-      flds.forEach(f=>{
-        if (d[f.id] != null) f.value = d[f.id];
-      });
-    }
-  }catch(e){}
-
-  /* 入力制御（全選択 + Enter / Shift+Enter） */
-  flds.forEach((el,i)=>{
-    // フォーカス時は必ず全選択（iOS対策含む）
-    el.addEventListener('focus', ()=>{
-      setTimeout(()=> {
-        if (typeof el.select === 'function') {
-          el.select();
-        }
-      }, 0);
-    });
-
-    // 入力時：再計算＋保存
-    el.addEventListener('input', ()=>{
-      calc();
-      const d = {};
-      flds.forEach(x => d[x.id] = x.value);
-      localStorage.setItem(KEY, JSON.stringify(d));
-    });
-
-    // Enter / Shift+Enter で上下移動
-    el.addEventListener('keydown', e=>{
-      if (e.key === 'Enter'){
-        e.preventDefault();
-        if (e.shiftKey){
-          if (flds[i-1]) flds[i-1].focus();
-        } else {
-          if (flds[i+1]) flds[i+1].focus();
-        }
+      if (isNaN(level)){
+        $('#strength').textContent = '0.00';
+        return;
       }
-      // Tab / Shift+Tab はブラウザ標準に任せる
-    });
-  });
 
-  calc();
-  if (flds[0]) flds[0].focus();
-})();
-</script>
+      let strength;
+      if (trait === 'power'){
+        strength = luck / (1 + level);
+      } else {
+        strength = power / (1 + level);
+      }
+
+      $('#strength').textContent =
+        Number.isFinite(strength) ? strength.toFixed(2) : '0.00';
+    }
+
+    /* 前回入力の復元 */
+    try{
+      const saved = localStorage.getItem(KEY);
+      if (saved){
+        const d = JSON.parse(saved);
+        flds.forEach(f=>{
+          if (d[f.id] != null) f.value = d[f.id];
+        });
+      }
+    }catch{}
+
+    /* 入力制御 */
+    flds.forEach((el,i)=>{
+      el.addEventListener('focus', ()=>{
+        setTimeout(()=>{
+          if (typeof el.select === 'function') el.select();
+        }, 0);
+      });
+
+      el.addEventListener('input', ()=>{
+        calc();
+        const d = {};
+        flds.forEach(x => d[x.id] = x.value);
+        localStorage.setItem(KEY, JSON.stringify(d));
+      });
+
+      el.addEventListener('keydown', e=>{
+        if (e.key === 'Enter'){
+          e.preventDefault();
+          if (e.shiftKey){
+            flds[i-1]?.focus();
+          } else {
+            flds[i+1]?.focus();
+          }
+        }
+      });
+    });
+
+    calc();
+    if (flds[0]) flds[0].focus();
+  })();
+  </script>
 </body>
 </html>
+``
