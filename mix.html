@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>MIX計算機</title>
 
-  <!-- 共通CSS -->
-  ./styles.css
+  <!-- 共通CSS（修正済み） -->
+  <link rel="stylesheet" href="./styles.css">
 
   <!-- iPhone 最適化 -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -23,27 +23,23 @@
   </header>
 
   <main>
-    <!-- 入力（TAB順＝思考順） -->
+    <!-- 入力（横並び × 2行） -->
     <form class="form-grid cols-3" novalidate>
 
-      <!-- ヘッダー行 -->
+      <!-- ヘッダー -->
       <div></div>
+      <div class="label">現在Lv</div>
+      <div class="label">基本Lv</div>
+
+      <!-- メイン行 -->
       <div class="label">メイン</div>
+      <input id="A" class="fld" type="number" inputmode="numeric" data-index="0">
+      <input id="B" class="fld" type="number" inputmode="numeric" data-index="1">
+
+      <!-- サブ行 -->
       <div class="label">サブ</div>
-
-      <!-- 基本Lv 行 -->
-      <label class="label">基本Lv</label>
-      <!-- メイン基本 -->
-      <input id="B" class="fld" type="number" inputmode="numeric" data-index="0">
-      <!-- サブ基本 -->
-      <input id="D" class="fld" type="number" inputmode="numeric" data-index="2">
-
-      <!-- 現在Lv 行 -->
-      <label class="label">現在Lv</label>
-      <!-- メイン現在 -->
-      <input id="A" class="fld" type="number" inputmode="numeric" data-index="1">
-      <!-- サブ現在 -->
-      <input id="C" class="fld" type="number" inputmode="numeric" data-index="3">
+      <input id="C" class="fld" type="number" inputmode="numeric" data-index="2">
+      <input id="D" class="fld" type="number" inputmode="numeric" data-index="3">
 
     </form>
 
@@ -55,7 +51,7 @@
     </section>
 
     <ul>
-      <li>https://uppooooo.github.io/mm/</li>
+      <li><a href="https://uppooooo.github.io/mm/">トップページ</a></li>
     </ul>
   </main>
 </div>
@@ -66,7 +62,7 @@
   const inputs = Array.from(document.querySelectorAll('.fld'))
     .sort((a,b)=>+a.dataset.index-+b.dataset.index);
 
-  const KEY = 'mix-calc.v2';
+  const KEY = 'mix-calc.v3';
 
   function n(v){
     const x = Number(v);
@@ -99,25 +95,21 @@
     const raw = localStorage.getItem(KEY);
     if (raw){
       const d = JSON.parse(raw);
-      inputs.forEach(f => { if (d[f.id] != null) f.value = d[f.id]; });
+      inputs.forEach(f => d[f.id] != null && (f.value = d[f.id]));
     }
   }catch{}
 
+  /* 入力イベント */
   inputs.forEach((el,i)=>{
-    el.addEventListener('focus', ()=>{
-      setTimeout(()=>el.select(), 0);
-    });
-
+    el.addEventListener('focus', ()=>setTimeout(()=>el.select(),0));
     el.addEventListener('input', ()=>{
       calc();
-      const d = {};
+      const d={};
       inputs.forEach(x=>d[x.id]=x.value);
       localStorage.setItem(KEY, JSON.stringify(d));
     });
-
-    // Enter は TAB と同じ前進
     el.addEventListener('keydown', e=>{
-      if (e.key === 'Enter'){
+      if(e.key==='Enter'){
         e.preventDefault();
         inputs[i+1]?.focus();
       }
