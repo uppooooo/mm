@@ -2,107 +2,100 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <meta name="robots" content="noindex,nofollow,noarchive">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>詳細強度計算</title>
-
   <link rel="stylesheet" href="./styles.css">
-
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="format-detection" content="telephone=no">
 </head>
 
 <body>
 <div class="container">
   <header>
     <h1>詳細強度計算（速のみ）</h1>
-    <p>レベルとステータスを入力すると強度を算出します。</p>
   </header>
 
   <main>
-    <h2>入力</h2>
-
     <form class="form-grid cols-1" novalidate>
-      <div class="row"><label class="label" style="min-width:4.5em;">Lv</label>
-        <input id="level" class="fld" type="number" min="1" data-index="0"></div>
 
-      <div class="row"><label class="label" style="min-width:4.5em;">力</label>
-        <input id="power" class="fld" type="number" min="0" data-index="1"></div>
+      <div class="row"><label class="label">Lv</label>
+        <input id="level" class="fld" type="number"></div>
 
-      <div class="row"><label class="label" style="min-width:4.5em;">敏捷</label>
-        <input id="agi" class="fld" type="number" min="0" data-index="2"></div>
+      <div class="row"><label class="label">力</label>
+        <input id="power" class="fld" type="number"></div>
 
-      <div class="row"><label class="label" style="min-width:4.5em;">器用</label>
-        <input id="dex" class="fld" type="number" min="0" data-index="3"></div>
+      <div class="row"><label class="label">敏捷</label>
+        <input id="agi" class="fld" type="number"></div>
 
-      <div class="row"><label class="label" style="min-width:4.5em;">幸運</label>
-        <input id="luck" class="fld" type="number" min="0" data-index="4"></div>
+      <div class="row"><label class="label">器用</label>
+        <input id="dex" class="fld" type="number"></div>
+
+      <div class="row"><label class="label">幸運</label>
+        <input id="luck" class="fld" type="number"></div>
+
     </form>
 
-    <div class="divider"></div>
-
-    <h2>結果</h2>
-
-    <section class="result-panel" aria-live="polite">
-      <div class="row">力強度：<span id="out_power">-</span></div>
-      <div class="row">敏捷強度：<span id="out_agi">-</span></div>
-      <div class="row">器用強度：<span id="out_dex">-</span></div>
-      <div class="row">幸運強度：<span id="out_luck">-</span></div>
-      <div class="row">平均強度：<span id="out_avg">-</span></div>
+    <section class="result-panel">
+      <div>力強度：<span id="out_power">-</span></div>
+      <div>敏捷強度：<span id="out_agi">-</span></div>
+      <div>器用強度：<span id="out_dex">-</span></div>
+      <div>幸運強度：<span id="out_luck">-</span></div>
+      <div>平均強度：<span id="out_avg">-</span></div>
     </section>
   </main>
 </div>
 
 <script>
 (function(){
-  const $ = s => document.querySelector(s);
-  const num = v => Number.isFinite(+v) ? +v : NaN;
+  const $ = id => document.getElementById(id);
+
+  function numFromInput(el){
+    if (!el || el.value.trim() === '') return NaN;
+    const v = Number(el.value);
+    return Number.isFinite(v) ? v : NaN;
+  }
+
   const fmt = v => Number.isFinite(v) ? v.toFixed(2) : '-';
 
   function calc(){
-    const lv = num($('#level').value);
+    const lv = numFromInput($('level'));
     if (!Number.isFinite(lv) || lv <= 0){
       ['out_power','out_agi','out_dex','out_luck','out_avg']
-        .forEach(id => $( '#' + id).textContent = '-');
+        .forEach(id => $(id).textContent='-');
       return;
     }
 
-    const strengths = [];
+    const values = [];
 
-    function calcStat(id, fn, outId){
-      const raw = num($(id).value);
+    function calcStat(inputId, fn, outId){
+      const raw = numFromInput($(inputId));
       if (!Number.isFinite(raw)) {
-        $(outId).textContent = '-';
+        $(outId).textContent='-';
         return;
       }
       const v = fn(raw);
       if (!Number.isFinite(v)) {
-        $(outId).textContent = '-';
+        $(outId).textContent='-';
         return;
       }
       $(outId).textContent = fmt(v);
-      strengths.push(v);
+      values.push(v);
     }
 
-    calcStat('#power', v => v / (1 + lv), '#out_power');
-    calcStat('#agi',   v => (v - lv) / Math.round(lv / 2), '#out_agi');
-    calcStat('#dex',   v => v / Math.floor(lv * 1.5 + 2), '#out_dex');
-    calcStat('#luck',  v => v / (1 + lv), '#out_luck');
+    calcStat('power', x => x/(1+lv), 'out_power');
+    calcStat('agi',   x => (x-lv)/Math.round(lv/2), 'out_agi');
+    calcStat('dex',   x => x/Math.floor(lv*1.5+2), 'out_dex');
+    calcStat('luck',  x => x/(1+lv), 'out_luck');
 
-    const avg = strengths.length
-      ? strengths.reduce((a,b)=>a+b,0) / strengths.length
+    const avg = values.length
+      ? values.reduce((a,b)=>a+b,0)/values.length
       : NaN;
 
-    $('#out_avg').textContent = fmt(avg);
+    $('out_avg').textContent = fmt(avg);
   }
 
   document.querySelectorAll('.fld').forEach(el=>{
     el.addEventListener('input', calc);
-    el.addEventListener('focus',()=>setTimeout(()=>el.select?.(),0));
   });
 
-  calc();
 })();
 </script>
 </body>
