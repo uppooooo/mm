@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="format-detection" content="telephone=no">
 
-  <!-- Chart.js（同期ロード） -->
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
@@ -28,7 +28,8 @@
   <main>
     <h2>入力</h2>
 
-    <form class="form-grid cols-1" novalidate>
+    <!-- ★ 1行入力フォーム -->
+    <form class="form-grid cols-2" novalidate>
       <label class="label" for="successRate">成功確率（%）</label>
       <input id="successRate" class="fld" type="number"
              min="0" max="100" step="0.01" data-index="0">
@@ -74,7 +75,6 @@
   let chart;
   const KEY = 'success-graph.v2';
 
-  const num = v => Number.isFinite(v) ? v : NaN;
   const numFromInput = el =>
     el && el.value.trim() !== '' && Number.isFinite(+el.value)
       ? +el.value : NaN;
@@ -179,3 +179,4 @@
 </script>
 </body>
 </html>
+``
