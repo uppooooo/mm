@@ -207,3 +207,14 @@ select:focus {
   color: #9ca3af;
   cursor: not-allowed;
 }
+
+/* ===== iPhoneでも label + input を1行維持 ===== */
+@media (max-width: 520px) {
+  .form-grid.cols-2 {
+    grid-template-columns: max-content 1fr;
+  }
+
+  .form-grid.cols-2 .label {
+    white-space: nowrap;
+  }
+}
