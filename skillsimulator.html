@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>スキルSP計算</title>
+  <title>スキルSP計算（完全版）</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
 
@@ -12,11 +12,11 @@
 <div class="container">
   <header>
     <h1>スキルSP計算</h1>
-    <p>Lvをクリックして取得／解除できます。</p>
+    <p>Lvセルをクリックして取得／再クリックで解除できます。</p>
   </header>
 
   <main>
-    <!-- 所有SP：1行表示 -->
+    <!-- 所有SP（1行） -->
     <form class="form-grid cols-2">
       <label class="label">所有SP</label>
       <input id="ownSP" class="fld" type="number" min="0" max="999">
@@ -26,7 +26,7 @@
 
     <p id="warn" style="color:#dc2626;font-weight:700;"></p>
 
-    <!-- スキル表（SPは表示しない） -->
+    <!-- スキル表 -->
     <table class="skill-table">
       <thead>
         <tr>
@@ -42,6 +42,7 @@
 
     <div class="divider"></div>
 
+    <!-- 結果 -->
     <section class="result-panel">
       <div class="row total">消費SP：<span id="usedSP">0</span></div>
       <div class="row total">残りSP：<span id="remainSP">0</span></div>
@@ -56,13 +57,40 @@
 
 <script>
 (function(){
-  const KEY = 'skill-sp-calc.v2';
+  const KEY = 'skill-sp-calc.full.v1';
 
+  /* =========================
+     全スキル定義
+     ========================= */
   const skills = [
-    { tier:1, name:'シェル', sp:[3,8,16,24,35,46,60], mp:[7,12,18,25,33,43,55] },
-    { tier:1, name:'ブレス', sp:[5,13,25,42,65], mp:[15,25,35,50,65] },
-    { tier:2, name:'プロミネンス', sp:[15,45], mp:[70,100], req:['ブレス'] }
+    /* ---------- 1次 ---------- */
+    { tier:1, name:'シェル', sp:[3,8,16,24,35,46,60], mp:[7,12,18,25,33,43,55], next:['ナイトメア','スロウフォース'] },
+    { tier:1, name:'カウンター', sp:[3,8,16,24,35,46,60], mp:[7,12,18,25,33,43,55] },
+    { tier:1, name:'シールド', sp:[5,12,22,35,50], mp:[10,20,30,40,50], next:['ナイトメア','スロウフォース'] },
+    { tier:1, name:'ブレス', sp:[5,13,25,42,65], mp:[15,25,35,50,65], next:['プロミネンス'] },
+    { tier:1, name:'スナッチ', sp:[3,8,16,26,39,55,75], mp:[20,30,40,50,60,70,80], next:['ナイトメア','スロウフォース'] },
+    { tier:1, name:'ポイズン', sp:[20,45,75], mp:[60,70,80], next:['ポイズンミスト'] },
+    { tier:1, name:'ブレイズ', sp:[20,45,75], mp:[60,70,80] },
+    { tier:1, name:'スタン', sp:[30,55,75,90,100,105], mp:[40,50,60,70,80,90], next:['ショックスタン'] },
+    { tier:1, name:'ストライク', sp:[3,8,16,24,35,46,60], mp:[7,12,18,26,35,46,60], next:['ナイトメア','スロウフォース'] },
+    { tier:1, name:'ヒーリング', sp:[4,13,27,46,70], mp:[16,30,40,60,70], next:['ヒールシャイン'] },
+    { tier:1, name:'アンチド', sp:[18,39,63], mp:[40,50,60], next:['アンチドウェーブ'] },
+    { tier:1, name:'バインド', sp:[30,65], mp:[50,70] },
+    { tier:1, name:'フリーズ', sp:[18,39,63], mp:[50,60,70] },
+    { tier:1, name:'ブースタ', sp:[18,39,63], mp:[50,60,70] },
+    { tier:1, name:'ハイスピ', sp:[30,65], mp:[50,70] },
+
+    /* ---------- 2次 ---------- */
+    { tier:2, name:'プロミネンス', sp:[15,45], mp:[70,100], req:['ブレス'] },
+    { tier:2, name:'ヒールシャイン', sp:[15,45], mp:[70,100], req:['ヒーリング'] },
+    { tier:2, name:'ショックスタン', sp:[20], mp:[110], req:['スタン'] },
+    { tier:2, name:'ナイトメア', sp:[5,15,25,40,55], mp:[40,50,60,70,80], req:['シェル','シールド','スナッチ','ストライク'] },
+    { tier:2, name:'スロウフォース', sp:[5,15,25,40,55], mp:[40,50,60,70,80], req:['シェル','シールド','スナッチ','ストライク'] },
+    { tier:2, name:'アンチドウェーブ', sp:[30], mp:[120], req:['アンチド'] },
+    { tier:2, name:'ポイズンミスト', sp:[30], mp:[120], req:['ポイズン'] }
   ];
+
+  /* ========================= */
 
   const ownSP = document.getElementById('ownSP');
   const warn = document.getElementById('warn');
@@ -91,18 +119,19 @@
     if(skill.tier !== 2) return true;
     return skill.req.some(r =>
       Object.entries(selected).some(([i,lv]) =>
-        skills[i].name === r && lv === skills[i].sp.length - 1
+        skills[i].name === r &&
+        lv === skills[i].sp.length - 1
       )
     );
   }
 
-  /* ---------- 2次リセット処理 ---------- */
+  /* ---------- 条件崩壊時リセット ---------- */
   function enforceSecondRules(){
-    Object.entries(selected).forEach(([i,lv])=>{
+    Object.entries(selected).forEach(([i])=>{
       const s = skills[i];
-      if(s.tier === 2 && !canSelectSecond(s)){
+      if(s.tier===2 && !canSelectSecond(s)){
         delete selected[i];
-        warn.textContent = '前提条件が崩れたため、2次スキルを解除しました。';
+        warn.textContent = '前提条件の変更により、2次スキルを解除しました。';
       }
     });
   }
@@ -122,42 +151,35 @@
     });
 
     usedSP.textContent = total;
-    remainSP.textContent = Math.max(0,(+ownSP.value||0) - total);
+    remainSP.textContent = Math.max(0,(+ownSP.value||0)-total);
     save();
   }
 
   /* ---------- 描画 ---------- */
   function render(){
-    body.innerHTML = '';
+    body.innerHTML='';
     skills.forEach((s,i)=>{
       const tr = document.createElement('tr');
 
-      const tdTier = document.createElement('td');
-      tdTier.textContent = s.tier === 1 ? '1次' : '2次';
-      tr.appendChild(tdTier);
-
-      const tdName = document.createElement('td');
-      tdName.textContent = s.name;
-      tr.appendChild(tdName);
+      tr.innerHTML = `<td>${s.tier===1?'1次':'2次'}</td><td>${s.name}</td>`;
 
       for(let lv=0; lv<7; lv++){
         const td = document.createElement('td');
-
-        if(s.sp[lv] != null){
-          td.classList.add('lv-cell');
-          if(selected[i] === lv) td.classList.add('active');
-          if(s.tier===2 && !canSelectSecond(s)) td.classList.add('disabled');
+        if(s.sp[lv]!=null){
           td.textContent = `Lv${lv+1}`;
+          td.classList.add('lv-cell');
+          if(selected[i]===lv) td.classList.add('active');
+          if(s.tier===2 && !canSelectSecond(s)) td.classList.add('disabled');
 
-          td.onclick = () => {
+          td.onclick = ()=>{
             if(s.tier===2 && !canSelectSecond(s)){
-              warn.textContent = '2次スキル取得条件を満たしていません。';
+              warn.textContent='2次スキル条件を満たしていません。';
               return;
             }
-            if(selected[i] === lv){
-              delete selected[i];   // ← 解除
+            if(selected[i]===lv){
+              delete selected[i];  // 解除
             }else{
-              selected[i] = lv;
+              selected[i]=lv;
             }
             enforceSecondRules();
             render(); calc();
@@ -166,8 +188,8 @@
         tr.appendChild(td);
       }
 
-      const tdMp = document.createElement('td');
-      tdMp.textContent = selected[i]!=null ? s.mp[selected[i]] : '-';
+      const tdMp=document.createElement('td');
+      tdMp.textContent = selected[i]!=null ? s.mp[selected[i]]:'-';
       tr.appendChild(tdMp);
 
       body.appendChild(tr);
@@ -178,9 +200,8 @@
   enforceSecondRules();
   render();
   calc();
-  ownSP.addEventListener('input', ()=>{ calc(); render(); });
+  ownSP.addEventListener('input',()=>{ calc(); render(); });
 })();
 </script>
 </body>
 </html>
-``
