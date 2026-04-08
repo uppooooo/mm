@@ -9,10 +9,13 @@
   <!-- 共通CSS -->
   <link rel="stylesheet" href="./styles.css">
 
-  <!-- ラベル改行防止（最小補足） -->
+  <!-- ラベル改行防止 -->
   <style>
     .form-grid.cols-2 .label {
-      white-space: nowrap;   /* ← 1行固定 */
+      white-space: nowrap;
+    }
+    .form-block {
+      margin-bottom: 24px;
     }
   </style>
 </head>
@@ -25,41 +28,56 @@
   </header>
 
   <main>
-    <!-- 入力フォーム：ラベル＋入力を1行 -->
-    <form class="form-grid cols-2" novalidate>
-      <label class="label" for="time">狩り時間（分）</label>
-      <input id="time" class="fld" type="number">
+    <!-- 狩り開始前 -->
+    <div class="form-block">
+      <h2>狩り開始前</h2>
+      <form class="form-grid cols-2" novalidate>
+        <label class="label" for="gpi">初期GP</label>
+        <input id="gpi" class="fld" type="number">
 
-      <label class="label" for="gpi">初期GP</label>
-      <input id="gpi" class="fld" type="number">
+        <label class="label" for="expi">初期経験値（%）</label>
+        <input id="expi" class="fld" type="number" step="0.01">
+      </form>
+    </div>
 
-      <label class="label" for="gpf">最終GP</label>
-      <input id="gpf" class="fld" type="number">
+    <!-- 狩り開始時 -->
+    <div class="form-block">
+      <h2>狩り開始時</h2>
+      <form class="form-grid cols-2" novalidate>
+        <label class="label" for="exp">経験値／匹</label>
+        <input id="exp" class="fld" type="number">
 
-      <label class="label" for="gp1">取得GP／匹①</label>
-      <input id="gp1" class="fld" type="number">
+        <label class="label" for="gp1">取得GP／匹①</label>
+        <input id="gp1" class="fld" type="number">
 
-      <label class="label" for="gp2">取得GP／匹②</label>
-      <input id="gp2" class="fld" type="number">
+        <label class="label" for="gp2">取得GP／匹②</label>
+        <input id="gp2" class="fld" type="number">
 
-      <label class="label" for="gp3">取得GP／匹③</label>
-      <input id="gp3" class="fld" type="number">
+        <label class="label" for="gp3">取得GP／匹③</label>
+        <input id="gp3" class="fld" type="number">
 
-      <label class="label" for="gp4">取得GP／匹④</label>
-      <input id="gp4" class="fld" type="number">
+        <label class="label" for="gp4">取得GP／匹④</label>
+        <input id="gp4" class="fld" type="number">
 
-      <label class="label" for="gp5">取得GP／匹⑤</label>
-      <input id="gp5" class="fld" type="number">
+        <label class="label" for="gp5">取得GP／匹⑤</label>
+        <input id="gp5" class="fld" type="number">
+      </form>
+    </div>
 
-      <label class="label" for="exp">経験値／匹</label>
-      <input id="exp" class="fld" type="number">
+    <!-- 狩り終了後 -->
+    <div class="form-block">
+      <h2>狩り終了後</h2>
+      <form class="form-grid cols-2" novalidate>
+        <label class="label" for="expf">最終経験値（%）</label>
+        <input id="expf" class="fld" type="number" step="0.01">
 
-      <label class="label" for="expi">初期経験値（%）</label>
-      <input id="expi" class="fld" type="number" step="0.01">
+        <label class="label" for="gpf">最終GP</label>
+        <input id="gpf" class="fld" type="number">
 
-      <label class="label" for="expf">最終経験値（%）</label>
-      <input id="expf" class="fld" type="number" step="0.01">
-    </form>
+        <label class="label" for="time">狩り時間（分）</label>
+        <input id="time" class="fld" type="number">
+      </form>
+    </div>
 
     <!-- 結果 -->
     <section class="result-panel" aria-live="polite">
@@ -150,3 +168,4 @@
 </script>
 </body>
 </html>
+``
