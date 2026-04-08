@@ -12,22 +12,21 @@
 <div class="container">
   <header>
     <h1>スキルSP計算</h1>
-    <p>Lvをクリックして取得スキルを選択してください。</p>
+    <p>Lvをクリックして取得／解除できます。</p>
   </header>
 
   <main>
-    <!-- 所有SP -->
-    <form class="form-grid cols-1">
+    <!-- 所有SP：1行表示 -->
+    <form class="form-grid cols-2">
       <label class="label">所有SP</label>
-      <input id="ownSP" class="fld" type="number" min="0">
+      <input id="ownSP" class="fld" type="number" min="0" max="999">
     </form>
 
     <div class="divider"></div>
 
-    <!-- 警告 -->
     <p id="warn" style="color:#dc2626;font-weight:700;"></p>
 
-    <!-- スキル表 -->
+    <!-- スキル表（SPは表示しない） -->
     <table class="skill-table">
       <thead>
         <tr>
@@ -43,7 +42,6 @@
 
     <div class="divider"></div>
 
-    <!-- 結果 -->
     <section class="result-panel">
       <div class="row total">消費SP：<span id="usedSP">0</span></div>
       <div class="row total">残りSP：<span id="remainSP">0</span></div>
@@ -58,132 +56,131 @@
 
 <script>
 (function(){
-  const KEY = 'skill-sp-calc.v1';
+  const KEY = 'skill-sp-calc.v2';
 
   const skills = [
-    { tier:1, name:'シェル', sp:[3,8,16,24,35,46,60], mp:[7,12,18,25,33,43,55], next:['ナイトメア','スロウフォース'] },
-    { tier:1, name:'ブレス', sp:[5,13,25,42,65], mp:[15,25,35,50,65], next:['プロミネンス'] },
+    { tier:1, name:'シェル', sp:[3,8,16,24,35,46,60], mp:[7,12,18,25,33,43,55] },
+    { tier:1, name:'ブレス', sp:[5,13,25,42,65], mp:[15,25,35,50,65] },
     { tier:2, name:'プロミネンス', sp:[15,45], mp:[70,100], req:['ブレス'] }
   ];
 
-  const ownSP    = document.getElementById('ownSP');
-  const warn     = document.getElementById('warn');
-  const body     = document.getElementById('skillBody');
-  const usedSP   = document.getElementById('usedSP');
+  const ownSP = document.getElementById('ownSP');
+  const warn = document.getElementById('warn');
+  const body = document.getElementById('skillBody');
+  const usedSP = document.getElementById('usedSP');
   const remainSP = document.getElementById('remainSP');
-  const list     = document.getElementById('resultList');
+  const list = document.getElementById('resultList');
 
   let selected = {};
 
-  /* ---------- 保存・復元 ---------- */
+  /* ---------- 保存／復元 ---------- */
   function save(){
-    localStorage.setItem(KEY, JSON.stringify({
-      ownSP: ownSP.value,
-      selected
-    }));
+    localStorage.setItem(KEY, JSON.stringify({ ownSP: ownSP.value, selected }));
   }
-
   function load(){
-    try {
+    try{
       const d = JSON.parse(localStorage.getItem(KEY));
-      if (!d) return;
+      if(!d) return;
       ownSP.value = d.ownSP || '';
       selected = d.selected || {};
-    } catch {}
+    }catch{}
   }
 
-  /* ---------- 2次スキル条件 ---------- */
-  function canSelect(skill){
-    if (skill.tier !== 2) return true;
-    return skill.req.some(reqName =>
+  /* ---------- 2次条件判定 ---------- */
+  function canSelectSecond(skill){
+    if(skill.tier !== 2) return true;
+    return skill.req.some(r =>
       Object.entries(selected).some(([i,lv]) =>
-        skills[i].name === reqName &&
-        lv === skills[i].sp.length - 1
+        skills[i].name === r && lv === skills[i].sp.length - 1
       )
     );
+  }
+
+  /* ---------- 2次リセット処理 ---------- */
+  function enforceSecondRules(){
+    Object.entries(selected).forEach(([i,lv])=>{
+      const s = skills[i];
+      if(s.tier === 2 && !canSelectSecond(s)){
+        delete selected[i];
+        warn.textContent = '前提条件が崩れたため、2次スキルを解除しました。';
+      }
+    });
   }
 
   /* ---------- 計算 ---------- */
   function calc(){
     let total = 0;
-    warn.textContent = '';
     list.innerHTML = '';
+    warn.textContent ||= '';
 
     Object.entries(selected).forEach(([i,lv])=>{
       const s = skills[i];
       total += s.sp[lv];
-
       const li = document.createElement('li');
       li.textContent = `${s.name} Lv${Number(lv)+1}（MP ${s.mp[lv]}）`;
       list.appendChild(li);
-
-      if (s.tier === 2 && !canSelect(s)){
-        warn.textContent = '2次スキル取得条件（1次スキル最大Lv）を満たしていません。';
-      }
     });
 
     usedSP.textContent = total;
-    remainSP.textContent = Math.max(0, (+ownSP.value || 0) - total);
+    remainSP.textContent = Math.max(0,(+ownSP.value||0) - total);
     save();
   }
 
-  /* ---------- 描画（★完全修正版） ---------- */
+  /* ---------- 描画 ---------- */
   function render(){
     body.innerHTML = '';
-
     skills.forEach((s,i)=>{
       const tr = document.createElement('tr');
 
-      // 区分
       const tdTier = document.createElement('td');
       tdTier.textContent = s.tier === 1 ? '1次' : '2次';
       tr.appendChild(tdTier);
 
-      // スキル名
       const tdName = document.createElement('td');
       tdName.textContent = s.name;
       tr.appendChild(tdName);
 
-      // Lv選択セル
       for(let lv=0; lv<7; lv++){
         const td = document.createElement('td');
 
-        if (s.sp[lv] != null){
-          td.textContent = s.sp[lv];
+        if(s.sp[lv] != null){
           td.classList.add('lv-cell');
+          if(selected[i] === lv) td.classList.add('active');
+          if(s.tier===2 && !canSelectSecond(s)) td.classList.add('disabled');
+          td.textContent = `Lv${lv+1}`;
 
-          if (selected[i] === lv) td.classList.add('active');
-          if (!canSelect(s) && s.tier === 2) td.classList.add('disabled');
-
-          td.addEventListener('click', ()=>{
-            if (s.tier === 2 && !canSelect(s)){
-              warn.textContent = '2次スキル条件を満たしていません。';
+          td.onclick = () => {
+            if(s.tier===2 && !canSelectSecond(s)){
+              warn.textContent = '2次スキル取得条件を満たしていません。';
               return;
             }
-            selected[i] = lv;
-            render();
-            calc();
-          });
+            if(selected[i] === lv){
+              delete selected[i];   // ← 解除
+            }else{
+              selected[i] = lv;
+            }
+            enforceSecondRules();
+            render(); calc();
+          };
         }
-
         tr.appendChild(td);
       }
 
-      // 消費MP
       const tdMp = document.createElement('td');
-      tdMp.textContent = selected[i] != null ? s.mp[selected[i]] : '-';
+      tdMp.textContent = selected[i]!=null ? s.mp[selected[i]] : '-';
       tr.appendChild(tdMp);
 
       body.appendChild(tr);
     });
   }
 
-  /* ---------- 初期化 ---------- */
   load();
+  enforceSecondRules();
   render();
   calc();
-  ownSP.addEventListener('input', () => { calc(); render(); });
+  ownSP.addEventListener('input', ()=>{ calc(); render(); });
 })();
 </script>
 </body>
 </html>
+``
