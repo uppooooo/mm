@@ -207,3 +207,51 @@ select:focus {
   color: #9ca3af;
   cursor: not-allowed;
 }
+
+/* ===== iPhone横はみ出し対策 ===== */
+.skill-table {
+  width: 100%;
+  table-layout: fixed;     /* ← 最重要 */
+  border-collapse: collapse;
+}
+
+/* 列幅を固定 */
+.skill-table th,
+.skill-table td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 4px;           /* iPhone用に少し詰める */
+}
+
+/* 列ごとの目安幅 */
+.skill-table th:nth-child(1),
+.skill-table td:nth-child(1) { width: 9%; }   /* 区分 */
+.skill-table th:nth-child(2),
+.skill-table td:nth-child(2) { width: 18%; }  /* スキル名 */
+
+.skill-table th:nth-child(3),
+.skill-table th:nth-child(4),
+.skill-table th:nth-child(5),
+.skill-table th:nth-child(6),
+.skill-table th:nth-child(7),
+.skill-table th:nth-child(8),
+.skill-table th:nth-child(9),
+.skill-table td:nth-child(3),
+.skill-table td:nth-child(4),
+.skill-table td:nth-child(5),
+.skill-table td:nth-child(6),
+.skill-table td:nth-child(7),
+.skill-table td:nth-child(8),
+.skill-table td:nth-child(9) {
+  width: 7%;
+  text-align: center;
+}
+
+/* 要求SP列 */
+.skill-table th:nth-child(10),
+.skill-table td:nth-child(10) {
+  width: 10%;
+  text-align: right;
+}
+``
