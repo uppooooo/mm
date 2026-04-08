@@ -4,14 +4,16 @@
   <meta charset="utf-8">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>スキルシミュレータ</title>
+  <title>スキルシミュレータ（完全版）</title>
 
   <!-- 共通CSS -->
   <link rel="stylesheet" href="./styles.css">
 
   <!-- 追加スタイル -->
   <style>
-    tr.tier-2 td { font-weight: 700; }
+    tr.tier-2 td {
+      font-weight: 700;
+    }
     .reset-btn {
       margin-top: 12px;
       padding: 8px 12px;
@@ -22,7 +24,9 @@
       cursor: pointer;
       font-weight: 600;
     }
-    .reset-btn:hover { background: #fee2e2; }
+    .reset-btn:hover {
+      background: #fee2e2;
+    }
     tfoot td {
       font-weight: 700;
       background: #f8fafc;
@@ -87,11 +91,11 @@
 
 <script>
 (function(){
-  const KEY = 'skill-sp-calc.full.all.v1';
+  const KEY = 'skill-sp-calc.full.final';
 
   /* ===== 全スキル定義 ===== */
   const skills = [
-    // --- 1次 ---
+    /* --- 1次 --- */
     { tier:1, name:'シェル', sp:[3,8,16,24,35,46,60], mp:[7,12,18,25,33,43,55] },
     { tier:1, name:'カウンター', sp:[3,8,16,24,35,46,60], mp:[7,12,18,25,33,43,55] },
     { tier:1, name:'シールド', sp:[5,12,22,35,50], mp:[10,20,30,40,50] },
@@ -108,7 +112,7 @@
     { tier:1, name:'ブースタ', sp:[18,39,63], mp:[50,60,70] },
     { tier:1, name:'ハイスピ', sp:[30,65], mp:[50,70] },
 
-    // --- 2次 ---
+    /* --- 2次 --- */
     { tier:2, name:'プロミネンス', sp:[15,45], mp:[70,100], req:['ブレス'] },
     { tier:2, name:'ヒールシャイン', sp:[15,45], mp:[70,100], req:['ヒーリング'] },
     { tier:2, name:'ショックスタン', sp:[20], mp:[110], req:['スタン'] },
@@ -129,7 +133,7 @@
   let selected = {};
 
   function canSelectSecond(skill){
-    if(skill.tier !== 2) return true;
+    if (skill.tier !== 2) return true;
     return skill.req.some(r =>
       Object.entries(selected).some(([i,lv]) =>
         skills[i].name === r &&
@@ -138,7 +142,23 @@
     );
   }
 
+  function enforceSecondRules(){
+    let changed = false;
+    Object.entries(selected).forEach(([i])=>{
+      const s = skills[i];
+      if (s.tier === 2 && !canSelectSecond(s)){
+        delete selected[i];
+        changed = true;
+      }
+    });
+    if (changed){
+      warn.textContent = '前提条件が崩れたため、2次スキルを解除しました。';
+    }
+  }
+
   function calc(){
+    enforceSecondRules();
+
     let totalSP = 0;
     list.innerHTML = '';
 
@@ -146,7 +166,7 @@
       const s = skills[i];
       totalSP += s.sp[lv];
       const li = document.createElement('li');
-      li.textContent = `${s.name} Lv${Number(lv)+1}（消費MP ${s.mp[lv]}）`;
+      li.textContent = `${s.name} Lv${lv+1}（消費MP ${s.mp[lv]}）`;
       list.appendChild(li);
     });
 
@@ -165,18 +185,16 @@
 
       for(let lv=0; lv<7; lv++){
         const td = document.createElement('td');
-        if(s.sp[lv]!=null){
+        if (s.sp[lv] != null){
           td.textContent = s.sp[lv];
           td.classList.add('lv-cell');
-          if(selected[i]===lv) td.classList.add('active');
-          if(s.tier===2 && !canSelectSecond(s)) td.classList.add('disabled');
-          td.onclick = ()=>{
-            if(s.tier===2 && !canSelectSecond(s)){
-              warn.textContent='2次スキル条件を満たしていません。';
-              return;
-            }
-            if(selected[i]===lv) delete selected[i];
-            else selected[i]=lv;
+          if (selected[i] === lv) td.classList.add('active');
+          if (s.tier === 2 && !canSelectSecond(s)) td.classList.add('disabled');
+          td.onclick = () => {
+            if (s.tier === 2 && !canSelectSecond(s)) return;
+            if (selected[i] === lv) delete selected[i];
+            else selected[i] = lv;
+            enforceSecondRules();
             render(); calc();
           };
         }
@@ -184,30 +202,28 @@
       }
 
       const tdReq = document.createElement('td');
-      tdReq.textContent = selected[i]!=null ? s.sp[selected[i]]:'-';
+      tdReq.textContent = selected[i] != null ? s.sp[selected[i]] : '-';
       tr.appendChild(tdReq);
 
       body.appendChild(tr);
     });
   }
 
-  resetBtn.onclick = ()=>{
+  resetBtn.onclick = () => {
     selected = {};
     warn.textContent = '';
     render(); calc();
   };
 
   const saved = JSON.parse(localStorage.getItem(KEY));
-  if(saved){
+  if (saved){
     ownSP.value = saved.ownSP || '';
     selected = saved.selected || {};
   }
 
   render();
   calc();
-  ownSP.addEventListener('input',()=>{ calc(); render(); });
 })();
 </script>
 </body>
 </html>
-``
