@@ -33,7 +33,8 @@
         <tr>
           <th>区分</th>
           <th>スキル</th>
-          <th>Lv1</th><th>Lv2</th><th>Lv3</th><th>Lv4</th><th>Lv5</th><th>Lv6</th><th>Lv7</th>
+          <th>Lv1</th><th>Lv2</th><th>Lv3</th><th>Lv4</th>
+          <th>Lv5</th><th>Lv6</th><th>Lv7</th>
           <th>消費MP</th>
         </tr>
       </thead>
@@ -46,7 +47,6 @@
     <section class="result-panel">
       <div class="row total">消費SP：<span id="usedSP">0</span></div>
       <div class="row total">残りSP：<span id="remainSP">0</span></div>
-
       <ul id="resultList"></ul>
     </section>
 
@@ -66,15 +66,16 @@
     { tier:2, name:'プロミネンス', sp:[15,45], mp:[70,100], req:['ブレス'] }
   ];
 
-  const ownSP = document.getElementById('ownSP');
-  const warn = document.getElementById('warn');
-  const body = document.getElementById('skillBody');
-  const usedSP = document.getElementById('usedSP');
+  const ownSP    = document.getElementById('ownSP');
+  const warn     = document.getElementById('warn');
+  const body     = document.getElementById('skillBody');
+  const usedSP   = document.getElementById('usedSP');
   const remainSP = document.getElementById('remainSP');
-  const list = document.getElementById('resultList');
+  const list     = document.getElementById('resultList');
 
   let selected = {};
 
+  /* ---------- 保存・復元 ---------- */
   function save(){
     localStorage.setItem(KEY, JSON.stringify({
       ownSP: ownSP.value,
@@ -83,24 +84,26 @@
   }
 
   function load(){
-    const d = JSON.parse(localStorage.getItem(KEY));
-    if(!d) return;
-    ownSP.value = d.ownSP || '';
-    selected = d.selected || {};
+    try {
+      const d = JSON.parse(localStorage.getItem(KEY));
+      if (!d) return;
+      ownSP.value = d.ownSP || '';
+      selected = d.selected || {};
+    } catch {}
   }
 
-  function canSelect(skill, lv){
-    if(skill.tier===2){
-      return skill.req.some(r=>{
-        return Object.entries(selected).some(([k,v])=>{
-          const s = skills[k];
-          return s.name===r && v===s.sp.length-1;
-        });
-      });
-    }
-    return true;
+  /* ---------- 2次スキル条件 ---------- */
+  function canSelect(skill){
+    if (skill.tier !== 2) return true;
+    return skill.req.some(reqName =>
+      Object.entries(selected).some(([i,lv]) =>
+        skills[i].name === reqName &&
+        lv === skills[i].sp.length - 1
+      )
+    );
   }
 
+  /* ---------- 計算 ---------- */
   function calc(){
     let total = 0;
     warn.textContent = '';
@@ -109,49 +112,77 @@
     Object.entries(selected).forEach(([i,lv])=>{
       const s = skills[i];
       total += s.sp[lv];
-      const li=document.createElement('li');
-      li.textContent=`${s.name} Lv${+lv+1}（MP ${s.mp[lv]}）`;
+
+      const li = document.createElement('li');
+      li.textContent = `${s.name} Lv${Number(lv)+1}（MP ${s.mp[lv]}）`;
       list.appendChild(li);
+
+      if (s.tier === 2 && !canSelect(s)){
+        warn.textContent = '2次スキル取得条件（1次スキル最大Lv）を満たしていません。';
+      }
     });
 
     usedSP.textContent = total;
-    remainSP.textContent = Math.max(0,(+ownSP.value||0)-total);
-
+    remainSP.textContent = Math.max(0, (+ownSP.value || 0) - total);
     save();
   }
 
+  /* ---------- 描画（★完全修正版） ---------- */
   function render(){
-    body.innerHTML='';
+    body.innerHTML = '';
+
     skills.forEach((s,i)=>{
-      const tr=document.createElement('tr');
-      tr.innerHTML = `<td>${s.tier===1?'1次':'2次'}</td><td>${s.name}</td>`;
-      for(let lv=0;lv<7;lv++){
-        const td=document.createElement('td');
-        if(s.sp[lv]!=null){
-          td.textContent=s.sp[lv];
-          td.className='lv-cell';
-          if(selected[i]==lv) td.classList.add('active');
-          if(!canSelect(s,lv)) td.classList.add('disabled');
-          td.onclick=()=>{
-            if(!canSelect(s,lv)){
-              warn.textContent='2次スキル条件を満たしていません。';
+      const tr = document.createElement('tr');
+
+      // 区分
+      const tdTier = document.createElement('td');
+      tdTier.textContent = s.tier === 1 ? '1次' : '2次';
+      tr.appendChild(tdTier);
+
+      // スキル名
+      const tdName = document.createElement('td');
+      tdName.textContent = s.name;
+      tr.appendChild(tdName);
+
+      // Lv選択セル
+      for(let lv=0; lv<7; lv++){
+        const td = document.createElement('td');
+
+        if (s.sp[lv] != null){
+          td.textContent = s.sp[lv];
+          td.classList.add('lv-cell');
+
+          if (selected[i] === lv) td.classList.add('active');
+          if (!canSelect(s) && s.tier === 2) td.classList.add('disabled');
+
+          td.addEventListener('click', ()=>{
+            if (s.tier === 2 && !canSelect(s)){
+              warn.textContent = '2次スキル条件を満たしていません。';
               return;
             }
-            selected[i]=lv;
-            render(); calc();
-          };
+            selected[i] = lv;
+            render();
+            calc();
+          });
         }
+
         tr.appendChild(td);
       }
-      tr.innerHTML += `<td>${selected[i]!=null?s.mp[selected[i]]:'-'}</td>`;
+
+      // 消費MP
+      const tdMp = document.createElement('td');
+      tdMp.textContent = selected[i] != null ? s.mp[selected[i]] : '-';
+      tr.appendChild(tdMp);
+
       body.appendChild(tr);
     });
   }
 
+  /* ---------- 初期化 ---------- */
   load();
   render();
   calc();
-  ownSP.addEventListener('input',()=>{calc();render();});
+  ownSP.addEventListener('input', () => { calc(); render(); });
 })();
 </script>
 </body>
