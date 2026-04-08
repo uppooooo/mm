@@ -23,16 +23,11 @@
     </header>
 
     <main>
-      <!-- 入力フォーム（特性を最上段に） -->
-      <form class="form-grid cols-1" novalidate>
+      <!-- 入力フォーム（1行表示） -->
+      <form class="form-grid cols-2" novalidate>
 
-        <!-- 特性（最上段） -->
         <label class="label" for="trait">特性</label>
-        <select
-          id="trait"
-          class="fld"
-          data-index="0"
-        >
+        <select id="trait" class="fld" data-index="0">
           <option value="other">力以外</option>
           <option value="power">力</option>
         </select>
@@ -154,9 +149,8 @@
     });
 
     calc();
-    if (flds[0]) flds[0].focus();
+    flds[0]?.focus();
   })();
   </script>
 </body>
 </html>
-``
