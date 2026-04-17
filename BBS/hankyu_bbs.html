@@ -2,201 +2,205 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>半球の扉BBS ─ みんなの掲示板</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>取引BBS ─ 半球掲示板</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{
-  background:#e8d0d0;color:#3a2020;
-  font-family:'ＭＳ Ｐゴシック','MS PGothic','ヒラギノ角ゴ Pro',Osaka,sans-serif;
-  font-size:12px;line-height:1.6;-webkit-text-size-adjust:100%;
+:root {
+  --bg:#e8d0d0;--bg-wrap:#f8ece8;--bg-section:#fdf4f0;
+  --bg-header-from:#e0c8c0;--bg-header-to:#ecd8d0;
+  --bg-nav:#e8d0c8;--bg-sh-from:#d8b8b0;--bg-sh-to:#c8a098;
+  --bg-detail:#f8f0ec;
+  --line-accent:#a85040;--line-accent-hi:#dd8070;
+  --line-border:#d0b0a8;--line-border-light:#d8c0b8;--line-header-border:#c0a098;
+  --text:#3a2020;--text-muted:#b09888;--text-heading:#8a3030;--text-section:#5a2020;
+  --text-label:#8a4040;
+  --link:#882244;--link-hover:#cc4400;--link-visited:#664488;
+  --accent:#a85040;
+  --btn-from:#a84840;--btn-to:#883030;--btn-border:#984040;
+  --btn-del-from:#b06050;--btn-del-to:#904038;--btn-del-border:#a05048;
+  --font-base:0.75rem;
 }
-a{color:#882244;text-decoration:none;}a:hover{color:#cc4400;text-decoration:underline;}a:visited{color:#664488;}
-.wrap{max-width:760px;margin:0 auto;background:#f8ece8;border-left:1px solid #d0b0a8;border-right:1px solid #d0b0a8;}
-.gl{height:4px;background:linear-gradient(90deg,#a85040,#cc6858,#dd8070,#cc6858,#a85040);}
-.gl2{height:1px;background:#d8c0b8;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:16px;}
+body{background:var(--bg);color:var(--text);font-family:'ＭＳ Ｐゴシック','MS PGothic','ヒラギノ角ゴ Pro',Osaka,sans-serif;font-size:var(--font-base);line-height:1.6;-webkit-text-size-adjust:100%;}
+a{color:var(--link);text-decoration:none;}
+a:hover,a:focus{color:var(--link-hover);text-decoration:underline;outline:none;}
+a:focus-visible{outline:2px solid var(--link-hover);outline-offset:2px;}
+a:visited{color:var(--link-visited);}
+.wrap{max-width:760px;margin:0 auto;background:var(--bg-wrap);border-left:1px solid var(--line-border);border-right:1px solid var(--line-border);}
+.gl{height:4px;background:linear-gradient(90deg,var(--line-accent),var(--line-accent-hi),var(--line-accent));}
+.gl2{height:1px;background:var(--line-border-light);}
+.site-header{background:linear-gradient(180deg,var(--bg-header-from),var(--bg-header-to),var(--bg-header-from));text-align:center;padding:0.875rem 0.625rem 0.625rem;border-bottom:2px solid var(--line-header-border);}
+.site-header h1{font-size:1.125rem;color:var(--text-heading);text-shadow:1px 1px 0 rgba(255,255,255,.5);letter-spacing:0.2em;}
+.site-header .bl{font-size:0.6875rem;margin-top:0.1875rem;}
+.site-header .bl a{color:var(--link);}
+.site-nav{background:var(--bg-nav);border-bottom:1px solid var(--line-border);text-align:center;padding:0.25rem 0;display:flex;justify-content:center;flex-wrap:wrap;}
+.site-nav a{display:inline-block;color:var(--text-heading);font-size:0.6875rem;font-weight:bold;letter-spacing:0.06em;padding:0.3rem 0.875rem;border-right:1px solid var(--line-border);}
+.site-nav a:last-child{border-right:none;}
+.site-nav a:hover,.site-nav a:focus{color:var(--link-hover);background:rgba(168,80,64,.08);text-decoration:none;}
+.site-nav a:focus-visible{outline:2px solid var(--link-hover);outline-offset:-2px;}
+.content{padding:0.625rem 0.875rem;min-height:31.25rem;}
+.sb{border:1px solid var(--line-border);margin-bottom:0.75rem;background:var(--bg-section);}
+.sh{background:linear-gradient(180deg,var(--bg-sh-from),var(--bg-sh-to));color:var(--text-section);font-size:0.6875rem;font-weight:bold;letter-spacing:0.15em;padding:0.3rem 0.625rem;border-bottom:1px solid var(--line-header-border);}
+.sd{padding:0.5rem 0.625rem;}
+.desc{font-size:0.6875rem;color:var(--text-muted);margin-top:0.25rem;}
 
-.hd{background:linear-gradient(180deg,#e0c8c0,#ecd8d0,#e0c8c0);text-align:center;padding:14px 10px 10px;border-bottom:2px solid #c0a098;}
-.hd h1{font-size:18px;color:#8a3030;text-shadow:1px 1px 0 rgba(255,255,255,.5);letter-spacing:3px;}
-.hd .bl{font-size:11px;margin-top:3px;}
-.hd .bl a{color:#882244;}
+.pf .fr{display:flex;align-items:center;margin-bottom:0.4375rem;gap:0.375rem;}
+.pf .fr label{width:4.375rem;font-size:0.6875rem;font-weight:bold;color:var(--text-label);text-align:right;flex-shrink:0;}
+.pf .fr input[type=text],.pf .fr input[type=password]{flex:1;padding:0.375rem 0.5rem;font-size:0.8125rem;background:#fff;border:1px solid var(--line-border);color:var(--text);border-radius:2px;font-family:inherit;}
+.pf .fr input:focus,.pf textarea:focus{border-color:var(--accent);outline:none;box-shadow:0 0 3px rgba(168,80,64,.3);}
+.pf .fr input:focus-visible,.pf textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+.pf textarea{width:100%;height:5rem;padding:0.375rem 0.5rem;font-size:0.8125rem;background:#fff;border:1px solid var(--line-border);color:var(--text);border-radius:2px;font-family:inherit;resize:vertical;}
+.pf .fa{text-align:center;margin-top:0.375rem;}
+.btn{padding:0.5rem 1.5rem;font-size:0.75rem;font-weight:bold;color:#fff;background:linear-gradient(180deg,var(--btn-from),var(--btn-to));border:1px solid var(--btn-border);border-radius:3px;cursor:pointer;letter-spacing:0.06em;appearance:none;-webkit-appearance:none;}
+.btn:hover{filter:brightness(1.1);}
+.btn:active{filter:brightness(0.95);}
+.btn:focus-visible{outline:2px solid var(--link-hover);outline-offset:2px;}
+.btn-sm{padding:0.25rem 0.75rem;font-size:0.6875rem;}
+.btn-del{background:linear-gradient(180deg,var(--btn-del-from),var(--btn-del-to));border-color:var(--btn-del-border);}
+.btn-page{background:linear-gradient(180deg,#888,#666);border-color:#777;}
 
-.nv{background:#e8d0c8;border-bottom:1px solid #d0b0a8;text-align:center;padding:4px 0;display:flex;justify-content:center;flex-wrap:wrap;}
-.nv a{display:inline-block;color:#6a3020;font-size:11px;font-weight:bold;letter-spacing:1px;padding:5px 14px;border-right:1px solid #d0b0a8;}
-.nv a:last-child{border-right:none;}
-.nv a:hover{color:#cc4400;background:rgba(168,80,64,.08);text-decoration:none;}
-
-.ct{padding:10px 14px;min-height:500px;}
-
-.sb{border:1px solid #d0b0a8;margin-bottom:12px;background:#fdf4f0;}
-.sh{background:linear-gradient(180deg,#d8b8b0,#c8a098);color:#5a2020;font-size:11px;font-weight:bold;letter-spacing:2px;padding:5px 10px;border-bottom:1px solid #b89888;}
-.sd{padding:8px 10px;}
-
-.desc{font-size:11px;color:#8a6060;margin-top:4px;}
-
-/* 投稿フォーム */
-.pf .fr{display:flex;align-items:center;margin-bottom:7px;gap:6px;}
-.pf .fr label{width:70px;font-size:11px;font-weight:bold;color:#8a4040;text-align:right;flex-shrink:0;}
-.pf .fr input[type=text],.pf .fr input[type=password]{
-  flex:1;padding:6px 8px;font-size:13px;background:#fff;border:1px solid #d0b0a8;color:#3a2020;border-radius:2px;font-family:inherit;
-}
-.pf .fr input:focus,.pf textarea:focus{border-color:#a85040;outline:none;box-shadow:0 0 3px rgba(168,80,64,.3);}
-.pf textarea{width:100%;height:90px;padding:6px 8px;font-size:13px;background:#fff;border:1px solid #d0b0a8;color:#3a2020;border-radius:2px;font-family:inherit;resize:vertical;}
-.pf .fa{text-align:center;margin-top:6px;}
-.btn{padding:8px 30px;font-size:13px;font-weight:bold;color:#fff;background:linear-gradient(180deg,#a84840,#883030);border:1px solid #984040;border-radius:3px;cursor:pointer;letter-spacing:1px;appearance:none;-webkit-appearance:none;}
-.btn:hover{background:linear-gradient(180deg,#b85850,#984040);}
-.btn:active{background:#883030;}
-
-/* トピック一覧 */
-.tp{border-bottom:1px solid #e8d0c8;padding:0;margin:0;}
+.tp{border-bottom:1px solid var(--line-border-light);}
 .tp:last-child{border-bottom:none;}
-.tp-head{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;padding:7px 4px;cursor:pointer;user-select:none;-webkit-user-select:none;}
+.tp-head{display:flex;align-items:baseline;gap:0.375rem;flex-wrap:wrap;padding:0.4375rem 0.25rem;cursor:pointer;user-select:none;-webkit-user-select:none;}
 .tp-head:hover{background:rgba(168,80,64,.04);}
-.tp .no{color:#b09888;font-size:11px;min-width:24px;text-align:right;flex-shrink:0;}
-.tp .su{font-size:12px;font-weight:bold;color:#882244;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.tp .nm{font-size:11px;color:#a84040;flex-shrink:0;}
-.tp .da{font-size:10px;color:#b09888;flex-shrink:0;}
-.tp .tog{font-size:10px;color:#b09888;flex-shrink:0;margin-left:2px;}
-.tp-body{font-size:12px;color:#4a3a3a;padding:4px 8px 10px 32px;white-space:pre-wrap;word-break:break-word;display:none;background:#f8f0ec;border-top:1px dotted #e0c8c0;}
-.tp-body.open{display:block;}
+.tp-head:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;}
+.tp .no{color:var(--text-muted);font-size:0.6875rem;min-width:1.5rem;text-align:right;flex-shrink:0;}
+.tp .su{font-size:var(--font-base);font-weight:bold;color:var(--link);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tp .nm{font-size:0.6875rem;color:var(--accent);flex-shrink:0;}
+.tp .rc{font-size:0.625rem;color:var(--text-label);flex-shrink:0;}
+.tp .da{font-size:0.625rem;color:var(--text-muted);flex-shrink:0;}
+.tp .tog{font-size:0.625rem;color:var(--text-muted);flex-shrink:0;margin-left:0.125rem;}
+.tp-detail{display:none;background:var(--bg-detail);border-top:1px dotted var(--line-border-light);padding:0.5rem 0.625rem;}
+.tp-detail.open{display:block;}
+.tp-body{font-size:var(--font-base);color:var(--text);padding:0 0 0.375rem;white-space:pre-wrap;word-break:break-word;}
+.tp-actions{display:flex;gap:0.375rem;align-items:center;margin-top:0.25rem;flex-wrap:wrap;}
+.tp-empty{color:var(--text-muted);text-align:center;padding:1.25rem;}
 
-.ft{background:#e8d0c8;border-top:2px solid #c0a098;text-align:center;padding:10px;font-size:10px;color:#8a7068;}
-.ft a{color:#882244;}
+.reply{border-top:1px dotted var(--line-border-light);padding:0.375rem 0 0.25rem 1rem;margin-top:0.25rem;}
+.r-head{font-size:0.6875rem;color:var(--text-label);}
+.r-nm{font-weight:bold;margin-right:0.375rem;}
+.r-da{color:var(--text-muted);}
+.r-body{font-size:var(--font-base);color:var(--text);padding:0.125rem 0;white-space:pre-wrap;word-break:break-word;}
+.r-del{margin-top:0.125rem;}
 
-/* ===== モバイル ===== */
+.reply-form{border-top:1px solid var(--line-border-light);margin-top:0.5rem;padding-top:0.5rem;}
+.rf-title{font-size:0.6875rem;font-weight:bold;color:var(--text-label);margin-bottom:0.25rem;}
+.reply-form .fr{display:flex;align-items:center;margin-bottom:0.3125rem;gap:0.25rem;}
+.reply-form .fr label{width:3.125rem;font-size:0.625rem;font-weight:bold;color:var(--text-label);text-align:right;flex-shrink:0;}
+.reply-form .fr input{flex:1;padding:0.25rem 0.375rem;font-size:var(--font-base);background:#fff;border:1px solid var(--line-border);color:var(--text);border-radius:2px;font-family:inherit;}
+.reply-form .fr input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+.reply-form textarea{width:100%;height:3.125rem;padding:0.25rem 0.375rem;font-size:var(--font-base);background:#fff;border:1px solid var(--line-border);color:var(--text);border-radius:2px;font-family:inherit;resize:vertical;}
+.reply-form textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+.rf-actions{text-align:center;margin-top:0.25rem;}
+
+.pager{display:flex;justify-content:center;align-items:center;gap:0.5rem;padding:0.625rem 0;margin-top:0.5rem;border-top:1px solid var(--line-border-light);}
+.page-info{font-size:0.6875rem;color:var(--text-muted);}
+
+.site-footer{background:var(--bg-nav);border-top:2px solid var(--line-header-border);text-align:center;padding:0.625rem;font-size:0.625rem;color:var(--text-muted);}
+.site-footer a{color:var(--link);}
+
 @media(max-width:600px){
-  body{font-size:15px;}
+  :root{--font-base:0.875rem;}
   .wrap{width:100%;border:none;}
-  .hd h1{font-size:17px;}
-  .nv a{padding:10px 12px;font-size:13px;}
-  .ct{padding:8px 8px;}
-  .sh{font-size:12px;padding:7px 10px;}
-  .sd{padding:8px;}
-  .pf .fr{flex-wrap:wrap;}
-  .pf .fr label{width:100%;text-align:left;margin-bottom:2px;}
-  .pf .fr input[type=text],.pf .fr input[type=password]{width:100%;font-size:16px;}
-  .pf textarea{font-size:16px;height:100px;}
-  .btn{padding:12px 0;width:100%;font-size:15px;}
-  .tp-head{gap:4px;padding:10px 4px;}
-  .tp .su{white-space:normal;font-size:14px;}
-  .tp .nm{font-size:12px;}
-  .tp .da{font-size:11px;width:100%;padding-left:30px;}
-  .tp-body{font-size:14px;padding:6px 8px 12px 12px;}
-  .desc{font-size:13px;}
+  .site-header h1{font-size:1.0625rem;}
+  .site-nav a{padding:0.625rem 0.75rem;font-size:0.8125rem;}
+  .content{padding:0.5rem;}
+  .sh{font-size:0.75rem;padding:0.4375rem 0.625rem;}.sd{padding:0.5rem;}
+  .pf .fr{flex-wrap:wrap;}.pf .fr label{width:100%;text-align:left;margin-bottom:0.125rem;}
+  .pf .fr input[type=text],.pf .fr input[type=password]{width:100%;font-size:1rem;}
+  .pf textarea{font-size:1rem;height:5.625rem;}
+  .btn{padding:0.75rem 0;width:100%;font-size:0.9375rem;}
+  .btn-sm{padding:0.5rem 1rem;width:auto;font-size:0.8125rem;}
+  .tp-head{gap:0.25rem;padding:0.625rem 0.25rem;}
+  .tp .su{white-space:normal;font-size:0.875rem;}.tp .nm{font-size:0.75rem;}
+  .tp .da{font-size:0.6875rem;width:100%;padding-left:1.875rem;}
+  .tp-body{font-size:0.875rem;}.r-body{font-size:0.875rem;}
+  .reply-form .fr{flex-wrap:wrap;}.reply-form .fr label{width:100%;text-align:left;}
+  .reply-form .fr input{font-size:1rem;}.reply-form textarea{font-size:1rem;}
+  .tp-actions{flex-direction:column;align-items:flex-start;}
+  .desc{font-size:0.8125rem;}
 }
 </style>
 </head>
 <body>
 <div class="wrap">
-<div class="gl"></div>
-<div class="hd">
-  <h1>半球の扉BBS</h1>
-  <div class="bl"><a href="index.html">≪ トップページに戻る</a></div>
-</div>
-<div class="gl"></div>
-<div class="nv">
+<div class="gl" role="presentation"></div>
+<header class="site-header">
+  <h1>取引BBS</h1>
+  <p class="bl"><a href="index.html">≪ トップページに戻る</a></p>
+</header>
+<div class="gl" role="presentation"></div>
+<nav class="site-nav" aria-label="メインナビゲーション">
   <a href="index.html">TOP</a>
   <a href="chat_bbs.html">雑談BBS</a>
-  <a href="hankyu_bbs.html">半球の扉BBS</a>
-</div>
-<div class="gl2"></div>
+  <a href="hankyu_bbs.html">取引BBS</a>
+</nav>
+<div class="gl2" role="presentation"></div>
 
-<div class="ct">
-
-  <div class="sb">
-    <div class="sh">ABOUT ─ 半球の扉BBSについて</div>
+<main class="content">
+  <section class="sb">
+    <h2 class="sh">ABOUT ─ 取引BBSについて</h2>
     <div class="sd">
-      <p>半球の扉サーバーでの情報交換・取引・相談にご利用ください。</p>
-      <p class="desc">※ マナーを守って楽しくご利用ください。荒らし行為はスルーでお願いします。</p>
+      <p>取引・売買にご利用ください。</p>
+      <p class="desc">※ トラブルは自己責任でお願いします。マナーを守ってご利用ください。</p>
     </div>
-  </div>
+  </section>
 
-  <div class="sb">
-    <div class="sh">NEW TOPIC ─ 新規投稿</div>
+  <section class="sb">
+    <h2 class="sh">NEW TOPIC ─ 新規投稿</h2>
     <div class="sd">
-      <div class="pf">
-        <div class="fr"><label>名前：</label><input type="text" id="pName" placeholder="名無しさん" maxlength="30"></div>
-        <div class="fr"><label>件名：</label><input type="text" id="pSubj" placeholder="トピックの件名" maxlength="80"></div>
-        <div class="fr" style="align-items:flex-start;"><label style="margin-top:6px;">本文：</label><textarea id="pBody" placeholder="本文を入力してください"></textarea></div>
-        <div class="fr"><label>削除キー：</label><input type="password" id="pDel" placeholder="半角英数8文字以内" maxlength="8" style="max-width:200px;"></div>
-        <div class="fa"><button class="btn" onclick="addTopic()">書き込む</button></div>
-      </div>
+      <form class="pf" id="postForm" onsubmit="return false;">
+        <div class="fr"><label for="pName">名前：</label><input type="text" id="pName" placeholder="名無しさん" maxlength="30"></div>
+        <div class="fr"><label for="pSubj">件名：</label><input type="text" id="pSubj" placeholder="例：○○売ります / ○○買います" maxlength="80"></div>
+        <div class="fr" style="align-items:flex-start;"><label for="pBody" style="margin-top:0.375rem;">本文：</label><textarea id="pBody" placeholder="取引内容の詳細を入力してください"></textarea></div>
+        <div class="fr"><label for="pDel">削除キー：</label><input type="password" id="pDel" placeholder="半角英数8文字以内" maxlength="8" style="max-width:12.5rem;"></div>
+        <div class="fa"><button type="button" class="btn" id="btnPost">書き込む</button></div>
+      </form>
     </div>
-  </div>
+  </section>
 
-  <div class="sb">
-    <div class="sh">TOPICS ─ トピック一覧　<span id="topicCount" style="font-weight:normal;color:#a87060;"></span></div>
-    <div class="sd" id="topicList"></div>
-  </div>
+  <section class="sb">
+    <h2 class="sh">TOPICS ─ トピック一覧　<span id="topicCount" style="font-weight:normal;color:var(--text-label);"></span></h2>
+    <div class="sd" id="topicList" role="list"></div>
+  </section>
+</main>
 
+<div class="gl" role="presentation"></div>
+<footer class="site-footer"><a href="index.html">≪ トップページに戻る</a><br>since 2026 ─ 半球掲示板</footer>
+<div class="gl" role="presentation"></div>
 </div>
 
-<div class="gl"></div>
-<div class="ft"><a href="index.html">≪ トップページに戻る</a><br>since 2026 ─ みんなの掲示板</div>
-<div class="gl"></div>
-</div>
-
+<script src="config.js"></script>
+<script src="bbs-core.js"></script>
 <script>
-const SK='hankyu_bbs_topics';
-function load(){const d=localStorage.getItem(SK);if(d)return JSON.parse(d);return[
-{name:'管理人',subj:'半球の扉 情報交換トピック',body:'半球の扉サーバーの情報交換にご利用ください。\nよろしくお願いします！',date:'2026/04/17 12:00'},
-{name:'管理人',subj:'取引・売買トピック',body:'取引や売買の書き込みはこちらへどうぞ。\nトラブルは自己責任でお願いします。',date:'2026/04/17 12:10'},
-];}
-function save(d){localStorage.setItem(SK,JSON.stringify(d));}
-function now(){const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'/'+p(d.getMonth()+1)+'/'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());}
-function esc(s){const d=document.createElement('div');d.appendChild(document.createTextNode(s));return d.innerHTML;}
-
-function toggleTopic(id){
-  const el=document.getElementById('tb-'+id);
-  const tg=document.getElementById('tg-'+id);
-  if(el.classList.contains('open')){
-    el.classList.remove('open');
-    tg.textContent='[+]';
-  }else{
-    el.classList.add('open');
-    tg.textContent='[-]';
-  }
-}
-
-function render(){
-  const topics=load();
-  const el=document.getElementById('topicList');
-  document.getElementById('topicCount').textContent='('+topics.length+'件)';
-  if(topics.length===0){el.innerHTML='<p style="color:#b09888;text-align:center;padding:20px;">まだ投稿がありません。</p>';return;}
-  let h='';
-  topics.forEach(function(t,i){
-    var num=topics.length-i;
-    h+='<div class="tp">';
-    h+='<div class="tp-head" onclick="toggleTopic('+i+')">';
-    h+='<span class="no">'+num+'</span>';
-    h+='<span class="su">'+esc(t.subj)+'</span>';
-    h+='<span class="nm">'+esc(t.name)+'</span>';
-    h+='<span class="da">'+esc(t.date)+'</span>';
-    h+='<span class="tog" id="tg-'+i+'">[+]</span>';
-    h+='</div>';
-    h+='<div class="tp-body" id="tb-'+i+'">'+esc(t.body).replace(/\n/g,'<br>')+'</div>';
-    h+='</div>';
+(function () {
+  'use strict';
+  var bbs = new BBS({
+    storageKey: 'hankyu_bbs_topics',
+    listEl: document.getElementById('topicList'),
+    countEl: document.getElementById('topicCount'),
+    defaults: [
+      { name: '管理人', subj: '取引ルール', body: '取引・売買の書き込みはこちらへどうぞ。\nトラブルは自己責任でお願いします。\n\n【テンプレート】\n売/買：\nアイテム名：\n希望価格：\n連絡先：', date: '2026:04:17:12:00', delkey: '' },
+      { name: '管理人', subj: '取引報告・評価スレ', body: '取引が完了したら、ここで報告・評価をお願いします。', date: '2026:04:17:12:10', delkey: '' },
+    ]
   });
-  el.innerHTML=h;
-}
 
-function addTopic(){
-  var name=document.getElementById('pName').value.trim()||'名無しさん';
-  var subj=document.getElementById('pSubj').value.trim();
-  var body=document.getElementById('pBody').value.trim();
-  if(!subj){alert('件名を入力してください。');return;}
-  if(!body){alert('本文を入力してください。');return;}
-  var topics=load();
-  topics.unshift({name:name,subj:subj,body:body,date:now()});
-  save(topics);
-  document.getElementById('pSubj').value='';
-  document.getElementById('pBody').value='';
-  render();
-  toggleTopic(0);
-  document.getElementById('topicList').scrollIntoView({behavior:'smooth'});
-}
-
-render();
+  document.getElementById('btnPost').addEventListener('click', function () {
+    var ok = bbs.addTopic(
+      document.getElementById('pName').value.trim(),
+      document.getElementById('pSubj').value.trim(),
+      document.getElementById('pBody').value.trim(),
+      document.getElementById('pDel').value.trim()
+    );
+    if (ok) {
+      document.getElementById('pSubj').value = '';
+      document.getElementById('pBody').value = '';
+      document.getElementById('pDel').value = '';
+      document.getElementById('topicList').scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+})();
 </script>
 </body>
 </html>
