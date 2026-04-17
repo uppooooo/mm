@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>☆みんなの掲示板☆</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:#0a0a14;
+  color:#c8c8d8;
+  font-family:'ＭＳ Ｐゴシック','MS PGothic','ヒラギノ角ゴ Pro',Osaka,sans-serif;
+  font-size:12px;line-height:1.6;
+  -webkit-text-size-adjust:100%;
+}
+a{color:#6ac;text-decoration:none;}
+a:hover{color:#fc6;text-decoration:underline;}
+a:visited{color:#a9c;}
+
+/* wrapper */
+.wrap{max-width:760px;margin:0 auto;background:#0e0e1c;}
+
+/* 金ライン */
+.gl{height:3px;background:linear-gradient(90deg,#1a1a2a,#a08030,#d4a840,#a08030,#1a1a2a);}
+.gl2{height:1px;background:linear-gradient(90deg,transparent,#4a4a60,transparent);}
+
+/* ヘッダー */
+.hd{background:linear-gradient(180deg,#10101e,#181830,#10101e);text-align:center;padding:16px 10px 12px;}
+.hd h1{font-size:20px;color:#d4a840;text-shadow:0 0 6px rgba(212,168,64,.4),1px 1px 2px #000;letter-spacing:3px;}
+.hd .sub{font-size:10px;color:#666;letter-spacing:2px;margin-top:2px;}
+
+/* ナビ */
+.nv{background:#12122a;border-top:1px solid #2a2a40;border-bottom:1px solid #2a2a40;text-align:center;padding:5px 0;display:flex;justify-content:center;flex-wrap:wrap;gap:0;}
+.nv a{display:inline-block;color:#d4a840;font-size:11px;font-weight:bold;letter-spacing:1px;padding:6px 14px;border-right:1px solid #2a2a40;}
+.nv a:last-child{border-right:none;}
+.nv a:hover{color:#fc6;background:rgba(212,168,64,.08);text-decoration:none;}
+
+/* 2カラム */
+.main{display:flex;min-height:400px;}
+.side{width:160px;min-width:140px;background:#0c0c1a;border-right:1px solid #1e1e34;padding:8px 6px;flex-shrink:0;}
+.side .mt{color:#d4a840;font-size:10px;font-weight:bold;letter-spacing:2px;text-align:center;padding:5px 0;border-bottom:1px solid #222240;margin-bottom:6px;}
+.side ul{list-style:none;}
+.side li a{display:block;padding:5px 6px;font-size:11px;color:#999ab8;border-left:2px solid transparent;}
+.side li a:hover{color:#fc6;border-left-color:#d4a840;background:rgba(212,168,64,.04);text-decoration:none;}
+.side .vc{text-align:center;font-size:10px;color:#666;margin-top:14px;padding-top:10px;border-top:1px solid #1e1e34;}
+.side .vc .n{font-family:'Courier New',monospace;color:#6c8;font-size:12px;font-weight:bold;display:block;margin-top:2px;}
+
+.ct{flex:1;padding:10px 14px;min-width:0;}
+
+/* セクション */
+.sb{border:1px solid #222240;margin-bottom:12px;background:rgba(14,14,28,.7);}
+.sh{background:linear-gradient(90deg,#16163a,#1e1e50,#16163a);color:#d4a840;font-size:11px;font-weight:bold;letter-spacing:2px;padding:5px 10px;border-bottom:1px solid #2a2a50;}
+.sd{padding:8px 10px;}
+
+/* BBSカード */
+.bc{display:flex;align-items:center;padding:8px 0;border-bottom:1px dotted #1e1e34;gap:10px;}
+.bc:last-child{border-bottom:none;}
+.bc .ic{width:36px;height:36px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:bold;color:#fff;text-shadow:1px 1px 1px rgba(0,0,0,.5);flex-shrink:0;}
+.bc .ic.c1{background:linear-gradient(135deg,#2a6030,#4a9050);}
+.bc .ic.c2{background:linear-gradient(135deg,#803030,#b04848);}
+.bc h3{font-size:12px;margin-bottom:1px;}
+.bc h3 a{color:#6ac;}
+.bc p{font-size:10px;color:#777;}
+
+/* お知らせ */
+.il{max-height:160px;overflow-y:auto;font-size:11px;padding-right:4px;}
+.il::-webkit-scrollbar{width:5px;}
+.il::-webkit-scrollbar-track{background:#0e0e1c;}
+.il::-webkit-scrollbar-thumb{background:#333;border-radius:3px;}
+.ii{padding:3px 0;border-bottom:1px dotted #1a1a30;}
+.ii .dt{color:#d4a840;font-weight:bold;margin-right:4px;}
+
+/* 注意 */
+.nt{background:rgba(160,50,50,.08);border:1px solid #442222;border-radius:2px;padding:6px 10px;font-size:11px;color:#c88;line-height:1.7;margin-top:6px;}
+
+/* フッター */
+.ft{background:#0a0a14;border-top:1px solid #1e1e34;text-align:center;padding:10px;font-size:10px;color:#444;}
+
+/* ===== iPhone / モバイル対応 ===== */
+@media(max-width:600px){
+  body{font-size:14px;}
+  .wrap{width:100%;}
+  .main{flex-direction:column;}
+  .side{width:100%;border-right:none;border-bottom:1px solid #1e1e34;padding:6px 10px;display:flex;flex-wrap:wrap;align-items:center;gap:0;}
+  .side .mt{width:100%;margin-bottom:4px;}
+  .side ul{display:flex;flex-wrap:wrap;gap:0;width:100%;}
+  .side li{flex:1;min-width:0;}
+  .side li a{text-align:center;padding:8px 4px;font-size:13px;border-left:none;border-bottom:2px solid transparent;}
+  .side li a:hover{border-bottom-color:#d4a840;border-left-color:transparent;}
+  .side .vc{display:none;}
+  .ct{padding:8px 10px;}
+  .nv a{padding:10px 12px;font-size:13px;}
+  .hd h1{font-size:18px;letter-spacing:2px;}
+  .sh{font-size:12px;padding:7px 10px;}
+  .sd{padding:8px;}
+  .bc .ic{width:40px;height:40px;font-size:18px;}
+  .bc h3{font-size:14px;}
+  .bc p{font-size:12px;}
+  .ii{font-size:13px;padding:5px 0;}
+  .nt{font-size:13px;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="gl"></div>
+
+<div class="hd">
+  <h1>☆ みんなの掲示板 ☆</h1>
+  <div class="sub">- Private BBS Portal -</div>
+</div>
+
+<div class="gl"></div>
+
+<div class="nv">
+  <a href="index.html">TOP</a>
+  <a href="chat_bbs.html">雑談BBS</a>
+  <a href="hankyu_bbs.html">半球の扉BBS</a>
+</div>
+
+<div class="gl2"></div>
+
+<div class="main">
+<div class="side">
+  <div class="mt">MENU</div>
+  <ul>
+    <li><a href="index.html">■ TOP</a></li>
+    <li><a href="chat_bbs.html">■ 雑談BBS</a></li>
+    <li><a href="hankyu_bbs.html">■ 半球の扉</a></li>
+  </ul>
+  <div class="vc">VISITOR<span class="n">000,128</span></div>
+</div>
+
+<div class="ct">
+
+  <div class="sb">
+    <div class="sh">MAIN MENU ─ BBS一覧</div>
+    <div class="sd">
+      <div class="bc">
+        <div class="ic c1">雑</div>
+        <div>
+          <h3><a href="chat_bbs.html">雑談BBS</a></h3>
+          <p>雑談や質問など、自由にご利用ください。</p>
+        </div>
+      </div>
+      <div class="bc">
+        <div class="ic c2">半</div>
+        <div>
+          <h3><a href="hankyu_bbs.html">半球の扉BBS</a></h3>
+          <p>半球の扉サーバーでの情報交換にご利用ください。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sb">
+    <div class="sh">INFORMATION ─ お知らせ</div>
+    <div class="sd">
+      <div class="il">
+        <div class="ii"><span class="dt">2026/04/17</span>掲示板を開設しました。よろしくお願いします！</div>
+        <div class="ii"><span class="dt">2026/04/17</span>雑談BBSと半球の扉BBSを設置しました。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sb" id="about">
+    <div class="sh">ABOUT ─ この掲示板について</div>
+    <div class="sd"><p>この掲示板は身内で使用するための非公式BBSサイトです。メンバー同士の交流や情報交換にご活用ください。</p></div>
+  </div>
+
+  <div class="sb" id="rules">
+    <div class="sh">RULES ─ 利用規約</div>
+    <div class="sd">
+      <div class="nt">
+        ■ 荒らし行為、誹謗中傷は禁止です。発見した場合はスルーでお願いします。<br>
+        ■ 個人情報の書き込みはご遠慮ください。<br>
+        ■ マナーを守って楽しくご利用ください。
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div class="gl"></div>
+<div class="ft">since 2026 ─ みんなの掲示板</div>
+<div class="gl"></div>
+</div>
+</body>
+</html>
