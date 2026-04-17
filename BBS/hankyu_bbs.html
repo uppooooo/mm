@@ -3,64 +3,70 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>雑談BBS ─ みんなの掲示板</title>
+<title>半球の扉BBS ─ みんなの掲示板</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{
-  background:#0a0a14;color:#c8c8d8;
+  background:#e8d0d0;color:#3a2020;
   font-family:'ＭＳ Ｐゴシック','MS PGothic','ヒラギノ角ゴ Pro',Osaka,sans-serif;
   font-size:12px;line-height:1.6;-webkit-text-size-adjust:100%;
 }
-a{color:#6ac;text-decoration:none;}a:hover{color:#fc6;text-decoration:underline;}a:visited{color:#a9c;}
-.wrap{max-width:760px;margin:0 auto;background:#0e0e1c;}
-.gl{height:3px;background:linear-gradient(90deg,#1a1a2a,#308030,#50b050,#308030,#1a1a2a);}
-.gl2{height:1px;background:linear-gradient(90deg,transparent,#3a5a3a,transparent);}
+a{color:#882244;text-decoration:none;}a:hover{color:#cc4400;text-decoration:underline;}a:visited{color:#664488;}
+.wrap{max-width:760px;margin:0 auto;background:#f8ece8;border-left:1px solid #d0b0a8;border-right:1px solid #d0b0a8;}
+.gl{height:4px;background:linear-gradient(90deg,#a85040,#cc6858,#dd8070,#cc6858,#a85040);}
+.gl2{height:1px;background:#d8c0b8;}
 
-.hd{background:linear-gradient(180deg,#0a0a14,#101a10,#0a0a14);text-align:center;padding:14px 10px 10px;}
-.hd h1{font-size:18px;color:#6c6;text-shadow:0 0 6px rgba(102,204,102,.35),1px 1px 2px #000;letter-spacing:3px;}
+.hd{background:linear-gradient(180deg,#e0c8c0,#ecd8d0,#e0c8c0);text-align:center;padding:14px 10px 10px;border-bottom:2px solid #c0a098;}
+.hd h1{font-size:18px;color:#8a3030;text-shadow:1px 1px 0 rgba(255,255,255,.5);letter-spacing:3px;}
 .hd .bl{font-size:11px;margin-top:3px;}
+.hd .bl a{color:#882244;}
 
-.nv{background:#0e1a0e;border-top:1px solid #2a3a2a;border-bottom:1px solid #2a3a2a;text-align:center;padding:5px 0;display:flex;justify-content:center;flex-wrap:wrap;}
-.nv a{display:inline-block;color:#d4a840;font-size:11px;font-weight:bold;letter-spacing:1px;padding:6px 14px;border-right:1px solid #2a3a2a;}
+.nv{background:#e8d0c8;border-bottom:1px solid #d0b0a8;text-align:center;padding:4px 0;display:flex;justify-content:center;flex-wrap:wrap;}
+.nv a{display:inline-block;color:#6a3020;font-size:11px;font-weight:bold;letter-spacing:1px;padding:5px 14px;border-right:1px solid #d0b0a8;}
 .nv a:last-child{border-right:none;}
-.nv a:hover{color:#fc6;background:rgba(212,168,64,.08);text-decoration:none;}
+.nv a:hover{color:#cc4400;background:rgba(168,80,64,.08);text-decoration:none;}
 
 .ct{padding:10px 14px;min-height:500px;}
 
-.sb{border:1px solid #1e2e1e;margin-bottom:12px;background:rgba(10,20,10,.6);}
-.sh{background:linear-gradient(90deg,#0e1e0e,#1a3a1a,#0e1e0e);color:#6c6;font-size:11px;font-weight:bold;letter-spacing:2px;padding:5px 10px;border-bottom:1px solid #2a4a2a;}
+.sb{border:1px solid #d0b0a8;margin-bottom:12px;background:#fdf4f0;}
+.sh{background:linear-gradient(180deg,#d8b8b0,#c8a098);color:#5a2020;font-size:11px;font-weight:bold;letter-spacing:2px;padding:5px 10px;border-bottom:1px solid #b89888;}
 .sd{padding:8px 10px;}
+
+.desc{font-size:11px;color:#8a6060;margin-top:4px;}
 
 /* 投稿フォーム */
 .pf .fr{display:flex;align-items:center;margin-bottom:7px;gap:6px;}
-.pf .fr label{width:70px;font-size:11px;font-weight:bold;color:#8a8;text-align:right;flex-shrink:0;}
+.pf .fr label{width:70px;font-size:11px;font-weight:bold;color:#8a4040;text-align:right;flex-shrink:0;}
 .pf .fr input[type=text],.pf .fr input[type=password]{
-  flex:1;padding:6px 8px;font-size:13px;background:#080810;border:1px solid #2a3a2a;color:#c8c8d8;border-radius:2px;font-family:inherit;
+  flex:1;padding:6px 8px;font-size:13px;background:#fff;border:1px solid #d0b0a8;color:#3a2020;border-radius:2px;font-family:inherit;
 }
-.pf .fr input:focus,.pf textarea:focus{border-color:#6c6;outline:none;}
-.pf textarea{width:100%;height:90px;padding:6px 8px;font-size:13px;background:#080810;border:1px solid #2a3a2a;color:#c8c8d8;border-radius:2px;font-family:inherit;resize:vertical;}
+.pf .fr input:focus,.pf textarea:focus{border-color:#a85040;outline:none;box-shadow:0 0 3px rgba(168,80,64,.3);}
+.pf textarea{width:100%;height:90px;padding:6px 8px;font-size:13px;background:#fff;border:1px solid #d0b0a8;color:#3a2020;border-radius:2px;font-family:inherit;resize:vertical;}
 .pf .fa{text-align:center;margin-top:6px;}
-.btn{padding:8px 30px;font-size:13px;font-weight:bold;color:#fff;background:linear-gradient(180deg,#2a7030,#1a5020);border:1px solid #4a4;border-radius:3px;cursor:pointer;letter-spacing:1px;-webkit-appearance:none;}
-.btn:hover{background:linear-gradient(180deg,#3a8040,#2a6030);}
-.btn:active{background:#1a5020;}
+.btn{padding:8px 30px;font-size:13px;font-weight:bold;color:#fff;background:linear-gradient(180deg,#a84840,#883030);border:1px solid #984040;border-radius:3px;cursor:pointer;letter-spacing:1px;appearance:none;-webkit-appearance:none;}
+.btn:hover{background:linear-gradient(180deg,#b85850,#984040);}
+.btn:active{background:#883030;}
 
 /* トピック一覧 */
-.tp{border-bottom:1px solid #1a2a1a;padding:8px 0;}
+.tp{border-bottom:1px solid #e8d0c8;padding:0;margin:0;}
 .tp:last-child{border-bottom:none;}
-.tp .th{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;}
-.tp .no{color:#555;font-size:11px;min-width:24px;text-align:right;flex-shrink:0;}
-.tp .su{font-size:12px;font-weight:bold;color:#8cb8e0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.tp .nm{font-size:11px;color:#6c6;flex-shrink:0;}
-.tp .da{font-size:10px;color:#556;flex-shrink:0;}
-.tp .bd{font-size:12px;color:#aab;padding:4px 0 2px 30px;white-space:pre-wrap;word-break:break-word;}
+.tp-head{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;padding:7px 4px;cursor:pointer;user-select:none;-webkit-user-select:none;}
+.tp-head:hover{background:rgba(168,80,64,.04);}
+.tp .no{color:#b09888;font-size:11px;min-width:24px;text-align:right;flex-shrink:0;}
+.tp .su{font-size:12px;font-weight:bold;color:#882244;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tp .nm{font-size:11px;color:#a84040;flex-shrink:0;}
+.tp .da{font-size:10px;color:#b09888;flex-shrink:0;}
+.tp .tog{font-size:10px;color:#b09888;flex-shrink:0;margin-left:2px;}
+.tp-body{font-size:12px;color:#4a3a3a;padding:4px 8px 10px 32px;white-space:pre-wrap;word-break:break-word;display:none;background:#f8f0ec;border-top:1px dotted #e0c8c0;}
+.tp-body.open{display:block;}
 
-/* フッター */
-.ft{background:#0a0a14;border-top:1px solid #1e2e1e;text-align:center;padding:10px;font-size:10px;color:#444;}
+.ft{background:#e8d0c8;border-top:2px solid #c0a098;text-align:center;padding:10px;font-size:10px;color:#8a7068;}
+.ft a{color:#882244;}
 
 /* ===== モバイル ===== */
 @media(max-width:600px){
   body{font-size:15px;}
-  .wrap{width:100%;}
+  .wrap{width:100%;border:none;}
   .hd h1{font-size:17px;}
   .nv a{padding:10px 12px;font-size:13px;}
   .ct{padding:8px 8px;}
@@ -71,11 +77,12 @@ a{color:#6ac;text-decoration:none;}a:hover{color:#fc6;text-decoration:underline;
   .pf .fr input[type=text],.pf .fr input[type=password]{width:100%;font-size:16px;}
   .pf textarea{font-size:16px;height:100px;}
   .btn{padding:12px 0;width:100%;font-size:15px;}
-  .tp .th{gap:4px;}
+  .tp-head{gap:4px;padding:10px 4px;}
   .tp .su{white-space:normal;font-size:14px;}
   .tp .nm{font-size:12px;}
   .tp .da{font-size:11px;width:100%;padding-left:30px;}
-  .tp .bd{font-size:14px;padding-left:10px;padding-right:4px;}
+  .tp-body{font-size:14px;padding:6px 8px 12px 12px;}
+  .desc{font-size:13px;}
 }
 </style>
 </head>
@@ -83,7 +90,7 @@ a{color:#6ac;text-decoration:none;}a:hover{color:#fc6;text-decoration:underline;
 <div class="wrap">
 <div class="gl"></div>
 <div class="hd">
-  <h1>雑談BBS</h1>
+  <h1>半球の扉BBS</h1>
   <div class="bl"><a href="index.html">≪ トップページに戻る</a></div>
 </div>
 <div class="gl"></div>
@@ -96,35 +103,29 @@ a{color:#6ac;text-decoration:none;}a:hover{color:#fc6;text-decoration:underline;
 
 <div class="ct">
 
-  <!-- 投稿フォーム -->
+  <div class="sb">
+    <div class="sh">ABOUT ─ 半球の扉BBSについて</div>
+    <div class="sd">
+      <p>半球の扉サーバーでの情報交換・取引・相談にご利用ください。</p>
+      <p class="desc">※ マナーを守って楽しくご利用ください。荒らし行為はスルーでお願いします。</p>
+    </div>
+  </div>
+
   <div class="sb">
     <div class="sh">NEW TOPIC ─ 新規投稿</div>
     <div class="sd">
       <div class="pf">
-        <div class="fr">
-          <label>名前：</label>
-          <input type="text" id="pName" placeholder="名無しさん" maxlength="30">
-        </div>
-        <div class="fr">
-          <label>件名：</label>
-          <input type="text" id="pSubj" placeholder="トピックの件名" maxlength="80">
-        </div>
-        <div class="fr" style="align-items:flex-start;">
-          <label style="margin-top:6px;">本文：</label>
-          <textarea id="pBody" placeholder="本文を入力してください"></textarea>
-        </div>
-        <div class="fr">
-          <label>削除キー：</label>
-          <input type="password" id="pDel" placeholder="半角英数8文字以内" maxlength="8" style="max-width:200px;">
-        </div>
+        <div class="fr"><label>名前：</label><input type="text" id="pName" placeholder="名無しさん" maxlength="30"></div>
+        <div class="fr"><label>件名：</label><input type="text" id="pSubj" placeholder="トピックの件名" maxlength="80"></div>
+        <div class="fr" style="align-items:flex-start;"><label style="margin-top:6px;">本文：</label><textarea id="pBody" placeholder="本文を入力してください"></textarea></div>
+        <div class="fr"><label>削除キー：</label><input type="password" id="pDel" placeholder="半角英数8文字以内" maxlength="8" style="max-width:200px;"></div>
         <div class="fa"><button class="btn" onclick="addTopic()">書き込む</button></div>
       </div>
     </div>
   </div>
 
-  <!-- トピック一覧 -->
   <div class="sb">
-    <div class="sh">TOPICS ─ トピック一覧　<span id="topicCount" style="font-weight:normal;color:#8a8;"></span></div>
+    <div class="sh">TOPICS ─ トピック一覧　<span id="topicCount" style="font-weight:normal;color:#a87060;"></span></div>
     <div class="sd" id="topicList"></div>
   </div>
 
@@ -136,48 +137,62 @@ a{color:#6ac;text-decoration:none;}a:hover{color:#fc6;text-decoration:underline;
 </div>
 
 <script>
-const SK='chat_bbs_topics';
+const SK='hankyu_bbs_topics';
 function load(){const d=localStorage.getItem(SK);if(d)return JSON.parse(d);return[
-{name:'管理人',subj:'はじめまして！自己紹介トピック',body:'みなさんはじめまして！\nここで自己紹介をどうぞ。よろしくお願いします。',date:'2026/04/17 12:00'},
-{name:'ゲスト',subj:'雑談なんでもトピック',body:'何でも自由に書き込んでください。\n今日はいい天気ですね。',date:'2026/04/17 12:30'},
-{name:'名無しさん',subj:'おすすめ情報共有',body:'おすすめの情報があったらここに書き込みましょう！',date:'2026/04/17 13:00'},
+{name:'管理人',subj:'半球の扉 情報交換トピック',body:'半球の扉サーバーの情報交換にご利用ください。\nよろしくお願いします！',date:'2026/04/17 12:00'},
+{name:'管理人',subj:'取引・売買トピック',body:'取引や売買の書き込みはこちらへどうぞ。\nトラブルは自己責任でお願いします。',date:'2026/04/17 12:10'},
 ];}
 function save(d){localStorage.setItem(SK,JSON.stringify(d));}
 function now(){const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'/'+p(d.getMonth()+1)+'/'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());}
 function esc(s){const d=document.createElement('div');d.appendChild(document.createTextNode(s));return d.innerHTML;}
 
+function toggleTopic(id){
+  const el=document.getElementById('tb-'+id);
+  const tg=document.getElementById('tg-'+id);
+  if(el.classList.contains('open')){
+    el.classList.remove('open');
+    tg.textContent='[+]';
+  }else{
+    el.classList.add('open');
+    tg.textContent='[-]';
+  }
+}
+
 function render(){
   const topics=load();
   const el=document.getElementById('topicList');
   document.getElementById('topicCount').textContent='('+topics.length+'件)';
-  if(topics.length===0){el.innerHTML='<p style="color:#666;text-align:center;padding:20px;">まだ投稿がありません。</p>';return;}
+  if(topics.length===0){el.innerHTML='<p style="color:#b09888;text-align:center;padding:20px;">まだ投稿がありません。</p>';return;}
   let h='';
-  topics.forEach((t,i)=>{
-    h+=`<div class="tp">
-      <div class="th">
-        <span class="no">${topics.length-i}</span>
-        <span class="su">${esc(t.subj)}</span>
-        <span class="nm">${esc(t.name)}</span>
-        <span class="da">${esc(t.date)}</span>
-      </div>
-      <div class="bd">${esc(t.body).replace(/\n/g,'<br>')}</div>
-    </div>`;
+  topics.forEach(function(t,i){
+    var num=topics.length-i;
+    h+='<div class="tp">';
+    h+='<div class="tp-head" onclick="toggleTopic('+i+')">';
+    h+='<span class="no">'+num+'</span>';
+    h+='<span class="su">'+esc(t.subj)+'</span>';
+    h+='<span class="nm">'+esc(t.name)+'</span>';
+    h+='<span class="da">'+esc(t.date)+'</span>';
+    h+='<span class="tog" id="tg-'+i+'">[+]</span>';
+    h+='</div>';
+    h+='<div class="tp-body" id="tb-'+i+'">'+esc(t.body).replace(/\n/g,'<br>')+'</div>';
+    h+='</div>';
   });
   el.innerHTML=h;
 }
 
 function addTopic(){
-  const name=document.getElementById('pName').value.trim()||'名無しさん';
-  const subj=document.getElementById('pSubj').value.trim();
-  const body=document.getElementById('pBody').value.trim();
+  var name=document.getElementById('pName').value.trim()||'名無しさん';
+  var subj=document.getElementById('pSubj').value.trim();
+  var body=document.getElementById('pBody').value.trim();
   if(!subj){alert('件名を入力してください。');return;}
   if(!body){alert('本文を入力してください。');return;}
-  const topics=load();
-  topics.unshift({name,subj,body,date:now()});
+  var topics=load();
+  topics.unshift({name:name,subj:subj,body:body,date:now()});
   save(topics);
   document.getElementById('pSubj').value='';
   document.getElementById('pBody').value='';
   render();
+  toggleTopic(0);
   document.getElementById('topicList').scrollIntoView({behavior:'smooth'});
 }
 
