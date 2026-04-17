@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>雑談BBS ─ みんなの掲示板</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:#0a0a14;color:#c8c8d8;
+  font-family:'ＭＳ Ｐゴシック','MS PGothic','ヒラギノ角ゴ Pro',Osaka,sans-serif;
+  font-size:12px;line-height:1.6;-webkit-text-size-adjust:100%;
+}
+a{color:#6ac;text-decoration:none;}a:hover{color:#fc6;text-decoration:underline;}a:visited{color:#a9c;}
+.wrap{max-width:760px;margin:0 auto;background:#0e0e1c;}
+.gl{height:3px;background:linear-gradient(90deg,#1a1a2a,#308030,#50b050,#308030,#1a1a2a);}
+.gl2{height:1px;background:linear-gradient(90deg,transparent,#3a5a3a,transparent);}
+
+.hd{background:linear-gradient(180deg,#0a0a14,#101a10,#0a0a14);text-align:center;padding:14px 10px 10px;}
+.hd h1{font-size:18px;color:#6c6;text-shadow:0 0 6px rgba(102,204,102,.35),1px 1px 2px #000;letter-spacing:3px;}
+.hd .bl{font-size:11px;margin-top:3px;}
+
+.nv{background:#0e1a0e;border-top:1px solid #2a3a2a;border-bottom:1px solid #2a3a2a;text-align:center;padding:5px 0;display:flex;justify-content:center;flex-wrap:wrap;}
+.nv a{display:inline-block;color:#d4a840;font-size:11px;font-weight:bold;letter-spacing:1px;padding:6px 14px;border-right:1px solid #2a3a2a;}
+.nv a:last-child{border-right:none;}
+.nv a:hover{color:#fc6;background:rgba(212,168,64,.08);text-decoration:none;}
+
+.ct{padding:10px 14px;min-height:500px;}
+
+.sb{border:1px solid #1e2e1e;margin-bottom:12px;background:rgba(10,20,10,.6);}
+.sh{background:linear-gradient(90deg,#0e1e0e,#1a3a1a,#0e1e0e);color:#6c6;font-size:11px;font-weight:bold;letter-spacing:2px;padding:5px 10px;border-bottom:1px solid #2a4a2a;}
+.sd{padding:8px 10px;}
+
+/* 投稿フォーム */
+.pf .fr{display:flex;align-items:center;margin-bottom:7px;gap:6px;}
+.pf .fr label{width:70px;font-size:11px;font-weight:bold;color:#8a8;text-align:right;flex-shrink:0;}
+.pf .fr input[type=text],.pf .fr input[type=password]{
+  flex:1;padding:6px 8px;font-size:13px;background:#080810;border:1px solid #2a3a2a;color:#c8c8d8;border-radius:2px;font-family:inherit;
+}
+.pf .fr input:focus,.pf textarea:focus{border-color:#6c6;outline:none;}
+.pf textarea{width:100%;height:90px;padding:6px 8px;font-size:13px;background:#080810;border:1px solid #2a3a2a;color:#c8c8d8;border-radius:2px;font-family:inherit;resize:vertical;}
+.pf .fa{text-align:center;margin-top:6px;}
+.btn{padding:8px 30px;font-size:13px;font-weight:bold;color:#fff;background:linear-gradient(180deg,#2a7030,#1a5020);border:1px solid #4a4;border-radius:3px;cursor:pointer;letter-spacing:1px;-webkit-appearance:none;}
+.btn:hover{background:linear-gradient(180deg,#3a8040,#2a6030);}
+.btn:active{background:#1a5020;}
+
+/* トピック一覧 */
+.tp{border-bottom:1px solid #1a2a1a;padding:8px 0;}
+.tp:last-child{border-bottom:none;}
+.tp .th{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;}
+.tp .no{color:#555;font-size:11px;min-width:24px;text-align:right;flex-shrink:0;}
+.tp .su{font-size:12px;font-weight:bold;color:#8cb8e0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tp .nm{font-size:11px;color:#6c6;flex-shrink:0;}
+.tp .da{font-size:10px;color:#556;flex-shrink:0;}
+.tp .bd{font-size:12px;color:#aab;padding:4px 0 2px 30px;white-space:pre-wrap;word-break:break-word;}
+
+/* フッター */
+.ft{background:#0a0a14;border-top:1px solid #1e2e1e;text-align:center;padding:10px;font-size:10px;color:#444;}
+
+/* ===== モバイル ===== */
+@media(max-width:600px){
+  body{font-size:15px;}
+  .wrap{width:100%;}
+  .hd h1{font-size:17px;}
+  .nv a{padding:10px 12px;font-size:13px;}
+  .ct{padding:8px 8px;}
+  .sh{font-size:12px;padding:7px 10px;}
+  .sd{padding:8px;}
+  .pf .fr{flex-wrap:wrap;}
+  .pf .fr label{width:100%;text-align:left;margin-bottom:2px;}
+  .pf .fr input[type=text],.pf .fr input[type=password]{width:100%;font-size:16px;}
+  .pf textarea{font-size:16px;height:100px;}
+  .btn{padding:12px 0;width:100%;font-size:15px;}
+  .tp .th{gap:4px;}
+  .tp .su{white-space:normal;font-size:14px;}
+  .tp .nm{font-size:12px;}
+  .tp .da{font-size:11px;width:100%;padding-left:30px;}
+  .tp .bd{font-size:14px;padding-left:10px;padding-right:4px;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="gl"></div>
+<div class="hd">
+  <h1>雑談BBS</h1>
+  <div class="bl"><a href="index.html">≪ トップページに戻る</a></div>
+</div>
+<div class="gl"></div>
+<div class="nv">
+  <a href="index.html">TOP</a>
+  <a href="chat_bbs.html">雑談BBS</a>
+  <a href="hankyu_bbs.html">半球の扉BBS</a>
+</div>
+<div class="gl2"></div>
+
+<div class="ct">
+
+  <!-- 投稿フォーム -->
+  <div class="sb">
+    <div class="sh">NEW TOPIC ─ 新規投稿</div>
+    <div class="sd">
+      <div class="pf">
+        <div class="fr">
+          <label>名前：</label>
+          <input type="text" id="pName" placeholder="名無しさん" maxlength="30">
+        </div>
+        <div class="fr">
+          <label>件名：</label>
+          <input type="text" id="pSubj" placeholder="トピックの件名" maxlength="80">
+        </div>
+        <div class="fr" style="align-items:flex-start;">
+          <label style="margin-top:6px;">本文：</label>
+          <textarea id="pBody" placeholder="本文を入力してください"></textarea>
+        </div>
+        <div class="fr">
+          <label>削除キー：</label>
+          <input type="password" id="pDel" placeholder="半角英数8文字以内" maxlength="8" style="max-width:200px;">
+        </div>
+        <div class="fa"><button class="btn" onclick="addTopic()">書き込む</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- トピック一覧 -->
+  <div class="sb">
+    <div class="sh">TOPICS ─ トピック一覧　<span id="topicCount" style="font-weight:normal;color:#8a8;"></span></div>
+    <div class="sd" id="topicList"></div>
+  </div>
+
+</div>
+
+<div class="gl"></div>
+<div class="ft"><a href="index.html">≪ トップページに戻る</a><br>since 2026 ─ みんなの掲示板</div>
+<div class="gl"></div>
+</div>
+
+<script>
+const SK='chat_bbs_topics';
+function load(){const d=localStorage.getItem(SK);if(d)return JSON.parse(d);return[
+{name:'管理人',subj:'はじめまして！自己紹介トピック',body:'みなさんはじめまして！\nここで自己紹介をどうぞ。よろしくお願いします。',date:'2026/04/17 12:00'},
+{name:'ゲスト',subj:'雑談なんでもトピック',body:'何でも自由に書き込んでください。\n今日はいい天気ですね。',date:'2026/04/17 12:30'},
+{name:'名無しさん',subj:'おすすめ情報共有',body:'おすすめの情報があったらここに書き込みましょう！',date:'2026/04/17 13:00'},
+];}
+function save(d){localStorage.setItem(SK,JSON.stringify(d));}
+function now(){const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'/'+p(d.getMonth()+1)+'/'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());}
+function esc(s){const d=document.createElement('div');d.appendChild(document.createTextNode(s));return d.innerHTML;}
+
+function render(){
+  const topics=load();
+  const el=document.getElementById('topicList');
+  document.getElementById('topicCount').textContent='('+topics.length+'件)';
+  if(topics.length===0){el.innerHTML='<p style="color:#666;text-align:center;padding:20px;">まだ投稿がありません。</p>';return;}
+  let h='';
+  topics.forEach((t,i)=>{
+    h+=`<div class="tp">
+      <div class="th">
+        <span class="no">${topics.length-i}</span>
+        <span class="su">${esc(t.subj)}</span>
+        <span class="nm">${esc(t.name)}</span>
+        <span class="da">${esc(t.date)}</span>
+      </div>
+      <div class="bd">${esc(t.body).replace(/\n/g,'<br>')}</div>
+    </div>`;
+  });
+  el.innerHTML=h;
+}
+
+function addTopic(){
+  const name=document.getElementById('pName').value.trim()||'名無しさん';
+  const subj=document.getElementById('pSubj').value.trim();
+  const body=document.getElementById('pBody').value.trim();
+  if(!subj){alert('件名を入力してください。');return;}
+  if(!body){alert('本文を入力してください。');return;}
+  const topics=load();
+  topics.unshift({name,subj,body,date:now()});
+  save(topics);
+  document.getElementById('pSubj').value='';
+  document.getElementById('pBody').value='';
+  render();
+  document.getElementById('topicList').scrollIntoView({behavior:'smooth'});
+}
+
+render();
+</script>
+</body>
+</html>
