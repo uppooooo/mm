@@ -275,16 +275,27 @@
         });
       }
 
-      // レスフォーム
+      // レスフォーム（折りたたみ式）
       var rf = el('div', { className: 'reply-form' });
-      rf.appendChild(el('div', { className: 'rf-title', textContent: '返信する' }));
+      var rfToggle = el('button', {
+        className: 'btn btn-sm rf-toggle',
+        textContent: '返信する ▼',
+        onClick: function (e) {
+          e.stopPropagation();
+          var isOpen = rfBody.classList.toggle('open');
+          rfToggle.textContent = isOpen ? '返信を閉じる ▲' : '返信する ▼';
+        }
+      });
+      rf.appendChild(rfToggle);
+
+      var rfBody = el('div', { className: 'rf-body' });
       var rnInput = el('input', { type: 'text', placeholder: '名無しさん', maxlength: '30' });
       var rbArea = el('textarea', { placeholder: '返信を入力' });
       var rdInput = el('input', { type: 'password', placeholder: '削除キー', maxlength: '8' });
 
-      rf.appendChild(el('div', { className: 'fr' }, [el('label', { textContent: '名前：' }), rnInput]));
-      rf.appendChild(rbArea);
-      rf.appendChild(el('div', { className: 'fr' }, [el('label', { textContent: '削除キー：' }), rdInput]));
+      rfBody.appendChild(el('div', { className: 'fr' }, [el('label', { textContent: '名前：' }), rnInput]));
+      rfBody.appendChild(rbArea);
+      rfBody.appendChild(el('div', { className: 'fr' }, [el('label', { textContent: '削除キー：' }), rdInput]));
       var rfBtn = el('div', { className: 'rf-actions' });
       rfBtn.appendChild(el('button', {
         className: 'btn btn-sm',
@@ -296,7 +307,8 @@
           }
         }
       }));
-      rf.appendChild(rfBtn);
+      rfBody.appendChild(rfBtn);
+      rf.appendChild(rfBody);
       detail.appendChild(rf);
 
       article.appendChild(detail);
