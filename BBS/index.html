@@ -86,6 +86,9 @@ a:visited { color: var(--link-visited); }
 .bc .ic { width: 2.125rem; height: 2.125rem; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 0.9375rem; font-weight: bold; color: #fff; text-shadow: 1px 1px 1px rgba(0,0,0,.3); flex-shrink: 0; }
 .bc .ic.c1 { background: linear-gradient(135deg, #4a8a4a, #6aaa6a); }
 .bc .ic.c2 { background: linear-gradient(135deg, #aa4040, #cc6060); }
+.bc .ic.c3 { background: linear-gradient(135deg, #4060a8, #6080c8); }
+.bc .ic.c4 { background: linear-gradient(135deg, #6040a8, #8060c8); }
+.bc .ic.c5 { background: linear-gradient(135deg, #408040, #60a060); }
 .bc h3 { font-size: var(--font-base); margin-bottom: 0.0625rem; }
 .bc h3 a { color: var(--link); }
 .bc p { font-size: 0.625rem; color: var(--text-muted); }
@@ -145,6 +148,9 @@ a:visited { color: var(--link-visited); }
   <a href="./index.html">TOP</a>
   <a href="./chat_bbs.html">雑談BBS</a>
   <a href="./hankyu_bbs.html">取引BBS</a>
+  <a href="./drop_db.html">ドロップDB</a>
+  <a href="./mix_db.html">ミックス表</a>
+  <a href="./mix_tree.html">MIXツリー</a>
 </nav>
 
 <div class="gl2" role="presentation"></div>
@@ -156,6 +162,9 @@ a:visited { color: var(--link-visited); }
     <li><a href="./index.html">■ TOP</a></li>
     <li><a href="./chat_bbs.html">■ 雑談BBS</a></li>
     <li><a href="./hankyu_bbs.html">■ 取引BBS</a></li>
+    <li><a href="./drop_db.html">■ ドロップDB</a></li>
+    <li><a href="./mix_db.html">■ ミックス表</a></li>
+    <li><a href="./mix_tree.html">■ MIXツリー</a></li>
   </ul>
 </aside>
 
@@ -171,6 +180,18 @@ a:visited { color: var(--link-visited); }
       <div class="bc">
         <div class="ic c2" aria-hidden="true">取</div>
         <div><h3><a href="./hankyu_bbs.html">取引BBS</a></h3><p id="hankyuDesc"></p></div>
+      </div>
+      <div class="bc">
+        <div class="ic c3" aria-hidden="true">D</div>
+        <div><h3><a href="./drop_db.html">ドロップ情報DB</a></h3><p>モンスターのドロップ情報を共有・検索できます。</p></div>
+      </div>
+      <div class="bc">
+        <div class="ic c4" aria-hidden="true">M</div>
+        <div><h3><a href="./mix_db.html">ミックス表DB</a></h3><p>コアの配合レシピを共有・検索できます。</p></div>
+      </div>
+      <div class="bc">
+        <div class="ic c5" aria-hidden="true">T</div>
+        <div><h3><a href="./mix_tree.html">MIXツリー</a></h3><p>配合ツリーを自動生成しレベル計算できます。</p></div>
       </div>
     </div>
   </section>
