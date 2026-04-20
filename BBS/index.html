@@ -1,1 +1,259 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>半球掲示板</title>
+<style>
+:root {
+  /* --- カラーテーマ (トップページ: ベージュ/金) --- */
+  --bg: #e8d8c4;
+  --bg-wrap: #f5ead8;
+  --bg-side: #efe0c8;
+  --bg-section: #faf4e8;
+  --bg-header-from: #d8c8a8;
+  --bg-header-to: #e8d8c0;
+  --bg-nav: #ddd0b8;
+  --bg-sh-from: #d8c8a0;
+  --bg-sh-to: #c8b888;
+  --bg-notice: #fff8e8;
+  --line-accent: #c8a860;
+  --line-accent-hi: #f0d888;
+  --line-border: #c8b898;
+  --line-border-light: #d0c0a0;
+  --line-header-border: #c0a878;
+  --text: #3a2a1a;
+  --text-muted: #8a7a60;
+  --text-heading: #6a4a20;
+  --text-section: #4a3a18;
+  --text-notice: #6a4a20;
+  --text-side: #5a4a30;
+  --link: #2244aa;
+  --link-hover: #cc4400;
+  --link-visited: #553388;
+  --accent: #c8a860;
+  --notice-border: #e0c888;
+  --font-base: 0.75rem;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'ＭＳ Ｐゴシック', 'MS PGothic', 'ヒラギノ角ゴ Pro', Osaka, sans-serif;
+  font-size: var(--font-base); line-height: 1.6; -webkit-text-size-adjust: 100%;
+}
+a { color: var(--link); text-decoration: none; }
+a:hover, a:focus { color: var(--link-hover); text-decoration: underline; outline: none; }
+a:focus-visible { outline: 2px solid var(--link-hover); outline-offset: 2px; }
+a:visited { color: var(--link-visited); }
 
+.wrap { max-width: 760px; margin: 0 auto; background: var(--bg-wrap); border-left: 1px solid var(--line-border); border-right: 1px solid var(--line-border); }
+.gl { height: 4px; background: linear-gradient(90deg, var(--line-accent), var(--line-accent-hi), var(--line-accent)); }
+.gl2 { height: 1px; background: var(--line-border-light); }
+
+/* Header */
+.site-header { background: linear-gradient(180deg, var(--bg-header-from), var(--bg-header-to), var(--bg-header-from)); text-align: center; padding: 0.9rem 0.6rem 0.6rem; border-bottom: 2px solid var(--line-header-border); }
+.site-header h1 { font-size: 1.125rem; color: var(--text-heading); text-shadow: 1px 1px 0 rgba(255,255,255,.5); letter-spacing: 0.2em; }
+.site-header .sub { font-size: 0.625rem; color: var(--text-muted); letter-spacing: 0.15em; margin-top: 0.125rem; }
+
+/* Nav */
+.site-nav { background: var(--bg-nav); border-bottom: 1px solid var(--line-border); text-align: center; padding: 0.25rem 0; display: flex; justify-content: center; flex-wrap: wrap; }
+.site-nav a { display: inline-block; color: var(--text-heading); font-size: 0.6875rem; font-weight: bold; letter-spacing: 0.06em; padding: 0.3rem 0.9rem; border-right: 1px solid var(--line-border); }
+.site-nav a:last-child { border-right: none; }
+.site-nav a:hover, .site-nav a:focus { color: var(--link-hover); background: rgba(200,168,96,.15); text-decoration: none; }
+.site-nav a:focus-visible { outline: 2px solid var(--link-hover); outline-offset: -2px; }
+
+/* Layout */
+.main-layout { display: flex; min-height: 25rem; }
+.sidebar { width: 9.7rem; min-width: 8.75rem; background: var(--bg-side); border-right: 1px solid var(--line-border-light); padding: 0.5rem 0.375rem; flex-shrink: 0; }
+.sidebar .mt { color: var(--text-heading); font-size: 0.625rem; font-weight: bold; letter-spacing: 0.15em; text-align: center; padding: 0.3rem 0; border-bottom: 1px solid var(--line-border-light); margin-bottom: 0.375rem; }
+.sidebar ul { list-style: none; }
+.sidebar li a { display: block; padding: 0.25rem 0.375rem; font-size: 0.6875rem; color: var(--text-side); border-left: 2px solid transparent; }
+.sidebar li a:hover, .sidebar li a:focus { color: var(--link-hover); border-left-color: var(--accent); background: rgba(200,168,96,.1); text-decoration: none; }
+.sidebar li a:focus-visible { outline: 2px solid var(--link-hover); outline-offset: -2px; }
+
+.content { flex: 1; padding: 0.625rem 0.875rem; min-width: 0; }
+
+/* Section */
+.sb { border: 1px solid var(--line-border); margin-bottom: 0.75rem; background: var(--bg-section); }
+.sh { background: linear-gradient(180deg, var(--bg-sh-from), var(--bg-sh-to)); color: var(--text-section); font-size: 0.6875rem; font-weight: bold; letter-spacing: 0.15em; padding: 0.3rem 0.625rem; border-bottom: 1px solid var(--line-border); }
+.sd { padding: 0.5rem 0.625rem; font-size: var(--font-base); }
+
+/* BBS card */
+.bc { display: flex; align-items: center; padding: 0.5rem 0; border-bottom: 1px dotted var(--line-border-light); gap: 0.625rem; }
+.bc:last-child { border-bottom: none; }
+.bc .ic { width: 2.125rem; height: 2.125rem; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 0.9375rem; font-weight: bold; color: #fff; text-shadow: 1px 1px 1px rgba(0,0,0,.3); flex-shrink: 0; }
+.bc .ic.c1 { background: linear-gradient(135deg, #4a8a4a, #6aaa6a); }
+.bc .ic.c2 { background: linear-gradient(135deg, #aa4040, #cc6060); }
+.bc h3 { font-size: var(--font-base); margin-bottom: 0.0625rem; }
+.bc h3 a { color: var(--link); }
+.bc p { font-size: 0.625rem; color: var(--text-muted); }
+
+/* Info */
+.il { max-height: 10rem; overflow-y: auto; font-size: 0.6875rem; }
+.ii { padding: 0.1875rem 0; border-bottom: 1px dotted var(--line-border-light); }
+.ii .dt { color: var(--text-heading); font-weight: bold; margin-right: 0.25rem; }
+
+/* Notice */
+.nt { background: var(--bg-notice); border: 1px solid var(--notice-border); border-radius: 2px; padding: 0.375rem 0.625rem; font-size: 0.6875rem; color: var(--text-notice); line-height: 1.7; }
+
+/* Link box */
+.link-box { border: 1px solid var(--line-border); background: var(--bg-section); margin-bottom: 0.75rem; padding: 0.5rem 0.75rem; font-size: 0.6875rem; text-align: center; }
+.link-box a { color: var(--link); font-weight: bold; }
+
+/* Footer */
+.site-footer { background: var(--bg-nav); border-top: 2px solid var(--line-header-border); text-align: center; padding: 0.625rem; font-size: 0.625rem; color: var(--text-muted); }
+.site-footer a { color: var(--link); }
+
+@media (max-width: 600px) {
+  :root { --font-base: 0.875rem; }
+  .wrap { width: 100%; border: none; }
+  .main-layout { flex-direction: column; }
+  .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--line-border-light); padding: 0.375rem 0.625rem; display: flex; flex-wrap: wrap; align-items: center; }
+  .sidebar .mt { width: 100%; margin-bottom: 0.25rem; }
+  .sidebar ul { display: flex; flex-wrap: wrap; width: 100%; }
+  .sidebar li { flex: 1; min-width: 0; }
+  .sidebar li a { text-align: center; padding: 0.5rem 0.25rem; font-size: 0.8125rem; border-left: none; border-bottom: 2px solid transparent; }
+  .sidebar li a:hover, .sidebar li a:focus { border-bottom-color: var(--accent); }
+  .content { padding: 0.5rem 0.625rem; }
+  .site-nav a { padding: 0.625rem 0.75rem; font-size: 0.8125rem; }
+  .site-header h1 { font-size: 1.0625rem; }
+  .sh { font-size: 0.75rem; padding: 0.4375rem 0.625rem; }
+  .sd { padding: 0.5rem; }
+  .bc .ic { width: 2.5rem; height: 2.5rem; font-size: 1.125rem; }
+  .bc h3 { font-size: 0.875rem; }
+  .bc p { font-size: 0.75rem; }
+  .ii { font-size: 0.8125rem; padding: 0.3125rem 0; }
+  .nt { font-size: 0.8125rem; }
+  .link-box { font-size: 0.8125rem; padding: 0.625rem; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="gl" role="presentation"></div>
+
+<header class="site-header">
+  <h1 id="siteTitle">半球掲示板</h1>
+  <p class="sub" id="siteSub">- Private BBS Portal -</p>
+</header>
+
+<div class="gl" role="presentation"></div>
+
+<nav class="site-nav" aria-label="メインナビゲーション">
+  <a href="index.html">TOP</a>
+  <a href="chat_bbs.html">雑談BBS</a>
+  <a href="hankyu_bbs.html">取引BBS</a>
+</nav>
+
+<div class="gl2" role="presentation"></div>
+
+<div class="main-layout">
+<aside class="sidebar" aria-label="サイドメニュー">
+  <div class="mt">MENU</div>
+  <ul>
+    <li><a href="index.html">■ TOP</a></li>
+    <li><a href="chat_bbs.html">■ 雑談BBS</a></li>
+    <li><a href="hankyu_bbs.html">■ 取引BBS</a></li>
+  </ul>
+</aside>
+
+<main class="content">
+
+  <section class="sb">
+    <h2 class="sh">MAIN MENU ─ BBS一覧</h2>
+    <div class="sd">
+      <div class="bc">
+        <div class="ic c1" aria-hidden="true">雑</div>
+        <div><h3><a href="chat_bbs.html">雑談BBS</a></h3><p id="chatDesc"></p></div>
+      </div>
+      <div class="bc">
+        <div class="ic c2" aria-hidden="true">取</div>
+        <div><h3><a href="hankyu_bbs.html">取引BBS</a></h3><p id="hankyuDesc"></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sb">
+    <h2 class="sh">INFORMATION ─ お知らせ</h2>
+    <div class="sd"><div class="il" id="infoList"></div></div>
+  </section>
+
+  <section class="sb" id="about">
+    <h2 class="sh">ABOUT ─ この掲示板について</h2>
+    <div class="sd" id="aboutBody"></div>
+  </section>
+
+  <section class="sb" id="rules">
+    <h2 class="sh">RULES ─ 利用規約</h2>
+    <div class="sd"><div class="nt" id="rulesBody"></div></div>
+  </section>
+
+  <div class="link-box">
+    LINK: <a href="https://uppooooo.github.io/mm/" target="_blank" rel="noopener">@uppo tools</a>
+  </div>
+
+</main>
+</div>
+
+<div class="gl" role="presentation"></div>
+<footer class="site-footer">since 2026 ─ 半球掲示板</footer>
+<div class="gl" role="presentation"></div>
+</div>
+
+<script src="config.js"></script>
+<script>
+(function () {
+  'use strict';
+  var C = (typeof SITE_CONFIG !== 'undefined') ? SITE_CONFIG : {};
+
+  var titleEl = document.getElementById('siteTitle');
+  var subEl = document.getElementById('siteSub');
+  if (titleEl) titleEl.textContent = C.siteName || titleEl.textContent;
+  if (subEl) subEl.textContent = C.siteSubtitle || subEl.textContent;
+
+  // INFORMATION (DOM API)
+  var il = document.getElementById('infoList');
+  if (il && C.information) {
+    C.information.forEach(function (item) {
+      var div = document.createElement('div');
+      div.className = 'ii';
+      var sp = document.createElement('span');
+      sp.className = 'dt';
+      sp.textContent = item.date;
+      div.appendChild(sp);
+      div.appendChild(document.createTextNode(item.text));
+      il.appendChild(div);
+    });
+  }
+
+  // ABOUT (DOM API)
+  var ab = document.getElementById('aboutBody');
+  if (ab && C.about) {
+    var p = document.createElement('p');
+    C.about.split('\n').forEach(function (line, i) {
+      if (i > 0) p.appendChild(document.createElement('br'));
+      p.appendChild(document.createTextNode(line));
+    });
+    ab.appendChild(p);
+  }
+
+  // RULES (DOM API)
+  var rb = document.getElementById('rulesBody');
+  if (rb && C.rules) {
+    C.rules.forEach(function (r, i) {
+      if (i > 0) rb.appendChild(document.createElement('br'));
+      rb.appendChild(document.createTextNode('■ ' + r));
+    });
+  }
+
+  // BBS descriptions
+  var cd = document.getElementById('chatDesc');
+  var hd = document.getElementById('hankyuDesc');
+  if (cd) cd.textContent = C.chatBbsDesc || '';
+  if (hd) hd.textContent = C.hankyuBbsDesc || '';
+})();
+</script>
+</body>
+</html>
