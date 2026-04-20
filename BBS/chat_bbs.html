@@ -1,1 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>雑談BBS ─ 半球掲示板</title>
+<style>
+:root {
+  --bg:#d8e8d0;--bg-wrap:#f0f5e8;--bg-section:#f8faf0;
+  --bg-header-from:#c8d8b8;--bg-header-to:#d8e8c8;
+  --bg-nav:#d0e0c0;--bg-sh-from:#c0d0a8;--bg-sh-to:#a8c090;
+  --bg-detail:#f4f8ec;
+  --line-accent:#6a9a50;--line-accent-hi:#a0cc80;
+  --line-border:#b8c8a8;--line-border-light:#c0d0b0;--line-header-border:#a0b888;
+  --text:#2a3a20;--text-muted:#8a9a78;--text-heading:#3a6a20;--text-section:#2a4a18;
+  --text-label:#4a6a30;
+  --link:#2244aa;--link-hover:#cc4400;--link-visited:#553388;
+  --accent:#6a9a50;
+  --btn-from:#5a9a40;--btn-to:#3a7a28;--btn-border:#4a8a38;
+  --btn-del-from:#b06050;--btn-del-to:#904038;--btn-del-border:#a05048;
+  --font-base:0.75rem;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:16px;}
+body{background:var(--bg);color:var(--text);font-family:'ＭＳ Ｐゴシック','MS PGothic','ヒラギノ角ゴ Pro',Osaka,sans-serif;font-size:var(--font-base);line-height:1.6;-webkit-text-size-adjust:100%;}
+a{color:var(--link);text-decoration:none;}
+a:hover,a:focus{color:var(--link-hover);text-decoration:underline;outline:none;}
+a:focus-visible{outline:2px solid var(--link-hover);outline-offset:2px;}
+a:visited{color:var(--link-visited);}
+.wrap{max-width:760px;margin:0 auto;background:var(--bg-wrap);border-left:1px solid var(--line-border);border-right:1px solid var(--line-border);}
+.gl{height:4px;background:linear-gradient(90deg,var(--line-accent),var(--line-accent-hi),var(--line-accent));}
+.gl2{height:1px;background:var(--line-border-light);}
+.site-header{background:linear-gradient(180deg,var(--bg-header-from),var(--bg-header-to),var(--bg-header-from));text-align:center;padding:0.875rem 0.625rem 0.625rem;border-bottom:2px solid var(--line-header-border);}
+.site-header h1{font-size:1.125rem;color:var(--text-heading);text-shadow:1px 1px 0 rgba(255,255,255,.5);letter-spacing:0.2em;}
+.site-header .bl{font-size:0.6875rem;margin-top:0.1875rem;}
+.site-nav{background:var(--bg-nav);border-bottom:1px solid var(--line-border);text-align:center;padding:0.25rem 0;display:flex;justify-content:center;flex-wrap:wrap;}
+.site-nav a{display:inline-block;color:var(--text-heading);font-size:0.6875rem;font-weight:bold;letter-spacing:0.06em;padding:0.3rem 0.875rem;border-right:1px solid var(--line-border);}
+.site-nav a:last-child{border-right:none;}
+.site-nav a:hover,.site-nav a:focus{color:var(--link-hover);background:rgba(100,160,80,.1);text-decoration:none;}
+.site-nav a:focus-visible{outline:2px solid var(--link-hover);outline-offset:-2px;}
+.content{padding:0.625rem 0.875rem;min-height:31.25rem;}
+.sb{border:1px solid var(--line-border);margin-bottom:0.75rem;background:var(--bg-section);}
+.sh{background:linear-gradient(180deg,var(--bg-sh-from),var(--bg-sh-to));color:var(--text-section);font-size:0.6875rem;font-weight:bold;letter-spacing:0.15em;padding:0.3rem 0.625rem;border-bottom:1px solid var(--line-header-border);}
+.sd{padding:0.5rem 0.625rem;}
 
+/* Form */
+.pf .fr{display:flex;align-items:center;margin-bottom:0.4375rem;gap:0.375rem;}
+.pf .fr label{width:4.375rem;font-size:0.6875rem;font-weight:bold;color:var(--text-label);text-align:right;flex-shrink:0;}
+.pf .fr input[type=text],.pf .fr input[type=password]{flex:1;padding:0.375rem 0.5rem;font-size:0.8125rem;background:#fff;border:1px solid var(--line-border);color:var(--text);border-radius:2px;font-family:inherit;}
+.pf .fr input:focus,.pf textarea:focus{border-color:var(--accent);outline:none;box-shadow:0 0 3px rgba(106,154,80,.3);}
+.pf .fr input:focus-visible,.pf textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+.pf textarea{width:100%;height:5rem;padding:0.375rem 0.5rem;font-size:0.8125rem;background:#fff;border:1px solid var(--line-border);color:var(--text);border-radius:2px;font-family:inherit;resize:vertical;}
+.pf .fa{text-align:center;margin-top:0.375rem;}
+.btn{padding:0.5rem 1.5rem;font-size:0.75rem;font-weight:bold;color:#fff;background:linear-gradient(180deg,var(--btn-from),var(--btn-to));border:1px solid var(--btn-border);border-radius:3px;cursor:pointer;letter-spacing:0.06em;appearance:none;-webkit-appearance:none;}
+.btn:hover{filter:brightness(1.1);}
+.btn:active{filter:brightness(0.95);}
+.btn:focus-visible{outline:2px solid var(--link-hover);outline-offset:2px;}
+.btn-sm{padding:0.25rem 0.75rem;font-size:0.6875rem;}
+.btn-del{background:linear-gradient(180deg,var(--btn-del-from),var(--btn-del-to));border-color:var(--btn-del-border);}
+.btn-page{background:linear-gradient(180deg,#888,#666);border-color:#777;}
+
+/* Topic */
+.tp{border-bottom:1px solid var(--line-border-light);}
+.tp:last-child{border-bottom:none;}
+.tp-head{display:flex;align-items:baseline;gap:0.375rem;flex-wrap:wrap;padding:0.4375rem 0.25rem;cursor:pointer;user-select:none;-webkit-user-select:none;}
+.tp-head:hover{background:rgba(100,160,80,.06);}
+.tp-head:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;}
+.tp .no{color:var(--text-muted);font-size:0.6875rem;min-width:1.5rem;text-align:right;flex-shrink:0;}
+.tp .su{font-size:var(--font-base);font-weight:bold;color:var(--link);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tp .nm{font-size:0.6875rem;color:var(--accent);flex-shrink:0;}
+.tp .rc{font-size:0.625rem;color:var(--text-label);flex-shrink:0;}
+.tp .da{font-size:0.625rem;color:var(--text-muted);flex-shrink:0;}
+.tp .tog{font-size:0.625rem;color:var(--text-muted);flex-shrink:0;margin-left:0.125rem;}
+.tp-detail{display:none;background:var(--bg-detail);border-top:1px dotted var(--line-border-light);padding:0.5rem 0.625rem;}
+.tp-detail.open{display:block;}
+.tp-body{font-size:var(--font-base);color:var(--text);padding:0 0 0.375rem;white-space:pre-wrap;word-break:break-word;}
+.tp-actions{display:flex;gap:0.375rem;align-items:center;margin-top:0.25rem;flex-wrap:wrap;}
+.tp-empty{color:var(--text-muted);text-align:center;padding:1.25rem;}
+
+/* Reply */
+.reply{border-top:1px dotted var(--line-border-light);padding:0.375rem 0 0.25rem 1rem;margin-top:0.25rem;}
+.r-head{font-size:0.6875rem;color:var(--text-label);}
+.r-nm{font-weight:bold;margin-right:0.375rem;}
+.r-da{color:var(--text-muted);}
+.r-body{font-size:var(--font-base);color:var(--text);padding:0.125rem 0;white-space:pre-wrap;word-break:break-word;}
+.r-del{margin-top:0.125rem;}
+
+/* Reply form */
+.reply-form{border-top:1px solid var(--line-border-light);margin-top:0.5rem;padding-top:0.5rem;}
+.rf-title{font-size:0.6875rem;font-weight:bold;color:var(--text-label);margin-bottom:0.25rem;}
+.reply-form .fr{display:flex;align-items:center;margin-bottom:0.3125rem;gap:0.25rem;}
+.reply-form .fr label{width:3.125rem;font-size:0.625rem;font-weight:bold;color:var(--text-label);text-align:right;flex-shrink:0;}
+.reply-form .fr input{flex:1;padding:0.25rem 0.375rem;font-size:var(--font-base);background:#fff;border:1px solid var(--line-border);color:var(--text);border-radius:2px;font-family:inherit;}
+.reply-form .fr input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+.reply-form textarea{width:100%;height:3.125rem;padding:0.25rem 0.375rem;font-size:var(--font-base);background:#fff;border:1px solid var(--line-border);color:var(--text);border-radius:2px;font-family:inherit;resize:vertical;}
+.reply-form textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+.rf-actions{text-align:center;margin-top:0.25rem;}
+.rf-toggle{margin-bottom:0.375rem;background:linear-gradient(180deg,#888,#666);border-color:#777;font-size:0.6875rem;}
+.rf-body{display:none;}
+.rf-body.open{display:block;}
+
+/* Pager */
+.pager{display:flex;justify-content:center;align-items:center;gap:0.5rem;padding:0.625rem 0;margin-top:0.5rem;border-top:1px solid var(--line-border-light);}
+.page-info{font-size:0.6875rem;color:var(--text-muted);}
+
+/* Footer */
+.site-footer{background:var(--bg-nav);border-top:2px solid var(--line-header-border);text-align:center;padding:0.625rem;font-size:0.625rem;color:var(--text-muted);}
+
+@media(max-width:600px){
+  :root{--font-base:0.875rem;}
+  .wrap{width:100%;border:none;}
+  .site-header h1{font-size:1.0625rem;}
+  .site-nav a{padding:0.625rem 0.75rem;font-size:0.8125rem;}
+  .content{padding:0.5rem;}
+  .sh{font-size:0.75rem;padding:0.4375rem 0.625rem;}.sd{padding:0.5rem;}
+  .pf .fr{flex-wrap:wrap;}.pf .fr label{width:100%;text-align:left;margin-bottom:0.125rem;}
+  .pf .fr input[type=text],.pf .fr input[type=password]{width:100%;font-size:1rem;}
+  .pf textarea{font-size:1rem;height:5.625rem;}
+  .btn{padding:0.75rem 0;width:100%;font-size:0.9375rem;}
+  .btn-sm{padding:0.5rem 1rem;width:auto;font-size:0.8125rem;}
+  .tp-head{gap:0.25rem;padding:0.625rem 0.25rem;}
+  .tp .su{white-space:normal;font-size:0.875rem;}.tp .nm{font-size:0.75rem;}
+  .tp .da{font-size:0.6875rem;width:100%;padding-left:1.875rem;}
+  .tp-body{font-size:0.875rem;}.r-body{font-size:0.875rem;}
+  .reply-form .fr{flex-wrap:wrap;}.reply-form .fr label{width:100%;text-align:left;}
+  .reply-form .fr input{font-size:1rem;}.reply-form textarea{font-size:1rem;}
+  .tp-actions{flex-direction:column;align-items:flex-start;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="gl" role="presentation"></div>
+<header class="site-header">
+  <h1>雑談BBS</h1>
+  <p class="bl"><a href="index.html">≪ トップページに戻る</a></p>
+</header>
+<div class="gl" role="presentation"></div>
+<nav class="site-nav" aria-label="メインナビゲーション">
+  <a href="index.html">TOP</a>
+  <a href="chat_bbs.html">雑談BBS</a>
+  <a href="hankyu_bbs.html">取引BBS</a>
+</nav>
+<div class="gl2" role="presentation"></div>
+
+<main class="content">
+  <section class="sb">
+    <h2 class="sh">NEW TOPIC ─ 新規投稿</h2>
+    <div class="sd">
+      <form class="pf" id="postForm" onsubmit="return false;">
+        <div class="fr"><label for="pName">名前：</label><input type="text" id="pName" placeholder="名無しさん" maxlength="30"></div>
+        <div class="fr"><label for="pSubj">件名：</label><input type="text" id="pSubj" placeholder="トピックの件名" maxlength="80"></div>
+        <div class="fr" style="align-items:flex-start;"><label for="pBody" style="margin-top:0.375rem;">本文：</label><textarea id="pBody" placeholder="本文を入力してください"></textarea></div>
+        <div class="fr"><label for="pDel">削除キー：</label><input type="password" id="pDel" placeholder="半角英数8文字以内" maxlength="8" style="max-width:12.5rem;"></div>
+        <div class="fa"><button type="button" class="btn" id="btnPost">書き込む</button></div>
+      </form>
+    </div>
+  </section>
+
+  <section class="sb">
+    <h2 class="sh">TOPICS ─ トピック一覧　<span id="topicCount" style="font-weight:normal;color:var(--text-label);"></span></h2>
+    <div class="sd" id="topicList" role="list"></div>
+  </section>
+</main>
+
+<div class="gl" role="presentation"></div>
+<footer class="site-footer"><a href="index.html">≪ トップページに戻る</a><br>since 2026 ─ みんなの掲示板</footer>
+<div class="gl" role="presentation"></div>
+</div>
+
+<script src="config.js"></script>
+<script src="bbs-core.js"></script>
+<script>
+(function () {
+  'use strict';
+  var bbs = new BBS({
+    storageKey: 'chat_bbs_topics',
+    listEl: document.getElementById('topicList'),
+    countEl: document.getElementById('topicCount'),
+    defaults: [
+      { name: '管理人', subj: 'はじめまして！自己紹介トピック', body: 'みなさんはじめまして！\nここで自己紹介をどうぞ。よろしくお願いします。', date: '2026:04:17:12:00', delkey: '' },
+      { name: 'ゲスト', subj: '雑談なんでもトピック', body: '何でも自由に書き込んでください。\n今日はいい天気ですね。', date: '2026:04:17:12:30', delkey: '' },
+      { name: '名無しさん', subj: 'おすすめ情報共有', body: 'おすすめの情報があったらここに書き込みましょう！', date: '2026:04:17:13:00', delkey: '' },
+    ]
+  });
+
+  document.getElementById('btnPost').addEventListener('click', function () {
+    var ok = bbs.addTopic(
+      document.getElementById('pName').value.trim(),
+      document.getElementById('pSubj').value.trim(),
+      document.getElementById('pBody').value.trim(),
+      document.getElementById('pDel').value.trim()
+    );
+    if (ok) {
+      document.getElementById('pSubj').value = '';
+      document.getElementById('pBody').value = '';
+      document.getElementById('pDel').value = '';
+      document.getElementById('topicList').scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+})();
+</script>
+</body>
+</html>
