@@ -4,20 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow,noarchive">
-<title>ミックス表DB ─ 半球掲示板</title>
+<title>ドロップ情報DB ─ 半球掲示板</title>
 <style>
 :root {
-  --bg:#d8d0e8;--bg-wrap:#eee8f8;--bg-section:#f4f0fa;
-  --bg-header-from:#c8b8e0;--bg-header-to:#d8c8e8;
-  --bg-nav:#d0c0e0;--bg-sh-from:#b8a8d8;--bg-sh-to:#a090c0;
-  --bg-detail:#f2eefa;
-  --line-accent:#6040a8;--line-accent-hi:#9070d0;
-  --line-border:#b8a8d0;--line-border-light:#c8b8d8;--line-header-border:#a090c0;
-  --text:#2a1a3a;--text-muted:#8878a0;--text-heading:#4020a0;--text-section:#301a60;
-  --text-label:#483080;
-  --link:#4422aa;--link-hover:#cc4400;--link-visited:#553388;
-  --accent:#6040a8;
-  --btn-from:#5840b0;--btn-to:#403088;--btn-border:#4838a0;
+  --bg:#d0d8e8;--bg-wrap:#e8eef8;--bg-section:#f0f4fa;
+  --bg-header-from:#b8c8e0;--bg-header-to:#c8d8e8;
+  --bg-nav:#c0d0e0;--bg-sh-from:#a8b8d8;--bg-sh-to:#90a0c0;
+  --bg-detail:#eef2fa;
+  --line-accent:#4060a8;--line-accent-hi:#7090d0;
+  --line-border:#a8b8d0;--line-border-light:#b8c8d8;--line-header-border:#90a0c0;
+  --text:#1a2a3a;--text-muted:#7888a0;--text-heading:#2040a0;--text-section:#1a3060;
+  --text-label:#304880;
+  --link:#2244aa;--link-hover:#cc4400;--link-visited:#553388;
+  --accent:#4060a8;
+  --btn-from:#4068b0;--btn-to:#304888;--btn-border:#3858a0;
   --btn-del-from:#b06050;--btn-del-to:#904038;--btn-del-border:#a05048;
   --font-base:0.75rem;
 }
@@ -28,7 +28,7 @@ a{color:var(--link);text-decoration:none;}
 a:hover,a:focus{color:var(--link-hover);text-decoration:underline;outline:none;}
 a:focus-visible{outline:2px solid var(--link-hover);outline-offset:2px;}
 a:visited{color:var(--link-visited);}
-.wrap{max-width:800px;margin:0 auto;background:var(--bg-wrap);border-left:1px solid var(--line-border);border-right:1px solid var(--line-border);}
+.wrap{max-width:760px;margin:0 auto;background:var(--bg-wrap);border-left:1px solid var(--line-border);border-right:1px solid var(--line-border);}
 .gl{height:4px;background:linear-gradient(90deg,var(--line-accent),var(--line-accent-hi),var(--line-accent));}
 .gl2{height:1px;background:var(--line-border-light);}
 .site-header{background:linear-gradient(180deg,var(--bg-header-from),var(--bg-header-to),var(--bg-header-from));text-align:center;padding:0.875rem 0.625rem 0.625rem;border-bottom:2px solid var(--line-header-border);}
@@ -38,66 +38,69 @@ a:visited{color:var(--link-visited);}
 .site-nav{background:var(--bg-nav);border-bottom:1px solid var(--line-border);text-align:center;padding:0.25rem 0;display:flex;justify-content:center;flex-wrap:wrap;}
 .site-nav a{display:inline-block;color:var(--text-heading);font-size:0.6875rem;font-weight:bold;letter-spacing:0.06em;padding:0.3rem 0.875rem;border-right:1px solid var(--line-border);}
 .site-nav a:last-child{border-right:none;}
-.site-nav a:hover,.site-nav a:focus{color:var(--link-hover);background:rgba(96,64,168,.08);text-decoration:none;}
+.site-nav a:hover,.site-nav a:focus{color:var(--link-hover);background:rgba(64,96,168,.08);text-decoration:none;}
 .site-nav a:focus-visible{outline:2px solid var(--link-hover);outline-offset:-2px;}
 .content{padding:0.625rem 0.875rem;min-height:31.25rem;}
 .sb{border:1px solid var(--line-border);margin-bottom:0.75rem;background:var(--bg-section);}
 .sh{background:linear-gradient(180deg,var(--bg-sh-from),var(--bg-sh-to));color:#fff;font-size:0.6875rem;font-weight:bold;letter-spacing:0.15em;padding:0.3rem 0.625rem;border-bottom:1px solid var(--line-header-border);}
 .sd{padding:0.5rem 0.625rem;}
 .desc{font-size:0.6875rem;color:var(--text-muted);margin-top:0.25rem;}
+
+/* Form */
 .pf .fr{display:flex;align-items:center;margin-bottom:0.4375rem;gap:0.375rem;}
-.pf .fr label{width:6.5rem;font-size:0.6875rem;font-weight:bold;color:var(--text-label);text-align:right;flex-shrink:0;}
-.pf .fr input[type=text],.pf .fr input[type=password],.pf .fr input[type=number]{flex:1;padding:0.375rem 0.5rem;font-size:0.8125rem;background:#fff;border:1px solid var(--line-border);color:var(--text);border-radius:2px;font-family:inherit;}
-.pf .fr input[type=number]{max-width:5rem;}
-.pf .fr input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 3px rgba(96,64,168,.3);}
+.pf .fr label{width:5.5rem;font-size:0.6875rem;font-weight:bold;color:var(--text-label);text-align:right;flex-shrink:0;}
+.pf .fr input[type=text],.pf .fr input[type=password]{flex:1;padding:0.375rem 0.5rem;font-size:0.8125rem;background:#fff;border:1px solid var(--line-border);color:var(--text);border-radius:2px;font-family:inherit;}
+.pf .fr input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 3px rgba(64,96,168,.3);}
 .pf .fr input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
-.pf .fr .cb-wrap{display:flex;align-items:center;gap:0.25rem;font-size:0.8125rem;}
-.pf .fr .cb-wrap input[type=checkbox]{width:1.1rem;height:1.1rem;accent-color:var(--accent);}
 .pf .fa{text-align:center;margin-top:0.375rem;}
 .btn{padding:0.5rem 1.5rem;font-size:0.75rem;font-weight:bold;color:#fff;background:linear-gradient(180deg,var(--btn-from),var(--btn-to));border:1px solid var(--btn-border);border-radius:3px;cursor:pointer;letter-spacing:0.06em;appearance:none;-webkit-appearance:none;}
-.btn:hover{filter:brightness(1.1);}.btn:active{filter:brightness(0.95);}
+.btn:hover{filter:brightness(1.1);}
+.btn:active{filter:brightness(0.95);}
 .btn:focus-visible{outline:2px solid var(--link-hover);outline-offset:2px;}
 .btn-sm{padding:0.25rem 0.75rem;font-size:0.6875rem;}
 .btn-del{background:linear-gradient(180deg,var(--btn-del-from),var(--btn-del-to));border-color:var(--btn-del-border);}
 .btn-copy{background:linear-gradient(180deg,#5a8a40,#3a6a28);border-color:#4a7a38;}
 .btn-page{background:linear-gradient(180deg,#888,#666);border-color:#777;}
-.btn-cancel{background:linear-gradient(180deg,#888,#666);border-color:#777;}
+
+/* Search & Tools */
 .toolbar{display:flex;gap:0.375rem;align-items:center;flex-wrap:wrap;padding:0.375rem 0.625rem;}
 .toolbar input[type=text]{flex:1;min-width:8rem;padding:0.375rem 0.5rem;font-size:0.8125rem;background:#fff;border:1px solid var(--line-border);color:var(--text);border-radius:2px;font-family:inherit;}
-.toolbar input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 3px rgba(96,64,168,.3);}
+.toolbar input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 3px rgba(64,96,168,.3);}
+.count-label{font-size:0.6875rem;color:var(--text-muted);flex-shrink:0;}
 .copied-msg{font-size:0.6875rem;color:#3a8a30;font-weight:bold;display:none;}
-.bulk-area{width:100%;height:8rem;padding:0.375rem 0.5rem;font-size:0.75rem;background:#fff;border:1px solid var(--line-border);color:var(--text);border-radius:2px;font-family:'Consolas','Monaco',monospace;resize:vertical;line-height:1.5;}
-.bulk-area:focus{border-color:var(--accent);outline:none;box-shadow:0 0 3px rgba(96,64,168,.3);}
-.bulk-result{font-size:0.6875rem;margin-top:0.375rem;padding:0.25rem 0;}
-.bulk-result .ok{color:#3a8a30;font-weight:bold;}
-.bulk-result .err{color:#c04030;}
+
+/* Table */
 .db-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
 table.db{width:100%;border-collapse:collapse;font-size:var(--font-base);}
-table.db th{background:var(--bg-sh-from);color:#fff;font-size:0.6875rem;font-weight:bold;padding:0.3rem 0.375rem;border:1px solid var(--line-border);text-align:left;white-space:nowrap;cursor:pointer;user-select:none;-webkit-user-select:none;letter-spacing:0.06em;}
+table.db th{background:var(--bg-sh-from);color:#fff;font-size:0.6875rem;font-weight:bold;padding:0.3rem 0.5rem;border:1px solid var(--line-border);text-align:left;white-space:nowrap;cursor:pointer;user-select:none;-webkit-user-select:none;letter-spacing:0.06em;}
 table.db th:hover{background:var(--accent);}
-table.db th .sa{font-size:0.5rem;margin-left:0.125rem;opacity:0.6;}
-table.db td{padding:0.3rem 0.375rem;border:1px solid var(--line-border-light);vertical-align:top;word-break:break-word;}
-table.db tr:nth-child(even){background:rgba(96,64,168,.04);}
-table.db tr:hover{background:rgba(96,64,168,.08);}
+table.db th .sort-arrow{font-size:0.5rem;margin-left:0.25rem;opacity:0.6;}
+table.db td{padding:0.3rem 0.5rem;border:1px solid var(--line-border-light);vertical-align:top;word-break:break-word;}
+table.db tr:nth-child(even){background:rgba(64,96,168,.04);}
+table.db tr:hover{background:rgba(64,96,168,.08);}
 table.db td.act{white-space:nowrap;text-align:center;}
-table.db td.chk{text-align:center;}
 .no-data{text-align:center;color:var(--text-muted);padding:1.25rem;}
+
+/* Modal */
 .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:9999;}
-.modal-box{background:#fff;border:1px solid var(--line-border);border-radius:6px;padding:1rem;width:90%;max-width:22rem;box-shadow:0 4px 16px rgba(0,0,0,.2);}
-.modal-edit{max-width:28rem;}
+.modal-box{background:#fff;border:1px solid var(--line-border);border-radius:6px;padding:1rem;width:90%;max-width:20rem;box-shadow:0 4px 16px rgba(0,0,0,.2);}
+.modal-edit{max-width:24rem;}
 .modal-title{font-size:0.8125rem;font-weight:bold;color:var(--text-heading);margin-bottom:0.625rem;text-align:center;}
 .modal-label{display:block;font-size:0.6875rem;font-weight:bold;color:var(--text-label);margin:0.375rem 0 0.125rem;}
-.modal-input{width:100%;padding:0.375rem 0.5rem;font-size:0.875rem;border:1px solid var(--line-border);border-radius:2px;font-family:inherit;margin-bottom:0.375rem;}
+.modal-input{width:100%;padding:0.375rem 0.5rem;font-size:0.875rem;border:1px solid var(--line-border);border-radius:2px;font-family:inherit;margin-bottom:0.5rem;}
 .modal-input:focus{border-color:var(--accent);outline:none;}
-.modal-input-num{max-width:6rem;}
-.modal-cb{display:flex;align-items:center;gap:0.25rem;margin-bottom:0.375rem;font-size:0.8125rem;}
-.modal-cb input{width:1.1rem;height:1.1rem;accent-color:var(--accent);}
 .modal-btns{display:flex;gap:0.375rem;justify-content:center;margin-top:0.375rem;}
 .modal-btn{flex:1;text-align:center;}
+.btn-cancel{background:linear-gradient(180deg,#888,#666);border-color:#777;}
+
+/* Pager */
 .pager{display:flex;justify-content:center;align-items:center;gap:0.5rem;padding:0.625rem 0;margin-top:0.5rem;border-top:1px solid var(--line-border-light);}
 .page-info{font-size:0.6875rem;color:var(--text-muted);}
+
+/* Footer */
 .site-footer{background:var(--bg-nav);border-top:2px solid var(--line-header-border);text-align:center;padding:0.625rem;font-size:0.625rem;color:var(--text-muted);}
 .site-footer a{color:var(--link);}
+
 @media(max-width:600px){
   :root{--font-base:0.875rem;}
   .wrap{width:100%;border:none;}
@@ -106,17 +109,15 @@ table.db td.chk{text-align:center;}
   .content{padding:0.5rem;}
   .sh{font-size:0.75rem;padding:0.4375rem 0.625rem;}.sd{padding:0.5rem;}
   .pf .fr{flex-wrap:wrap;}.pf .fr label{width:100%;text-align:left;margin-bottom:0.125rem;}
-  .pf .fr input[type=text],.pf .fr input[type=password],.pf .fr input[type=number]{width:100%;font-size:1rem;}
-  .pf .fr input[type=number]{max-width:100%;}
+  .pf .fr input[type=text],.pf .fr input[type=password]{width:100%;font-size:1rem;}
   .btn{padding:0.75rem 0;width:100%;font-size:0.9375rem;}
   .btn-sm{padding:0.5rem 1rem;width:auto;font-size:0.8125rem;}
   .toolbar{flex-direction:column;align-items:stretch;}
   .toolbar input[type=text]{font-size:1rem;}
   .toolbar .btn-sm{width:100%;}
-  table.db th,table.db td{padding:0.4rem 0.25rem;font-size:0.75rem;}
+  table.db th,table.db td{padding:0.4rem 0.375rem;font-size:0.8125rem;}
   .desc{font-size:0.8125rem;}
   .modal-input{font-size:1rem;}
-  .bulk-area{font-size:0.8125rem;height:10rem;}
 }
 </style>
 </head>
@@ -124,7 +125,7 @@ table.db td.chk{text-align:center;}
 <div class="wrap">
 <div class="gl" role="presentation"></div>
 <header class="site-header">
-  <h1>ミックス表DB</h1>
+  <h1>ドロップ情報DB</h1>
   <p class="bl"><a href="./index.html">≪ トップページに戻る</a></p>
 </header>
 <div class="gl" role="presentation"></div>
@@ -137,379 +138,428 @@ table.db td.chk{text-align:center;}
   <a href="./mix_tree.html">MIXツリー</a>
 </nav>
 <div class="gl2" role="presentation"></div>
+
 <main class="content">
   <section class="sb">
-    <h2 class="sh">ABOUT ─ ミックス表DBについて</h2>
+    <h2 class="sh">ABOUT ─ ドロップ情報DBについて</h2>
     <div class="sd">
-      <p>コアのミックス（配合）レシピを共有するデータベースです。</p>
-      <p class="desc">※ カタカナは全角、数字・英字は半角に自動変換されます。TSVコピーでスプレッドシートに貼り付け可能。</p>
+      <p>モンスターのドロップ情報を共有するデータベースです。</p>
+      <p class="desc">※ 投稿データはTSV形式でコピーしてスプレッドシートに貼り付けられます。</p>
     </div>
   </section>
+
   <section class="sb">
-    <h2 class="sh">NEW RECIPE ─ レシピ登録</h2>
+    <h2 class="sh">NEW ENTRY ─ 新規登録</h2>
     <div class="sd">
       <form class="pf" id="postForm" onsubmit="return false;">
         <div class="fr"><label for="pName">投稿者名：</label><input type="text" id="pName" placeholder="名無しさん" maxlength="30"></div>
-        <div class="fr"><label for="pCore">完成コア名：</label><input type="text" id="pCore" placeholder="例：ドラゴン" maxlength="80"></div>
-        <div class="fr"><label for="pRace">種族：</label><input type="text" id="pRace" placeholder="例：竜族" maxlength="40"></div>
-        <div class="fr"><label for="pBaseLv">基本レベル：</label><input type="number" id="pBaseLv" placeholder="1" min="1" max="999"></div>
-        <div class="fr"><label for="pMixLv">MIXレベル：</label><input type="number" id="pMixLv" placeholder="1" min="1" max="999"></div>
-        <div class="fr"><label for="pMain">メインコア名：</label><input type="text" id="pMain" placeholder="例：ワイバーン" maxlength="80"></div>
-        <div class="fr"><label for="pMainEC">メインEC：</label><input type="text" id="pMainEC" placeholder="不要なら空欄" maxlength="80"></div>
-        <div class="fr"><label for="pSub">サブコア名：</label><input type="text" id="pSub" placeholder="例：リザード" maxlength="80"></div>
-        <div class="fr"><label for="pSubEC">サブEC：</label><input type="text" id="pSubEC" placeholder="不要なら空欄" maxlength="80"></div>
-        <div class="fr"><label>ドロップ可能：</label><div class="cb-wrap"><input type="checkbox" id="pDrop"><span>このコアはドロップで入手可能</span></div></div>
+        <div class="fr"><label for="pMonster">モンスター名：</label><input type="text" id="pMonster" placeholder="例：スライム" maxlength="80"></div>
+        <div class="fr"><label for="pItem">アイテム名：</label><input type="text" id="pItem" placeholder="例：回復薬" maxlength="80"></div>
+        <div class="fr"><label for="pMap">マップ名：</label><input type="text" id="pMap" placeholder="例：始まりの草原" maxlength="80"></div>
         <div class="fr"><label for="pDel">削除キー：</label><input type="password" id="pDel" placeholder="半角英数8文字以内" maxlength="8" style="max-width:12.5rem;"></div>
         <div class="fa"><button type="button" class="btn" id="btnPost">登録する</button></div>
       </form>
     </div>
   </section>
+
   <section class="sb">
-    <h2 class="sh">BULK IMPORT ─ 一括登録（TSV貼り付け）</h2>
-    <div class="sd">
-      <p class="desc">エクセルやスプレッドシートからコピーして貼り付けてください。列の順序：</p>
-      <p class="desc" style="font-weight:bold;margin-top:0.125rem;">完成コア名 / 種族 / 基本Lv / MIX Lv / メインコア / メインEC / サブコア / サブEC / Drop可（○ or 空欄）</p>
-      <p class="desc">※ 1行目がヘッダー行の場合は自動スキップされます。ECが不要なら空欄、ドロップ限定ならメイン/サブも空欄でOK。</p>
-      <textarea class="bulk-area" id="bulkArea" placeholder="エクセルからコピーした内容をここに貼り付け&#10;例：&#10;ドラゴン&#9;竜族&#9;30&#9;25&#9;ワイバーン&#9;&#9;リザード&#9;&#9;&#10;スライム&#9;不定形&#9;1&#9;0&#9;&#9;&#9;&#9;&#9;○"></textarea>
-      <div style="display:flex;gap:0.375rem;align-items:center;margin-top:0.375rem;flex-wrap:wrap;">
-        <button type="button" class="btn btn-sm" id="btnBulk">一括登録</button>
-        <span class="desc">削除キー：</span>
-        <input type="password" id="bulkDel" placeholder="共通削除キー" maxlength="8" style="padding:0.25rem 0.375rem;font-size:0.8125rem;border:1px solid var(--line-border);border-radius:2px;width:8rem;">
-      </div>
-      <div class="bulk-result" id="bulkResult"></div>
-    </div>
-  </section>
-  <section class="sb">
-    <h2 class="sh">BULK DELETE ─ 一括削除</h2>
-    <div class="sd">
-      <p class="desc">削除キーが一致する全データ、または管理者キーで全データを一括削除できます。</p>
-      <div style="display:flex;gap:0.375rem;align-items:center;margin-top:0.375rem;flex-wrap:wrap;">
-        <input type="password" id="bulkDelKey" placeholder="削除キー or 管理者キー" maxlength="8" style="padding:0.25rem 0.375rem;font-size:0.8125rem;border:1px solid var(--line-border);border-radius:2px;width:10rem;">
-        <button type="button" class="btn btn-sm btn-del" id="btnBulkDel">一括削除</button>
-      </div>
-      <div class="bulk-result" id="bulkDelResult"></div>
-    </div>
-  </section>
-  <section class="sb">
-    <h2 class="sh">DATABASE ─ ミックス表一覧　<span id="dbCount" style="font-weight:normal;"></span></h2>
+    <h2 class="sh">DATABASE ─ ドロップ一覧　<span id="dbCount" style="font-weight:normal;"></span></h2>
     <div class="toolbar">
-      <input type="text" id="searchInput" placeholder="検索（コア名・種族・EC）">
+      <input type="text" id="searchInput" placeholder="検索（モンスター・アイテム・マップ）">
       <button type="button" class="btn btn-sm btn-copy" id="btnCopy">TSVコピー</button>
       <span class="copied-msg" id="copiedMsg">✓ コピーしました</span>
     </div>
-    <div class="sd"><div class="db-table-wrap" id="dbBody"></div></div>
+    <div class="sd">
+      <div class="db-table-wrap" id="dbBody"></div>
+    </div>
   </section>
 </main>
+
 <div class="gl" role="presentation"></div>
 <footer class="site-footer"><a href="./index.html">≪ トップページに戻る</a><br>since 2026 ─ 半球掲示板</footer>
 <div class="gl" role="presentation"></div>
 </div>
+
 <script src="./config.js"></script>
 <script>
 (function () {
   'use strict';
-  var SK = 'mix_db_entries', PK = 'mix_db_prefs', CK = 'mix_db_counter';
-  var ADMIN = (window.SITE_CONFIG && window.SITE_CONFIG.adminKey) || 'admin';
-  var PS = 30, page = 0, sq = '', sCol = 'id', sAsc = false;
 
-  function pad(n){return String(n).padStart(2,'0');}
-  function now(){var d=new Date();return d.getFullYear()+':'+pad(d.getMonth()+1)+':'+pad(d.getDate())+':'+pad(d.getHours())+':'+pad(d.getMinutes());}
-  function nid(){var n;try{n=parseInt(localStorage.getItem(CK))||0;}catch(e){n=0;}n++;try{localStorage.setItem(CK,n);}catch(e){}return n;}
-  function load(){try{var r=localStorage.getItem(SK);if(r){var d=JSON.parse(r);if(Array.isArray(d))return d;}}catch(e){}return[];}
-  function save(d){try{localStorage.setItem(SK,JSON.stringify(d));}catch(e){}}
-  function sp(n,k){try{localStorage.setItem(PK,JSON.stringify({name:n,delkey:k}));}catch(e){}}
-  function lp(){try{var d=JSON.parse(localStorage.getItem(PK));return d||{};}catch(e){return{};}}
-  function fi(es,id){for(var i=0;i<es.length;i++){if(es[i].id===id)return i;}return-1;}
+  var STORAGE_KEY = 'drop_db_entries';
+  var PREFS_KEY = 'drop_db_prefs';
+  var COUNTER_KEY = 'drop_db_counter';
+  var ADMIN_KEY = (window.SITE_CONFIG && window.SITE_CONFIG.adminKey) || 'admin';
+  var PAGE_SIZE = 30;
 
-  // --- 表記揺れ防止：正規化 ---
-  function normalize(s) {
-    if (!s) return '';
-    // 半角カタカナ→全角カタカナ
-    s = s.replace(/[\uFF66-\uFF9F]/g, function(c) {
-      var code = c.charCodeAt(0);
-      // 半角カタカナ範囲をマッピング
-      var map = 'ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン゙゚';
-      var idx = code - 0xFF66;
-      return idx >= 0 && idx < map.length ? map[idx] : c;
-    });
-    // 全角英数→半角英数
-    s = s.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(c) {
-      return String.fromCharCode(c.charCodeAt(0) - 0xFEE0);
-    });
-    // 全角スペース→半角
-    s = s.replace(/　/g, ' ');
-    // 前後空白除去
-    return s.trim();
+  var page = 0;
+  var searchQuery = '';
+  var sortCol = 'id';
+  var sortAsc = false;
+
+  // --- Utils ---
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function now() {
+    var d = new Date();
+    return d.getFullYear() + ':' + pad(d.getMonth()+1) + ':' + pad(d.getDate()) + ':' + pad(d.getHours()) + ':' + pad(d.getMinutes());
   }
 
-  function filtered(){
-    var es=load(), q=sq;
-    if(q){es=es.filter(function(e){
-      return (e.core&&e.core.toLowerCase().indexOf(q)>=0)
-        ||(e.race&&e.race.toLowerCase().indexOf(q)>=0)
-        ||(e.main&&e.main.toLowerCase().indexOf(q)>=0)
-        ||(e.sub&&e.sub.toLowerCase().indexOf(q)>=0)
-        ||(e.mainEC&&e.mainEC.toLowerCase().indexOf(q)>=0)
-        ||(e.subEC&&e.subEC.toLowerCase().indexOf(q)>=0)
-        ||(e.name&&e.name.toLowerCase().indexOf(q)>=0);
-    });}
-    es.sort(function(a,b){
-      var va=a[sCol]||'',vb=b[sCol]||'';
-      if(typeof va==='number'&&typeof vb==='number')return sAsc?va-vb:vb-va;
-      va=String(va).toLowerCase();vb=String(vb).toLowerCase();
-      if(va<vb)return sAsc?-1:1;if(va>vb)return sAsc?1:-1;return 0;
-    });
-    return es;
+  function nextId() {
+    var n;
+    try { n = parseInt(localStorage.getItem(COUNTER_KEY)) || 0; } catch(e) { n = 0; }
+    n++;
+    try { localStorage.setItem(COUNTER_KEY, n); } catch(e) {}
+    return n;
   }
 
-  // --- Modals ---
-  function actionModal(title,cb){
-    var ov=document.createElement('div');ov.className='modal-overlay';
-    var bx=document.createElement('div');bx.className='modal-box';
-    bx.innerHTML='<div class="modal-title">'+title+'</div>';
-    var inp=document.createElement('input');inp.type='password';inp.className='modal-input';inp.placeholder='削除キーを入力';inp.maxLength=8;
-    bx.appendChild(inp);
-    var bs=document.createElement('div');bs.className='modal-btns';
-    var b1=document.createElement('button');b1.className='btn btn-sm btn-del modal-btn';b1.textContent='削除';b1.onclick=function(){cl('delete');};
-    var b2=document.createElement('button');b2.className='btn btn-sm modal-btn';b2.textContent='編集';b2.onclick=function(){cl('edit');};
-    var b3=document.createElement('button');b3.className='btn btn-sm btn-cancel modal-btn';b3.textContent='キャンセル';b3.onclick=function(){cl(null);};
-    bs.appendChild(b1);bs.appendChild(b2);bs.appendChild(b3);bx.appendChild(bs);ov.appendChild(bx);document.body.appendChild(ov);
-    setTimeout(function(){inp.focus();},50);
-    function cl(a){var k=inp.value.trim();document.body.removeChild(ov);cb(a,k);}
+  function loadEntries() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) { var d = JSON.parse(raw); if (Array.isArray(d)) return d; }
+    } catch(e) {}
+    return [];
   }
 
-  function editModal(entry,cb){
-    var ov=document.createElement('div');ov.className='modal-overlay';
-    var bx=document.createElement('div');bx.className='modal-box modal-edit';
-    bx.innerHTML='<div class="modal-title">レシピ編集</div>';
-    var fields=[
-      {key:'core',label:'完成コア名：',type:'text'},
-      {key:'race',label:'種族：',type:'text'},
-      {key:'baseLv',label:'基本レベル：',type:'number'},
-      {key:'mixLv',label:'MIXレベル：',type:'number'},
-      {key:'main',label:'メインコア名：',type:'text'},
-      {key:'mainEC',label:'メインEC：',type:'text'},
-      {key:'sub',label:'サブコア名：',type:'text'},
-      {key:'subEC',label:'サブEC：',type:'text'},
-    ];
-    var inputs={};
-    fields.forEach(function(f){
-      var lb=document.createElement('label');lb.className='modal-label';lb.textContent=f.label;bx.appendChild(lb);
-      var ip=document.createElement('input');ip.type=f.type;ip.className='modal-input'+(f.type==='number'?' modal-input-num':'');
-      if(f.type==='number'){ip.min='1';ip.max='999';}else{ip.maxLength=80;}
-      ip.value=entry[f.key]||'';bx.appendChild(ip);inputs[f.key]=ip;
-    });
-    // ドロップ可能チェック
-    var cbDiv=document.createElement('div');cbDiv.className='modal-cb';
-    var cbInp=document.createElement('input');cbInp.type='checkbox';cbInp.checked=!!entry.drop;
-    cbDiv.appendChild(cbInp);cbDiv.appendChild(document.createTextNode('ドロップ可能'));
-    bx.appendChild(cbDiv);
-
-    var bs=document.createElement('div');bs.className='modal-btns';
-    var bSave=document.createElement('button');bSave.className='btn btn-sm modal-btn';bSave.textContent='保存';
-    bSave.onclick=function(){
-      var r={};
-      fields.forEach(function(f){r[f.key]=f.type==='number'?parseInt(inputs[f.key].value)||0:normalize(inputs[f.key].value);});
-      r.drop=cbInp.checked;
-      if(!r.core){alert('完成コア名を入力してください。');return;}
-      if(!r.drop && !r.main){alert('メインコア名を入力するか、ドロップ可能にチェックしてください。');return;}
-      if(!r.drop && !r.sub){alert('サブコア名を入力するか、ドロップ可能にチェックしてください。');return;}
-      if((r.main && !r.sub) || (!r.main && r.sub)){alert('メインコアとサブコアは両方入力してください。');return;}
-      document.body.removeChild(ov);cb(r);
-    };
-    var bCancel=document.createElement('button');bCancel.className='btn btn-sm btn-cancel modal-btn';bCancel.textContent='キャンセル';
-    bCancel.onclick=function(){document.body.removeChild(ov);cb(null);};
-    bs.appendChild(bSave);bs.appendChild(bCancel);bx.appendChild(bs);ov.appendChild(bx);document.body.appendChild(ov);
-    setTimeout(function(){inputs.core.focus();},50);
+  function saveEntries(entries) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); } catch(e) {}
   }
 
-  // --- Render ---
-  function render(){
-    var es=filtered(),all=load(),total=es.length;
-    var tp=Math.max(1,Math.ceil(total/PS));
-    if(page>=tp)page=tp-1;if(page<0)page=0;
-    var st=page*PS,pe=es.slice(st,st+PS);
-    var ct=document.getElementById('dbCount');
-    if(ct)ct.textContent=sq?'('+total+'件 / '+all.length+'件中)':'('+all.length+'件)';
-    var bd=document.getElementById('dbBody');bd.innerHTML='';
-    if(total===0){bd.innerHTML='<p class="no-data">'+(sq?'該当するデータが見つかりません。':'まだデータがありません。')+'</p>';return;}
+  function savePrefs(name, delkey) {
+    try { localStorage.setItem(PREFS_KEY, JSON.stringify({ name: name, delkey: delkey })); } catch(e) {}
+  }
+  function loadPrefs() {
+    try { var d = JSON.parse(localStorage.getItem(PREFS_KEY)); return d || {}; } catch(e) { return {}; }
+  }
 
-    var cols=[
-      {k:'id',l:'#'},{k:'core',l:'完成コア'},{k:'race',l:'種族'},{k:'baseLv',l:'基本Lv'},
-      {k:'mixLv',l:'MIX Lv'},{k:'main',l:'メイン'},{k:'mainEC',l:'メインEC'},
-      {k:'sub',l:'サブ'},{k:'subEC',l:'サブEC'},{k:'drop',l:'Drop'},{k:'name',l:'投稿者'},{k:'date',l:'日時'}
-    ];
-    var tb=document.createElement('table');tb.className='db';
-    var th=document.createElement('thead'),hr=document.createElement('tr');
-    cols.forEach(function(c){
-      var h=document.createElement('th');
-      var ar='';if(sCol===c.k){ar=sAsc?' ▲':' ▼';}
-      h.innerHTML=c.l+'<span class="sa">'+ar+'</span>';
-      h.onclick=function(){if(sCol===c.k){sAsc=!sAsc;}else{sCol=c.k;sAsc=true;}render();};
-      hr.appendChild(h);
-    });
-    var ha=document.createElement('th');ha.textContent='操作';ha.style.cursor='default';hr.appendChild(ha);
-    th.appendChild(hr);tb.appendChild(th);
+  function findEntry(entries, id) {
+    for (var i = 0; i < entries.length; i++) { if (entries[i].id === id) return i; }
+    return -1;
+  }
 
-    var tbody=document.createElement('tbody');
-    pe.forEach(function(e){
-      var tr=document.createElement('tr');
-      cols.forEach(function(c){
-        var td=document.createElement('td');
-        if(c.k==='drop'){td.className='chk';td.textContent=e.drop?'✓':'';}
-        else{td.textContent=e[c.k]||'';}
-        tr.appendChild(td);
+  // --- Filter & Sort ---
+  function filtered() {
+    var entries = loadEntries();
+    var q = searchQuery;
+    if (q) {
+      entries = entries.filter(function(e) {
+        return (e.monster && e.monster.toLowerCase().indexOf(q) >= 0)
+            || (e.item && e.item.toLowerCase().indexOf(q) >= 0)
+            || (e.map && e.map.toLowerCase().indexOf(q) >= 0)
+            || (e.name && e.name.toLowerCase().indexOf(q) >= 0);
       });
-      var ta=document.createElement('td');ta.className='act';
-      var ab=document.createElement('button');ab.className='btn btn-sm btn-del';ab.textContent='削除・編集';
-      ab.onclick=function(){doAction(e.id);};ta.appendChild(ab);tr.appendChild(ta);
-      tbody.appendChild(tr);
+    }
+    entries.sort(function(a, b) {
+      var va = a[sortCol] || '', vb = b[sortCol] || '';
+      if (typeof va === 'number' && typeof vb === 'number') {
+        return sortAsc ? va - vb : vb - va;
+      }
+      va = String(va).toLowerCase(); vb = String(vb).toLowerCase();
+      if (va < vb) return sortAsc ? -1 : 1;
+      if (va > vb) return sortAsc ? 1 : -1;
+      return 0;
     });
-    tb.appendChild(tbody);bd.appendChild(tb);
+    return entries;
+  }
 
-    if(tp>1){
-      var pg=document.createElement('nav');pg.className='pager';
-      if(page>0){var pv=document.createElement('button');pv.className='btn btn-sm btn-page';pv.textContent='≪ 前へ';pv.onclick=function(){page--;render();bd.scrollIntoView({behavior:'smooth'});};pg.appendChild(pv);}
-      var pi=document.createElement('span');pi.className='page-info';pi.textContent=(page+1)+' / '+tp+' ページ';pg.appendChild(pi);
-      if(page<tp-1){var nx=document.createElement('button');nx.className='btn btn-sm btn-page';nx.textContent='次へ ≫';nx.onclick=function(){page++;render();bd.scrollIntoView({behavior:'smooth'});};pg.appendChild(nx);}
-      bd.appendChild(pg);
+  // --- Action Modal (delete / edit / cancel) ---
+  function showActionModal(title, callback) {
+    var overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    var box = document.createElement('div');
+    box.className = 'modal-box';
+    box.innerHTML = '<div class="modal-title">' + title + '</div>';
+    var inp = document.createElement('input');
+    inp.type = 'password'; inp.className = 'modal-input'; inp.placeholder = '削除キーを入力'; inp.maxLength = 8;
+    box.appendChild(inp);
+    var btns = document.createElement('div');
+    btns.className = 'modal-btns';
+
+    var btnDel = document.createElement('button');
+    btnDel.className = 'btn btn-sm btn-del modal-btn'; btnDel.textContent = '削除';
+    btnDel.onclick = function() { close('delete'); };
+
+    var btnEdit = document.createElement('button');
+    btnEdit.className = 'btn btn-sm modal-btn'; btnEdit.textContent = '編集';
+    btnEdit.onclick = function() { close('edit'); };
+
+    var btnCancel = document.createElement('button');
+    btnCancel.className = 'btn btn-sm btn-cancel modal-btn'; btnCancel.textContent = 'キャンセル';
+    btnCancel.onclick = function() { close(null); };
+
+    btns.appendChild(btnDel); btns.appendChild(btnEdit); btns.appendChild(btnCancel);
+    box.appendChild(btns); overlay.appendChild(box); document.body.appendChild(overlay);
+    setTimeout(function() { inp.focus(); }, 50);
+
+    function close(action) {
+      var key = inp.value.trim();
+      document.body.removeChild(overlay);
+      callback(action, key);
     }
   }
 
-  function addEntry(){
-    var name=document.getElementById('pName').value.trim();
-    var core=normalize(document.getElementById('pCore').value);
-    var race=normalize(document.getElementById('pRace').value);
-    var baseLv=parseInt(document.getElementById('pBaseLv').value)||0;
-    var mixLv=parseInt(document.getElementById('pMixLv').value)||0;
-    var main=normalize(document.getElementById('pMain').value);
-    var mainEC=normalize(document.getElementById('pMainEC').value);
-    var sub=normalize(document.getElementById('pSub').value);
-    var subEC=normalize(document.getElementById('pSubEC').value);
-    var drop=document.getElementById('pDrop').checked;
-    var delkey=document.getElementById('pDel').value.trim();
+  // --- Edit Modal ---
+  function showEditModal(entry, callback) {
+    var overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    var box = document.createElement('div');
+    box.className = 'modal-box modal-edit';
+    box.innerHTML = '<div class="modal-title">データ編集</div>';
 
-    if(!core){alert('完成コア名を入力してください。');return;}
-    if(!drop && !main){alert('メインコア名を入力するか、ドロップ可能にチェックしてください。');return;}
-    if(!drop && !sub){alert('サブコア名を入力するか、ドロップ可能にチェックしてください。');return;}
-    if((main && !sub) || (!main && sub)){alert('メインコアとサブコアは両方入力してください。');return;}
+    var fields = [
+      { key: 'monster', label: 'モンスター名：' },
+      { key: 'item', label: 'アイテム名：' },
+      { key: 'map', label: 'マップ名：' }
+    ];
+    var inputs = {};
 
-    var es=load();
-    es.unshift({id:nid(),name:name||'名無しさん',core:core,race:race,baseLv:baseLv,mixLv:mixLv,main:main,mainEC:mainEC,sub:sub,subEC:subEC,drop:drop,date:now(),edited:'',delkey:delkey||''});
-    save(es);sp(name||'',delkey||'');
-    ['pCore','pRace','pBaseLv','pMixLv','pMain','pMainEC','pSub','pSubEC'].forEach(function(id){document.getElementById(id).value='';});
-    document.getElementById('pDrop').checked=false;
-    page=0;render();document.getElementById('dbBody').scrollIntoView({behavior:'smooth'});
+    fields.forEach(function(f) {
+      var lbl = document.createElement('label');
+      lbl.className = 'modal-label'; lbl.textContent = f.label;
+      box.appendChild(lbl);
+      var inp = document.createElement('input');
+      inp.type = 'text'; inp.className = 'modal-input'; inp.maxLength = 80;
+      inp.value = entry[f.key] || '';
+      box.appendChild(inp);
+      inputs[f.key] = inp;
+    });
+
+    var btns = document.createElement('div');
+    btns.className = 'modal-btns';
+
+    var btnSave = document.createElement('button');
+    btnSave.className = 'btn btn-sm modal-btn'; btnSave.textContent = '保存';
+    btnSave.onclick = function() {
+      var monster = inputs.monster.value.trim();
+      var item = inputs.item.value.trim();
+      var map = inputs.map.value.trim();
+      if (!monster) { alert('モンスター名を入力してください。'); return; }
+      if (!item) { alert('アイテム名を入力してください。'); return; }
+      document.body.removeChild(overlay);
+      callback({ monster: monster, item: item, map: map });
+    };
+
+    var btnCancel = document.createElement('button');
+    btnCancel.className = 'btn btn-sm btn-cancel modal-btn'; btnCancel.textContent = 'キャンセル';
+    btnCancel.onclick = function() { document.body.removeChild(overlay); callback(null); };
+
+    btns.appendChild(btnSave); btns.appendChild(btnCancel);
+    box.appendChild(btns); overlay.appendChild(box); document.body.appendChild(overlay);
+    setTimeout(function() { inputs.monster.focus(); }, 50);
   }
 
-  function doAction(id){
-    actionModal('レシピ操作',function(a,k){
-      if(!a)return;var es=load(),idx=fi(es,id);if(idx<0)return;var e=es[idx];
-      if(k!==ADMIN&&(!e.delkey||k!==e.delkey)){alert('削除キーが一致しません。');return;}
-      if(a==='delete'){es.splice(idx,1);save(es);render();}
-      else if(a==='edit'){
-        editModal(e,function(r){
-          if(!r)return;var es2=load(),i2=fi(es2,id);if(i2<0)return;
-          ['core','race','baseLv','mixLv','main','mainEC','sub','subEC','drop'].forEach(function(k){es2[i2][k]=r[k];});
-          es2[i2].edited=now();save(es2);render();
+  // --- Render ---
+  function render() {
+    var entries = filtered();
+    var allEntries = loadEntries();
+    var total = entries.length;
+    var totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (page >= totalPages) page = totalPages - 1;
+    if (page < 0) page = 0;
+    var start = page * PAGE_SIZE;
+    var pageEntries = entries.slice(start, start + PAGE_SIZE);
+
+    var countEl = document.getElementById('dbCount');
+    if (countEl) {
+      countEl.textContent = searchQuery
+        ? '(' + total + '件 / ' + allEntries.length + '件中)'
+        : '(' + allEntries.length + '件)';
+    }
+
+    var body = document.getElementById('dbBody');
+    body.innerHTML = '';
+
+    if (total === 0) {
+      body.innerHTML = '<p class="no-data">' + (searchQuery ? '該当するデータが見つかりません。' : 'まだデータがありません。') + '</p>';
+      return;
+    }
+
+    var cols = [
+      { key: 'id', label: '#' },
+      { key: 'monster', label: 'モンスター名' },
+      { key: 'item', label: 'アイテム名' },
+      { key: 'map', label: 'マップ名' },
+      { key: 'name', label: '投稿者' },
+      { key: 'date', label: '登録日時' },
+      { key: 'edited', label: '編集日時' },
+    ];
+
+    var table = document.createElement('table');
+    table.className = 'db';
+    var thead = document.createElement('thead');
+    var headRow = document.createElement('tr');
+    cols.forEach(function(c) {
+      var th = document.createElement('th');
+      var arrow = '';
+      if (sortCol === c.key) { arrow = sortAsc ? ' ▲' : ' ▼'; }
+      th.innerHTML = c.label + '<span class="sort-arrow">' + arrow + '</span>';
+      th.onclick = function() {
+        if (sortCol === c.key) { sortAsc = !sortAsc; }
+        else { sortCol = c.key; sortAsc = true; }
+        render();
+      };
+      headRow.appendChild(th);
+    });
+    var thAct = document.createElement('th');
+    thAct.textContent = '操作';
+    thAct.style.cursor = 'default';
+    headRow.appendChild(thAct);
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    var tbody = document.createElement('tbody');
+    pageEntries.forEach(function(e) {
+      var tr = document.createElement('tr');
+      cols.forEach(function(c) {
+        var td = document.createElement('td');
+        td.textContent = e[c.key] || '';
+        tr.appendChild(td);
+      });
+      var tdAct = document.createElement('td');
+      tdAct.className = 'act';
+      var actBtn = document.createElement('button');
+      actBtn.className = 'btn btn-sm btn-del';
+      actBtn.textContent = '削除・編集';
+      actBtn.onclick = function() { actionEntry(e.id); };
+      tdAct.appendChild(actBtn);
+      tr.appendChild(tdAct);
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    body.appendChild(table);
+
+    // Pager
+    if (totalPages > 1) {
+      var pager = document.createElement('nav');
+      pager.className = 'pager';
+      if (page > 0) {
+        var prev = document.createElement('button');
+        prev.className = 'btn btn-sm btn-page'; prev.textContent = '≪ 前へ';
+        prev.onclick = function() { page--; render(); body.scrollIntoView({ behavior: 'smooth' }); };
+        pager.appendChild(prev);
+      }
+      var info = document.createElement('span');
+      info.className = 'page-info';
+      info.textContent = (page+1) + ' / ' + totalPages + ' ページ';
+      pager.appendChild(info);
+      if (page < totalPages - 1) {
+        var next = document.createElement('button');
+        next.className = 'btn btn-sm btn-page'; next.textContent = '次へ ≫';
+        next.onclick = function() { page++; render(); body.scrollIntoView({ behavior: 'smooth' }); };
+        pager.appendChild(next);
+      }
+      body.appendChild(pager);
+    }
+  }
+
+  // --- Actions ---
+  function addEntry() {
+    var name = document.getElementById('pName').value.trim();
+    var monster = document.getElementById('pMonster').value.trim();
+    var item = document.getElementById('pItem').value.trim();
+    var map = document.getElementById('pMap').value.trim();
+    var delkey = document.getElementById('pDel').value.trim();
+
+    if (!monster) { alert('モンスター名を入力してください。'); return; }
+    if (!item) { alert('アイテム名を入力してください。'); return; }
+
+    var entries = loadEntries();
+    entries.unshift({
+      id: nextId(),
+      name: name || '名無しさん',
+      monster: monster,
+      item: item,
+      map: map || '',
+      date: now(),
+      edited: '',
+      delkey: delkey || ''
+    });
+    saveEntries(entries);
+    savePrefs(name || '', delkey || '');
+
+    document.getElementById('pMonster').value = '';
+    document.getElementById('pItem').value = '';
+    document.getElementById('pMap').value = '';
+    page = 0;
+    render();
+    document.getElementById('dbBody').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function actionEntry(id) {
+    showActionModal('データ操作', function(action, key) {
+      if (!action) return;
+      var entries = loadEntries();
+      var idx = findEntry(entries, id);
+      if (idx < 0) return;
+      var e = entries[idx];
+      if (key !== ADMIN_KEY && (!e.delkey || key !== e.delkey)) {
+        alert('削除キーが一致しません。'); return;
+      }
+      if (action === 'delete') {
+        entries.splice(idx, 1);
+        saveEntries(entries);
+        render();
+      } else if (action === 'edit') {
+        showEditModal(e, function(result) {
+          if (!result) return;
+          var entries2 = loadEntries();
+          var idx2 = findEntry(entries2, id);
+          if (idx2 < 0) return;
+          entries2[idx2].monster = result.monster;
+          entries2[idx2].item = result.item;
+          entries2[idx2].map = result.map;
+          entries2[idx2].edited = now();
+          saveEntries(entries2);
+          render();
         });
       }
     });
   }
 
-  function copyTSV(){
-    var es=filtered();if(es.length===0){alert('コピーするデータがありません。');return;}
-    var h='完成コア名\t種族\t基本Lv\tMIX Lv\tメインコア\tメインEC\tサブコア\tサブEC\tDrop可\t投稿者\t日時';
-    var rows=es.map(function(e){return[e.core,e.race,e.baseLv,e.mixLv,e.main,e.mainEC||'',e.sub,e.subEC||'',e.drop?'○':'',e.name,e.date].join('\t');});
-    var tsv=h+'\n'+rows.join('\n');
-    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(tsv).then(sc).catch(function(){fc(tsv);});}else{fc(tsv);}
-  }
-  function fc(t){var a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');sc();}catch(e){alert('コピーに失敗しました。');}document.body.removeChild(a);}
-  function sc(){var m=document.getElementById('copiedMsg');m.style.display='inline';setTimeout(function(){m.style.display='none';},2000);}
+  function copyTSV() {
+    var entries = filtered();
+    if (entries.length === 0) { alert('コピーするデータがありません。'); return; }
+    var header = 'モンスター名\tアイテム名\tマップ名\t投稿者\t登録日時\t編集日時';
+    var rows = entries.map(function(e) {
+      return [e.monster, e.item, e.map, e.name, e.date, e.edited || ''].join('\t');
+    });
+    var tsv = header + '\n' + rows.join('\n');
 
-  // Init
-  var pr=lp();
-  if(pr.name)document.getElementById('pName').value=pr.name;
-  if(pr.delkey)document.getElementById('pDel').value=pr.delkey;
-  document.getElementById('btnPost').addEventListener('click',addEntry);
-  document.getElementById('btnCopy').addEventListener('click',copyTSV);
-  document.getElementById('btnBulk').addEventListener('click',bulkImport);
-  document.getElementById('btnBulkDel').addEventListener('click',bulkDelete);
-  document.getElementById('searchInput').addEventListener('input',function(){sq=this.value.trim().toLowerCase();page=0;render();});
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(tsv).then(function() { showCopied(); }).catch(function() { fallbackCopy(tsv); });
+    } else {
+      fallbackCopy(tsv);
+    }
+  }
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); showCopied(); } catch(e) { alert('コピーに失敗しました。'); }
+    document.body.removeChild(ta);
+  }
+
+  function showCopied() {
+    var msg = document.getElementById('copiedMsg');
+    msg.style.display = 'inline';
+    setTimeout(function() { msg.style.display = 'none'; }, 2000);
+  }
+
+  // --- Init ---
+  var prefs = loadPrefs();
+  var nameEl = document.getElementById('pName');
+  var delEl = document.getElementById('pDel');
+  if (nameEl && prefs.name) nameEl.value = prefs.name;
+  if (delEl && prefs.delkey) delEl.value = prefs.delkey;
+
+  document.getElementById('btnPost').addEventListener('click', addEntry);
+  document.getElementById('btnCopy').addEventListener('click', copyTSV);
+  document.getElementById('searchInput').addEventListener('input', function() {
+    searchQuery = this.value.trim().toLowerCase();
+    page = 0;
+    render();
+  });
+
   render();
-
-  function bulkDelete(){
-    var key=document.getElementById('bulkDelKey').value.trim();
-    var resultEl=document.getElementById('bulkDelResult');
-    if(!key){resultEl.innerHTML='<span class="err">キーを入力してください。</span>';return;}
-    var es=load();
-    var before=es.length;
-    if(key===ADMIN){
-      // 管理者キー：全件削除
-      if(!confirm('管理者キーで全'+before+'件を削除します。よろしいですか？'))return;
-      es=[];
-    }else{
-      // 削除キー一致分を削除
-      var remaining=es.filter(function(e){return e.delkey!==key;});
-      if(remaining.length===before){resultEl.innerHTML='<span class="err">一致するデータがありません。</span>';return;}
-      var count=before-remaining.length;
-      if(!confirm(count+'件のデータを削除します。よろしいですか？'))return;
-      es=remaining;
-    }
-    save(es);
-    var deleted=before-es.length;
-    resultEl.innerHTML='<span class="ok">'+deleted+'件削除しました。</span>（残り'+es.length+'件）';
-    document.getElementById('bulkDelKey').value='';
-    page=0;render();
-  }
-
-  function bulkImport(){
-    var raw=document.getElementById('bulkArea').value;
-    var delkey=document.getElementById('bulkDel').value.trim();
-    var name=document.getElementById('pName').value.trim()||'名無しさん';
-    if(!raw.trim()){alert('データを貼り付けてください。');return;}
-
-    var lines=raw.split('\n');
-    var es=load();
-    var added=0,skipped=0,errors=[];
-
-    for(var i=0;i<lines.length;i++){
-      var line=lines[i].trim();
-      if(!line)continue;
-      var cols=line.split('\t');
-      // ヘッダー行スキップ（最初の行が「完成コア」等を含む場合）
-      if(i===0 && cols[0] && /完成コア|コア名/i.test(cols[0])){continue;}
-
-      var core=normalize(cols[0]||'');
-      var race=normalize(cols[1]||'');
-      var baseLv=parseInt(cols[2])||0;
-      var mixLv=parseInt(cols[3])||0;
-      var main=normalize(cols[4]||'');
-      var mainEC=normalize(cols[5]||'');
-      var sub=normalize(cols[6]||'');
-      var subEC=normalize(cols[7]||'');
-      var drop=!!(cols[8]&&cols[8].trim());
-
-      if(!core){errors.push((i+1)+'行目: 完成コア名が空です');skipped++;continue;}
-      if(!drop&&!main&&!sub){errors.push((i+1)+'行目: メイン/サブが空でDrop可もありません');skipped++;continue;}
-      if((main&&!sub)||(!main&&sub)){errors.push((i+1)+'行目: メインとサブは両方必要です');skipped++;continue;}
-
-      es.unshift({id:nid(),name:name,core:core,race:race,baseLv:baseLv,mixLv:mixLv,main:main,mainEC:mainEC,sub:sub,subEC:subEC,drop:drop,date:now(),edited:'',delkey:delkey||''});
-      added++;
-    }
-
-    save(es);
-    page=0;render();
-
-    var resultEl=document.getElementById('bulkResult');
-    var msg='<span class="ok">'+added+'件登録しました。</span>';
-    if(skipped>0)msg+=' <span class="err">'+skipped+'件スキップ。</span>';
-    if(errors.length>0)msg+='<br>'+errors.slice(0,5).map(function(e){return'<span class="err">'+e+'</span>';}).join('<br>');
-    if(errors.length>5)msg+='<br><span class="err">...他'+(errors.length-5)+'件</span>';
-    resultEl.innerHTML=msg;
-
-    if(added>0){document.getElementById('bulkArea').value='';document.getElementById('dbBody').scrollIntoView({behavior:'smooth'});}
-  }
 })();
 </script>
 </body>
