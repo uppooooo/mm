@@ -75,7 +75,7 @@ a:visited{color:var(--link-visited);}
 .tp-detail{display:none;background:var(--bg-detail);border-top:1px dotted var(--line-border-light);padding:0.5rem 0.625rem;}
 .tp-detail.open{display:block;}
 .tp-body{font-size:var(--font-base);color:var(--text);padding:0 0 0.375rem;white-space:pre-wrap;word-break:break-word;}
-.tp-actions{display:flex;gap:0.375rem;align-items:center;margin-top:0.25rem;flex-wrap:wrap;}
+.tp-actions{display:flex;justify-content:space-between;align-items:center;margin-top:0.25rem;flex-wrap:wrap;gap:0.375rem;}
 .tp-empty{color:var(--text-muted);text-align:center;padding:1.25rem;}
 
 .reply{border-top:1px dotted var(--line-border-light);padding:0.375rem 0 0.25rem 1rem;margin-top:0.25rem;}
@@ -85,18 +85,37 @@ a:visited{color:var(--link-visited);}
 .r-body{font-size:var(--font-base);color:var(--text);padding:0.125rem 0;white-space:pre-wrap;word-break:break-word;}
 .r-del{margin-top:0.125rem;}
 
-.reply-form{border-top:1px solid var(--line-border-light);margin-top:0.5rem;padding-top:0.5rem;}
-.rf-title{font-size:0.6875rem;font-weight:bold;color:var(--text-label);margin-bottom:0.25rem;}
-.reply-form .fr{display:flex;align-items:center;margin-bottom:0.3125rem;gap:0.25rem;}
-.reply-form .fr label{width:3.125rem;font-size:0.625rem;font-weight:bold;color:var(--text-label);text-align:right;flex-shrink:0;}
-.reply-form .fr input{flex:1;padding:0.25rem 0.375rem;font-size:var(--font-base);background:#fff;border:1px solid var(--line-border);color:var(--text);border-radius:2px;font-family:inherit;}
-.reply-form .fr input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
-.reply-form textarea{width:100%;height:3.125rem;padding:0.25rem 0.375rem;font-size:var(--font-base);background:#fff;border:1px solid var(--line-border);color:var(--text);border-radius:2px;font-family:inherit;resize:vertical;}
-.reply-form textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+/* Reply form area */
+.reply-form-area{border-top:1px solid var(--line-border-light);margin-top:0.5rem;padding-top:0.5rem;}
+.reply-form-area .fr{display:flex;align-items:center;margin-bottom:0.3125rem;gap:0.25rem;}
+.reply-form-area .fr label{width:3.125rem;font-size:0.625rem;font-weight:bold;color:var(--text-label);text-align:right;flex-shrink:0;}
+.reply-form-area .fr input{flex:1;padding:0.25rem 0.375rem;font-size:var(--font-base);background:#fff;border:1px solid var(--line-border);color:var(--text);border-radius:2px;font-family:inherit;}
+.reply-form-area .fr input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+.reply-form-area textarea{width:100%;height:3.125rem;padding:0.25rem 0.375rem;font-size:var(--font-base);background:#fff;border:1px solid var(--line-border);color:var(--text);border-radius:2px;font-family:inherit;resize:vertical;}
+.reply-form-area textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
 .rf-actions{text-align:center;margin-top:0.25rem;}
-.rf-toggle{margin-bottom:0.375rem;background:linear-gradient(180deg,#888,#666);border-color:#777;font-size:0.6875rem;}
+.rf-toggle{background:linear-gradient(180deg,#888,#666);border-color:#777;font-size:0.6875rem;}
 .rf-body{display:none;}
 .rf-body.open{display:block;}
+
+/* Search */
+.search-box{padding:0.375rem 0.625rem;}
+.search-box input{width:100%;padding:0.375rem 0.5rem;font-size:0.8125rem;background:#fff;border:1px solid var(--line-border);color:var(--text);border-radius:2px;font-family:inherit;}
+.search-box input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 3px rgba(168,80,64,.3);}
+
+/* Modal */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:9999;}
+.modal-box{background:#fff;border:1px solid var(--line-border);border-radius:6px;padding:1rem;width:90%;max-width:20rem;box-shadow:0 4px 16px rgba(0,0,0,.2);}
+.modal-edit{max-width:28rem;}
+.modal-title{font-size:0.8125rem;font-weight:bold;color:var(--text-heading);margin-bottom:0.625rem;text-align:center;}
+.modal-label{display:block;font-size:0.6875rem;font-weight:bold;color:var(--text-label);margin:0.5rem 0 0.125rem;}
+.modal-input{width:100%;padding:0.375rem 0.5rem;font-size:0.875rem;border:1px solid var(--line-border);border-radius:2px;font-family:inherit;margin-bottom:0.5rem;}
+.modal-input:focus{border-color:var(--accent);outline:none;}
+.modal-textarea{width:100%;height:7rem;padding:0.375rem 0.5rem;font-size:0.875rem;border:1px solid var(--line-border);border-radius:2px;font-family:inherit;resize:vertical;margin-bottom:0.5rem;}
+.modal-textarea:focus{border-color:var(--accent);outline:none;}
+.modal-btns{display:flex;gap:0.375rem;justify-content:center;margin-top:0.375rem;}
+.modal-btn{flex:1;text-align:center;}
+.btn-cancel{background:linear-gradient(180deg,#888,#666);border-color:#777;}
 
 .pager{display:flex;justify-content:center;align-items:center;gap:0.5rem;padding:0.625rem 0;margin-top:0.5rem;border-top:1px solid var(--line-border-light);}
 .page-info{font-size:0.6875rem;color:var(--text-muted);}
@@ -120,9 +139,11 @@ a:visited{color:var(--link-visited);}
   .tp .su{white-space:normal;font-size:0.875rem;}.tp .nm{font-size:0.75rem;}
   .tp .da{font-size:0.6875rem;width:100%;padding-left:1.875rem;}
   .tp-body{font-size:0.875rem;}.r-body{font-size:0.875rem;}
-  .reply-form .fr{flex-wrap:wrap;}.reply-form .fr label{width:100%;text-align:left;}
-  .reply-form .fr input{font-size:1rem;}.reply-form textarea{font-size:1rem;}
-  .tp-actions{flex-direction:column;align-items:flex-start;}
+  .reply-form-area .fr{flex-wrap:wrap;}.reply-form-area .fr label{width:100%;text-align:left;}
+  .reply-form-area .fr input{font-size:1rem;}.reply-form-area textarea{font-size:1rem;}
+  .tp-actions{flex-direction:row;align-items:center;}
+  .search-box input{font-size:1rem;}
+  .modal-input{font-size:1rem;}.modal-textarea{font-size:1rem;}
   .desc{font-size:0.8125rem;}
 }
 </style>
@@ -166,6 +187,7 @@ a:visited{color:var(--link-visited);}
 
   <section class="sb">
     <h2 class="sh">TOPICS ─ トピック一覧　<span id="topicCount" style="font-weight:normal;color:var(--text-label);"></span></h2>
+    <div class="search-box"><input type="text" id="searchInput" placeholder="検索（名前・件名・本文）"></div>
     <div class="sd" id="topicList" role="list"></div>
   </section>
 </main>
@@ -184,6 +206,7 @@ a:visited{color:var(--link-visited);}
     storageKey: 'hankyu_bbs_topics',
     listEl: document.getElementById('topicList'),
     countEl: document.getElementById('topicCount'),
+    searchEl: document.getElementById('searchInput'),
     defaults: [
       { name: '管理人', subj: '取引ルール', body: '取引・売買の書き込みはこちらへどうぞ。\nトラブルは自己責任でお願いします。\n\n【テンプレート】\n売/買：\nアイテム名：\n希望価格：\n連絡先：', date: '2026:04:17:12:00', delkey: '' },
       { name: '管理人', subj: '取引報告・評価スレ', body: '取引が完了したら、ここで報告・評価をお願いします。', date: '2026:04:17:12:10', delkey: '' },
