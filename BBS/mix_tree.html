@@ -150,6 +150,7 @@ a:visited{color:var(--link-visited);}
 <div class="gl" role="presentation"></div>
 </div>
 <script src="./config.js"></script>
+<script src="./mix_data.js"></script>
 <script>
 (function(){
 'use strict';
@@ -157,6 +158,11 @@ var MIX_SK='mix_db_entries';
 var INIT_DEPTH=1; // 初期展開は1階層まで
 
 function loadMix(){
+  // 共有データ（mix_data.js）があればそちらを優先
+  if(window.MIX_SHARED_DATA&&Array.isArray(window.MIX_SHARED_DATA)&&window.MIX_SHARED_DATA.length>0){
+    return window.MIX_SHARED_DATA;
+  }
+  // フォールバック：localStorage
   try{var r=localStorage.getItem(MIX_SK);if(r){var d=JSON.parse(r);if(Array.isArray(d))return d;}}catch(e){}
   return[];
 }
