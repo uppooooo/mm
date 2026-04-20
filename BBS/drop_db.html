@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>ドロップ情報DB ─ 半球掲示板</title>
+<style>
+:root {
+  --bg:#d0d8e8;--bg-wrap:#e8eef8;--bg-section:#f0f4fa;
+  --bg-header-from:#b8c8e0;--bg-header-to:#c8d8e8;
+  --bg-nav:#c0d0e0;--bg-sh-from:#a8b8d8;--bg-sh-to:#90a0c0;
+  --bg-detail:#eef2fa;
+  --line-accent:#4060a8;--line-accent-hi:#7090d0;
+  --line-border:#a8b8d0;--line-border-light:#b8c8d8;--line-header-border:#90a0c0;
+  --text:#1a2a3a;--text-muted:#7888a0;--text-heading:#2040a0;--text-section:#1a3060;
+  --text-label:#304880;
+  --link:#2244aa;--link-hover:#cc4400;--link-visited:#553388;
+  --accent:#4060a8;
+  --btn-from:#4068b0;--btn-to:#304888;--btn-border:#3858a0;
+  --btn-del-from:#b06050;--btn-del-to:#904038;--btn-del-border:#a05048;
+  --font-base:0.75rem;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:16px;}
+body{background:var(--bg);color:var(--text);font-family:'ＭＳ Ｐゴシック','MS PGothic','ヒラギノ角ゴ Pro',Osaka,sans-serif;font-size:var(--font-base);line-height:1.6;-webkit-text-size-adjust:100%;}
+a{color:var(--link);text-decoration:none;}
+a:hover,a:focus{color:var(--link-hover);text-decoration:underline;outline:none;}
+a:focus-visible{outline:2px solid var(--link-hover);outline-offset:2px;}
+a:visited{color:var(--link-visited);}
+.wrap{max-width:760px;margin:0 auto;background:var(--bg-wrap);border-left:1px solid var(--line-border);border-right:1px solid var(--line-border);}
+.gl{height:4px;background:linear-gradient(90deg,var(--line-accent),var(--line-accent-hi),var(--line-accent));}
+.gl2{height:1px;background:var(--line-border-light);}
+.site-header{background:linear-gradient(180deg,var(--bg-header-from),var(--bg-header-to),var(--bg-header-from));text-align:center;padding:0.875rem 0.625rem 0.625rem;border-bottom:2px solid var(--line-header-border);}
+.site-header h1{font-size:1.125rem;color:var(--text-heading);text-shadow:1px 1px 0 rgba(255,255,255,.5);letter-spacing:0.2em;}
+.site-header .bl{font-size:0.6875rem;margin-top:0.1875rem;}
+.site-header .bl a{color:var(--link);}
+.site-nav{background:var(--bg-nav);border-bottom:1px solid var(--line-border);text-align:center;padding:0.25rem 0;display:flex;justify-content:center;flex-wrap:wrap;}
+.site-nav a{display:inline-block;color:var(--text-heading);font-size:0.6875rem;font-weight:bold;letter-spacing:0.06em;padding:0.3rem 0.875rem;border-right:1px solid var(--line-border);}
+.site-nav a:last-child{border-right:none;}
+.site-nav a:hover,.site-nav a:focus{color:var(--link-hover);background:rgba(64,96,168,.08);text-decoration:none;}
+.site-nav a:focus-visible{outline:2px solid var(--link-hover);outline-offset:-2px;}
+.content{padding:0.625rem 0.875rem;min-height:31.25rem;}
+.sb{border:1px solid var(--line-border);margin-bottom:0.75rem;background:var(--bg-section);}
+.sh{background:linear-gradient(180deg,var(--bg-sh-from),var(--bg-sh-to));color:#fff;font-size:0.6875rem;font-weight:bold;letter-spacing:0.15em;padding:0.3rem 0.625rem;border-bottom:1px solid var(--line-header-border);}
+.sd{padding:0.5rem 0.625rem;}
+.desc{font-size:0.6875rem;color:var(--text-muted);margin-top:0.25rem;}
+
+/* Form */
+.pf .fr{display:flex;align-items:center;margin-bottom:0.4375rem;gap:0.375rem;}
+.pf .fr label{width:5.5rem;font-size:0.6875rem;font-weight:bold;color:var(--text-label);text-align:right;flex-shrink:0;}
+.pf .fr input[type=text],.pf .fr input[type=password]{flex:1;padding:0.375rem 0.5rem;font-size:0.8125rem;background:#fff;border:1px solid var(--line-border);color:var(--text);border-radius:2px;font-family:inherit;}
+.pf .fr input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 3px rgba(64,96,168,.3);}
+.pf .fr input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+.pf .fa{text-align:center;margin-top:0.375rem;}
+.btn{padding:0.5rem 1.5rem;font-size:0.75rem;font-weight:bold;color:#fff;background:linear-gradient(180deg,var(--btn-from),var(--btn-to));border:1px solid var(--btn-border);border-radius:3px;cursor:pointer;letter-spacing:0.06em;appearance:none;-webkit-appearance:none;}
+.btn:hover{filter:brightness(1.1);}
+.btn:active{filter:brightness(0.95);}
+.btn:focus-visible{outline:2px solid var(--link-hover);outline-offset:2px;}
+.btn-sm{padding:0.25rem 0.75rem;font-size:0.6875rem;}
+.btn-del{background:linear-gradient(180deg,var(--btn-del-from),var(--btn-del-to));border-color:var(--btn-del-border);}
+.btn-copy{background:linear-gradient(180deg,#5a8a40,#3a6a28);border-color:#4a7a38;}
+.btn-page{background:linear-gradient(180deg,#888,#666);border-color:#777;}
+
+/* Search & Tools */
+.toolbar{display:flex;gap:0.375rem;align-items:center;flex-wrap:wrap;padding:0.375rem 0.625rem;}
+.toolbar input[type=text]{flex:1;min-width:8rem;padding:0.375rem 0.5rem;font-size:0.8125rem;background:#fff;border:1px solid var(--line-border);color:var(--text);border-radius:2px;font-family:inherit;}
+.toolbar input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 3px rgba(64,96,168,.3);}
+.count-label{font-size:0.6875rem;color:var(--text-muted);flex-shrink:0;}
+.copied-msg{font-size:0.6875rem;color:#3a8a30;font-weight:bold;display:none;}
+
+/* Table */
+.db-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table.db{width:100%;border-collapse:collapse;font-size:var(--font-base);}
+table.db th{background:var(--bg-sh-from);color:#fff;font-size:0.6875rem;font-weight:bold;padding:0.3rem 0.5rem;border:1px solid var(--line-border);text-align:left;white-space:nowrap;cursor:pointer;user-select:none;-webkit-user-select:none;letter-spacing:0.06em;}
+table.db th:hover{background:var(--accent);}
+table.db th .sort-arrow{font-size:0.5rem;margin-left:0.25rem;opacity:0.6;}
+table.db td{padding:0.3rem 0.5rem;border:1px solid var(--line-border-light);vertical-align:top;word-break:break-word;}
+table.db tr:nth-child(even){background:rgba(64,96,168,.04);}
+table.db tr:hover{background:rgba(64,96,168,.08);}
+table.db td.act{white-space:nowrap;text-align:center;}
+.no-data{text-align:center;color:var(--text-muted);padding:1.25rem;}
+
+/* Modal */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:9999;}
+.modal-box{background:#fff;border:1px solid var(--line-border);border-radius:6px;padding:1rem;width:90%;max-width:20rem;box-shadow:0 4px 16px rgba(0,0,0,.2);}
+.modal-edit{max-width:24rem;}
+.modal-title{font-size:0.8125rem;font-weight:bold;color:var(--text-heading);margin-bottom:0.625rem;text-align:center;}
+.modal-label{display:block;font-size:0.6875rem;font-weight:bold;color:var(--text-label);margin:0.375rem 0 0.125rem;}
+.modal-input{width:100%;padding:0.375rem 0.5rem;font-size:0.875rem;border:1px solid var(--line-border);border-radius:2px;font-family:inherit;margin-bottom:0.5rem;}
+.modal-input:focus{border-color:var(--accent);outline:none;}
+.modal-btns{display:flex;gap:0.375rem;justify-content:center;margin-top:0.375rem;}
+.modal-btn{flex:1;text-align:center;}
+.btn-cancel{background:linear-gradient(180deg,#888,#666);border-color:#777;}
+
+/* Pager */
+.pager{display:flex;justify-content:center;align-items:center;gap:0.5rem;padding:0.625rem 0;margin-top:0.5rem;border-top:1px solid var(--line-border-light);}
+.page-info{font-size:0.6875rem;color:var(--text-muted);}
+
+/* Footer */
+.site-footer{background:var(--bg-nav);border-top:2px solid var(--line-header-border);text-align:center;padding:0.625rem;font-size:0.625rem;color:var(--text-muted);}
+.site-footer a{color:var(--link);}
+
+@media(max-width:600px){
+  :root{--font-base:0.875rem;}
+  .wrap{width:100%;border:none;}
+  .site-header h1{font-size:1.0625rem;}
+  .site-nav a{padding:0.625rem 0.75rem;font-size:0.8125rem;}
+  .content{padding:0.5rem;}
+  .sh{font-size:0.75rem;padding:0.4375rem 0.625rem;}.sd{padding:0.5rem;}
+  .pf .fr{flex-wrap:wrap;}.pf .fr label{width:100%;text-align:left;margin-bottom:0.125rem;}
+  .pf .fr input[type=text],.pf .fr input[type=password]{width:100%;font-size:1rem;}
+  .btn{padding:0.75rem 0;width:100%;font-size:0.9375rem;}
+  .btn-sm{padding:0.5rem 1rem;width:auto;font-size:0.8125rem;}
+  .toolbar{flex-direction:column;align-items:stretch;}
+  .toolbar input[type=text]{font-size:1rem;}
+  .toolbar .btn-sm{width:100%;}
+  table.db th,table.db td{padding:0.4rem 0.375rem;font-size:0.8125rem;}
+  .desc{font-size:0.8125rem;}
+  .modal-input{font-size:1rem;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="gl" role="presentation"></div>
+<header class="site-header">
+  <h1>ドロップ情報DB</h1>
+  <p class="bl"><a href="./index.html">≪ トップページに戻る</a></p>
+</header>
+<div class="gl" role="presentation"></div>
+<nav class="site-nav" aria-label="メインナビゲーション">
+  <a href="./index.html">TOP</a>
+  <a href="./chat_bbs.html">雑談BBS</a>
+  <a href="./hankyu_bbs.html">取引BBS</a>
+  <a href="./drop_db.html">ドロップDB</a>
+  <a href="./mix_db.html">ミックス表</a>
+  <a href="./mix_tree.html">MIXツリー</a>
+</nav>
+<div class="gl2" role="presentation"></div>
+
+<main class="content">
+  <section class="sb">
+    <h2 class="sh">ABOUT ─ ドロップ情報DBについて</h2>
+    <div class="sd">
+      <p>モンスターのドロップ情報を共有するデータベースです。</p>
+      <p class="desc">※ 投稿データはTSV形式でコピーしてスプレッドシートに貼り付けられます。</p>
+    </div>
+  </section>
+
+  <section class="sb">
+    <h2 class="sh">NEW ENTRY ─ 新規登録</h2>
+    <div class="sd">
+      <form class="pf" id="postForm" onsubmit="return false;">
+        <div class="fr"><label for="pName">投稿者名：</label><input type="text" id="pName" placeholder="名無しさん" maxlength="30"></div>
+        <div class="fr"><label for="pMonster">モンスター名：</label><input type="text" id="pMonster" placeholder="例：スライム" maxlength="80"></div>
+        <div class="fr"><label for="pItem">アイテム名：</label><input type="text" id="pItem" placeholder="例：回復薬" maxlength="80"></div>
+        <div class="fr"><label for="pMap">マップ名：</label><input type="text" id="pMap" placeholder="例：始まりの草原" maxlength="80"></div>
+        <div class="fr"><label for="pDel">削除キー：</label><input type="password" id="pDel" placeholder="半角英数8文字以内" maxlength="8" style="max-width:12.5rem;"></div>
+        <div class="fa"><button type="button" class="btn" id="btnPost">登録する</button></div>
+      </form>
+    </div>
+  </section>
+
+  <section class="sb">
+    <h2 class="sh">DATABASE ─ ドロップ一覧　<span id="dbCount" style="font-weight:normal;"></span></h2>
+    <div class="toolbar">
+      <input type="text" id="searchInput" placeholder="検索（モンスター・アイテム・マップ）">
+      <button type="button" class="btn btn-sm btn-copy" id="btnCopy">TSVコピー</button>
+      <span class="copied-msg" id="copiedMsg">✓ コピーしました</span>
+    </div>
+    <div class="sd">
+      <div class="db-table-wrap" id="dbBody"></div>
+    </div>
+  </section>
+</main>
+
+<div class="gl" role="presentation"></div>
+<footer class="site-footer"><a href="./index.html">≪ トップページに戻る</a><br>since 2026 ─ 半球掲示板</footer>
+<div class="gl" role="presentation"></div>
+</div>
+
+<script src="./config.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var STORAGE_KEY = 'drop_db_entries';
+  var PREFS_KEY = 'drop_db_prefs';
+  var COUNTER_KEY = 'drop_db_counter';
+  var ADMIN_KEY = (window.SITE_CONFIG && window.SITE_CONFIG.adminKey) || 'admin';
+  var PAGE_SIZE = 30;
+
+  var page = 0;
+  var searchQuery = '';
+  var sortCol = 'id';
+  var sortAsc = false;
+
+  // --- Utils ---
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function now() {
+    var d = new Date();
+    return d.getFullYear() + ':' + pad(d.getMonth()+1) + ':' + pad(d.getDate()) + ':' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  }
+
+  function nextId() {
+    var n;
+    try { n = parseInt(localStorage.getItem(COUNTER_KEY)) || 0; } catch(e) { n = 0; }
+    n++;
+    try { localStorage.setItem(COUNTER_KEY, n); } catch(e) {}
+    return n;
+  }
+
+  function loadEntries() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) { var d = JSON.parse(raw); if (Array.isArray(d)) return d; }
+    } catch(e) {}
+    return [];
+  }
+
+  function saveEntries(entries) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); } catch(e) {}
+  }
+
+  function savePrefs(name, delkey) {
+    try { localStorage.setItem(PREFS_KEY, JSON.stringify({ name: name, delkey: delkey })); } catch(e) {}
+  }
+  function loadPrefs() {
+    try { var d = JSON.parse(localStorage.getItem(PREFS_KEY)); return d || {}; } catch(e) { return {}; }
+  }
+
+  function findEntry(entries, id) {
+    for (var i = 0; i < entries.length; i++) { if (entries[i].id === id) return i; }
+    return -1;
+  }
+
+  // --- Filter & Sort ---
+  function filtered() {
+    var entries = loadEntries();
+    var q = searchQuery;
+    if (q) {
+      entries = entries.filter(function(e) {
+        return (e.monster && e.monster.toLowerCase().indexOf(q) >= 0)
+            || (e.item && e.item.toLowerCase().indexOf(q) >= 0)
+            || (e.map && e.map.toLowerCase().indexOf(q) >= 0)
+            || (e.name && e.name.toLowerCase().indexOf(q) >= 0);
+      });
+    }
+    entries.sort(function(a, b) {
+      var va = a[sortCol] || '', vb = b[sortCol] || '';
+      if (typeof va === 'number' && typeof vb === 'number') {
+        return sortAsc ? va - vb : vb - va;
+      }
+      va = String(va).toLowerCase(); vb = String(vb).toLowerCase();
+      if (va < vb) return sortAsc ? -1 : 1;
+      if (va > vb) return sortAsc ? 1 : -1;
+      return 0;
+    });
+    return entries;
+  }
+
+  // --- Action Modal (delete / edit / cancel) ---
+  function showActionModal(title, callback) {
+    var overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    var box = document.createElement('div');
+    box.className = 'modal-box';
+    box.innerHTML = '<div class="modal-title">' + title + '</div>';
+    var inp = document.createElement('input');
+    inp.type = 'password'; inp.className = 'modal-input'; inp.placeholder = '削除キーを入力'; inp.maxLength = 8;
+    box.appendChild(inp);
+    var btns = document.createElement('div');
+    btns.className = 'modal-btns';
+
+    var btnDel = document.createElement('button');
+    btnDel.className = 'btn btn-sm btn-del modal-btn'; btnDel.textContent = '削除';
+    btnDel.onclick = function() { close('delete'); };
+
+    var btnEdit = document.createElement('button');
+    btnEdit.className = 'btn btn-sm modal-btn'; btnEdit.textContent = '編集';
+    btnEdit.onclick = function() { close('edit'); };
+
+    var btnCancel = document.createElement('button');
+    btnCancel.className = 'btn btn-sm btn-cancel modal-btn'; btnCancel.textContent = 'キャンセル';
+    btnCancel.onclick = function() { close(null); };
+
+    btns.appendChild(btnDel); btns.appendChild(btnEdit); btns.appendChild(btnCancel);
+    box.appendChild(btns); overlay.appendChild(box); document.body.appendChild(overlay);
+    setTimeout(function() { inp.focus(); }, 50);
+
+    function close(action) {
+      var key = inp.value.trim();
+      document.body.removeChild(overlay);
+      callback(action, key);
+    }
+  }
+
+  // --- Edit Modal ---
+  function showEditModal(entry, callback) {
+    var overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    var box = document.createElement('div');
+    box.className = 'modal-box modal-edit';
+    box.innerHTML = '<div class="modal-title">データ編集</div>';
+
+    var fields = [
+      { key: 'monster', label: 'モンスター名：' },
+      { key: 'item', label: 'アイテム名：' },
+      { key: 'map', label: 'マップ名：' }
+    ];
+    var inputs = {};
+
+    fields.forEach(function(f) {
+      var lbl = document.createElement('label');
+      lbl.className = 'modal-label'; lbl.textContent = f.label;
+      box.appendChild(lbl);
+      var inp = document.createElement('input');
+      inp.type = 'text'; inp.className = 'modal-input'; inp.maxLength = 80;
+      inp.value = entry[f.key] || '';
+      box.appendChild(inp);
+      inputs[f.key] = inp;
+    });
+
+    var btns = document.createElement('div');
+    btns.className = 'modal-btns';
+
+    var btnSave = document.createElement('button');
+    btnSave.className = 'btn btn-sm modal-btn'; btnSave.textContent = '保存';
+    btnSave.onclick = function() {
+      var monster = inputs.monster.value.trim();
+      var item = inputs.item.value.trim();
+      var map = inputs.map.value.trim();
+      if (!monster) { alert('モンスター名を入力してください。'); return; }
+      if (!item) { alert('アイテム名を入力してください。'); return; }
+      document.body.removeChild(overlay);
+      callback({ monster: monster, item: item, map: map });
+    };
+
+    var btnCancel = document.createElement('button');
+    btnCancel.className = 'btn btn-sm btn-cancel modal-btn'; btnCancel.textContent = 'キャンセル';
+    btnCancel.onclick = function() { document.body.removeChild(overlay); callback(null); };
+
+    btns.appendChild(btnSave); btns.appendChild(btnCancel);
+    box.appendChild(btns); overlay.appendChild(box); document.body.appendChild(overlay);
+    setTimeout(function() { inputs.monster.focus(); }, 50);
+  }
+
+  // --- Render ---
+  function render() {
+    var entries = filtered();
+    var allEntries = loadEntries();
+    var total = entries.length;
+    var totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (page >= totalPages) page = totalPages - 1;
+    if (page < 0) page = 0;
+    var start = page * PAGE_SIZE;
+    var pageEntries = entries.slice(start, start + PAGE_SIZE);
+
+    var countEl = document.getElementById('dbCount');
+    if (countEl) {
+      countEl.textContent = searchQuery
+        ? '(' + total + '件 / ' + allEntries.length + '件中)'
+        : '(' + allEntries.length + '件)';
+    }
+
+    var body = document.getElementById('dbBody');
+    body.innerHTML = '';
+
+    if (total === 0) {
+      body.innerHTML = '<p class="no-data">' + (searchQuery ? '該当するデータが見つかりません。' : 'まだデータがありません。') + '</p>';
+      return;
+    }
+
+    var cols = [
+      { key: 'id', label: '#' },
+      { key: 'monster', label: 'モンスター名' },
+      { key: 'item', label: 'アイテム名' },
+      { key: 'map', label: 'マップ名' },
+      { key: 'name', label: '投稿者' },
+      { key: 'date', label: '登録日時' },
+      { key: 'edited', label: '編集日時' },
+    ];
+
+    var table = document.createElement('table');
+    table.className = 'db';
+    var thead = document.createElement('thead');
+    var headRow = document.createElement('tr');
+    cols.forEach(function(c) {
+      var th = document.createElement('th');
+      var arrow = '';
+      if (sortCol === c.key) { arrow = sortAsc ? ' ▲' : ' ▼'; }
+      th.innerHTML = c.label + '<span class="sort-arrow">' + arrow + '</span>';
+      th.onclick = function() {
+        if (sortCol === c.key) { sortAsc = !sortAsc; }
+        else { sortCol = c.key; sortAsc = true; }
+        render();
+      };
+      headRow.appendChild(th);
+    });
+    var thAct = document.createElement('th');
+    thAct.textContent = '操作';
+    thAct.style.cursor = 'default';
+    headRow.appendChild(thAct);
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    var tbody = document.createElement('tbody');
+    pageEntries.forEach(function(e) {
+      var tr = document.createElement('tr');
+      cols.forEach(function(c) {
+        var td = document.createElement('td');
+        td.textContent = e[c.key] || '';
+        tr.appendChild(td);
+      });
+      var tdAct = document.createElement('td');
+      tdAct.className = 'act';
+      var actBtn = document.createElement('button');
+      actBtn.className = 'btn btn-sm btn-del';
+      actBtn.textContent = '削除・編集';
+      actBtn.onclick = function() { actionEntry(e.id); };
+      tdAct.appendChild(actBtn);
+      tr.appendChild(tdAct);
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    body.appendChild(table);
+
+    // Pager
+    if (totalPages > 1) {
+      var pager = document.createElement('nav');
+      pager.className = 'pager';
+      if (page > 0) {
+        var prev = document.createElement('button');
+        prev.className = 'btn btn-sm btn-page'; prev.textContent = '≪ 前へ';
+        prev.onclick = function() { page--; render(); body.scrollIntoView({ behavior: 'smooth' }); };
+        pager.appendChild(prev);
+      }
+      var info = document.createElement('span');
+      info.className = 'page-info';
+      info.textContent = (page+1) + ' / ' + totalPages + ' ページ';
+      pager.appendChild(info);
+      if (page < totalPages - 1) {
+        var next = document.createElement('button');
+        next.className = 'btn btn-sm btn-page'; next.textContent = '次へ ≫';
+        next.onclick = function() { page++; render(); body.scrollIntoView({ behavior: 'smooth' }); };
+        pager.appendChild(next);
+      }
+      body.appendChild(pager);
+    }
+  }
+
+  // --- Actions ---
+  function addEntry() {
+    var name = document.getElementById('pName').value.trim();
+    var monster = document.getElementById('pMonster').value.trim();
+    var item = document.getElementById('pItem').value.trim();
+    var map = document.getElementById('pMap').value.trim();
+    var delkey = document.getElementById('pDel').value.trim();
+
+    if (!monster) { alert('モンスター名を入力してください。'); return; }
+    if (!item) { alert('アイテム名を入力してください。'); return; }
+
+    var entries = loadEntries();
+    entries.unshift({
+      id: nextId(),
+      name: name || '名無しさん',
+      monster: monster,
+      item: item,
+      map: map || '',
+      date: now(),
+      edited: '',
+      delkey: delkey || ''
+    });
+    saveEntries(entries);
+    savePrefs(name || '', delkey || '');
+
+    document.getElementById('pMonster').value = '';
+    document.getElementById('pItem').value = '';
+    document.getElementById('pMap').value = '';
+    page = 0;
+    render();
+    document.getElementById('dbBody').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function actionEntry(id) {
+    showActionModal('データ操作', function(action, key) {
+      if (!action) return;
+      var entries = loadEntries();
+      var idx = findEntry(entries, id);
+      if (idx < 0) return;
+      var e = entries[idx];
+      if (key !== ADMIN_KEY && (!e.delkey || key !== e.delkey)) {
+        alert('削除キーが一致しません。'); return;
+      }
+      if (action === 'delete') {
+        entries.splice(idx, 1);
+        saveEntries(entries);
+        render();
+      } else if (action === 'edit') {
+        showEditModal(e, function(result) {
+          if (!result) return;
+          var entries2 = loadEntries();
+          var idx2 = findEntry(entries2, id);
+          if (idx2 < 0) return;
+          entries2[idx2].monster = result.monster;
+          entries2[idx2].item = result.item;
+          entries2[idx2].map = result.map;
+          entries2[idx2].edited = now();
+          saveEntries(entries2);
+          render();
+        });
+      }
+    });
+  }
+
+  function copyTSV() {
+    var entries = filtered();
+    if (entries.length === 0) { alert('コピーするデータがありません。'); return; }
+    var header = 'モンスター名\tアイテム名\tマップ名\t投稿者\t登録日時\t編集日時';
+    var rows = entries.map(function(e) {
+      return [e.monster, e.item, e.map, e.name, e.date, e.edited || ''].join('\t');
+    });
+    var tsv = header + '\n' + rows.join('\n');
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(tsv).then(function() { showCopied(); }).catch(function() { fallbackCopy(tsv); });
+    } else {
+      fallbackCopy(tsv);
+    }
+  }
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); showCopied(); } catch(e) { alert('コピーに失敗しました。'); }
+    document.body.removeChild(ta);
+  }
+
+  function showCopied() {
+    var msg = document.getElementById('copiedMsg');
+    msg.style.display = 'inline';
+    setTimeout(function() { msg.style.display = 'none'; }, 2000);
+  }
+
+  // --- Init ---
+  var prefs = loadPrefs();
+  var nameEl = document.getElementById('pName');
+  var delEl = document.getElementById('pDel');
+  if (nameEl && prefs.name) nameEl.value = prefs.name;
+  if (delEl && prefs.delkey) delEl.value = prefs.delkey;
+
+  document.getElementById('btnPost').addEventListener('click', addEntry);
+  document.getElementById('btnCopy').addEventListener('click', copyTSV);
+  document.getElementById('searchInput').addEventListener('input', function() {
+    searchQuery = this.value.trim().toLowerCase();
+    page = 0;
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
