@@ -125,15 +125,12 @@ table.db td.chk{text-align:center;}
 <div class="gl" role="presentation"></div>
 <header class="site-header">
   <h1>ミックス表DB</h1>
-  <p class="bl"><a href="./index.html">≪ トップページに戻る</a></p>
+  <p class="bl"><a href="../index.html">≪ メインサイトに戻る</a></p>
 </header>
 <div class="gl" role="presentation"></div>
 <nav class="site-nav" aria-label="メインナビゲーション">
-  <a href="./index.html">TOP</a>
-  <a href="./chat_bbs.html">雑談BBS</a>
-  <a href="./hankyu_bbs.html">取引BBS</a>
-  <a href="./drop_db.html">ドロップDB</a>
-  <a href="./mix_db.html">ミックス表</a>
+  <a href="../index.html">メインサイト</a>
+  <a href="./mix_db.html">ミックス表DB</a>
   <a href="./mix_tree.html">MIXツリー</a>
 </nav>
 <div class="gl2" role="presentation"></div>
@@ -202,10 +199,11 @@ table.db td.chk{text-align:center;}
   </section>
 </main>
 <div class="gl" role="presentation"></div>
-<footer class="site-footer"><a href="./index.html">≪ トップページに戻る</a><br>since 2026 ─ 半球掲示板</footer>
+<footer class="site-footer"><a href="../index.html">≪ メインサイトに戻る</a><br>since 2026 ─ 半球掲示板</footer>
 <div class="gl" role="presentation"></div>
 </div>
 <script src="./config.js"></script>
+<script src="./mix_data.js"></script>
 <script>
 (function () {
   'use strict';
@@ -216,7 +214,12 @@ table.db td.chk{text-align:center;}
   function pad(n){return String(n).padStart(2,'0');}
   function now(){var d=new Date();return d.getFullYear()+':'+pad(d.getMonth()+1)+':'+pad(d.getDate())+':'+pad(d.getHours())+':'+pad(d.getMinutes());}
   function nid(){var n;try{n=parseInt(localStorage.getItem(CK))||0;}catch(e){n=0;}n++;try{localStorage.setItem(CK,n);}catch(e){}return n;}
-  function load(){try{var r=localStorage.getItem(SK);if(r){var d=JSON.parse(r);if(Array.isArray(d))return d;}}catch(e){}return[];}
+  function load(){
+    try{var r=localStorage.getItem(SK);if(r){var d=JSON.parse(r);if(Array.isArray(d)&&d.length>0)return d;}}catch(e){}
+    // localStorageが空なら共有データをフォールバック
+    if(window.MIX_SHARED_DATA&&Array.isArray(window.MIX_SHARED_DATA)&&window.MIX_SHARED_DATA.length>0)return window.MIX_SHARED_DATA.map(function(e){return Object.assign({id:0,name:'共有データ',date:'',edited:'',delkey:''},e);});
+    return[];
+  }
   function save(d){try{localStorage.setItem(SK,JSON.stringify(d));}catch(e){}}
   function sp(n,k){try{localStorage.setItem(PK,JSON.stringify({name:n,delkey:k}));}catch(e){}}
   function lp(){try{var d=JSON.parse(localStorage.getItem(PK));return d||{};}catch(e){return{};}}
