@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>データベース</title>
+
+  <!-- 共通CSS -->
+  <link rel="stylesheet" href="./styles.css">
+
+  <style>
+    .tab-bar {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 8px 16px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .search-box {
+      margin-bottom: 12px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 16px;
+      background: #ffffff;
+      color: var(--ink);
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-weak);
+    }
+
+    .status-bar {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .db-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .db-table th,
+    .db-table td {
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .db-table th {
+      background: var(--bg);
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+
+    .db-table tr:nth-child(even) {
+      background: #f9fafb;
+    }
+
+    .droppable-badge {
+      display: inline-block;
+      background: #d1fae5;
+      color: #065f46;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .loading, .empty-state {
+      text-align: center;
+      padding: 30px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>データベース</h1>
+      <a href="./index.html" class="back-link">← トップページに戻る</a>
+    </header>
+
+    <main>
+      <div class="tab-bar">
+        <button class="tab-btn active" data-page="mix">MIX公式</button>
+        <button class="tab-btn" data-page="delivery">納品アイテム</button>
+      </div>
+
+      <div class="search-box">
+        <input type="search" id="searchInput" placeholder="検索..." autocomplete="off">
+      </div>
+
+      <div class="status-bar">
+        <span id="resultCount">読み込み中...</span>
+        <span id="syncInfo"></span>
+      </div>
+
+      <div class="page active" id="page-mix">
+        <div class="loading">読み込み中...</div>
+      </div>
+
+      <div class="page" id="page-delivery">
+        <div class="loading">読み込み中...</div>
+      </div>
+    </main>
+
+    <footer>
+      <p>© uppo tools</p>
+    </footer>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    var firebaseConfig = {
+      apiKey: "AIzaSyBQbmQPaXDjItAGQx0QBPpZKUXrByAHIXs",
+      authDomain: "uppooooo.firebaseapp.com",
+      projectId: "uppooooo",
+      storageBucket: "uppooooo.firebasestorage.app",
+      messagingSenderId: "299004426367",
+      appId: "1:299004426367:web:64a30627d61b40da4de74a"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
+
+    var appData = { mix: [], delivery: [] };
+    var currentPage = 'mix';
+    var currentSearch = '';
+
+    var COLLECTION_MAP = {
+      mix: 'MIX公式DB',
+      delivery: '納品アイテムDB'
+    };
+
+    async function fetchAllData() {
+      try {
+        var promises = Object.keys(COLLECTION_MAP).map(function(key) {
+          return db.collection(COLLECTION_MAP[key]).get().then(function(snapshot) {
+            appData[key] = snapshot.docs.map(function(doc) {
+              return Object.assign({ id: doc.id }, doc.data());
+            });
+          });
+        });
+        await Promise.all(promises);
+        renderCurrentPage();
+        fetchSyncInfo();
+      } catch (error) {
+        console.error('Fetch error:', error);
+        document.getElementById('resultCount').textContent = 'エラー: ' + error.message;
+      }
+    }
+
+    async function fetchSyncInfo() {
+      try {
+        var doc = await db.collection('metadata').doc('last_sync').get();
+        if (doc.exists) {
+          var data = doc.data();
+          var date = new Date(data.synced_at);
+          document.getElementById('syncInfo').textContent = '同期: ' + date.toLocaleDateString('ja-JP', {
+            month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+          });
+        }
+      } catch (e) {}
+    }
+
+    function getFilteredItems(pageKey) {
+      var items = appData[pageKey];
+      if (!currentSearch) return items;
+      var search = currentSearch.toLowerCase();
+      return items.filter(function(item) {
+        return Object.values(item).some(function(val) {
+          return String(val).toLowerCase().indexOf(search) !== -1;
+        });
+      });
+    }
+
+    function renderCurrentPage() {
+      var filtered = getFilteredItems(currentPage);
+      document.getElementById('resultCount').textContent = filtered.length + '件';
+      var container = document.getElementById('page-' + currentPage);
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="empty-state">該当データなし</div>';
+        return;
+      }
+
+      switch (currentPage) {
+        case 'mix': renderMix(container, filtered); break;
+        case 'delivery': renderDelivery(container, filtered); break;
+      }
+    }
+
+    function renderMix(container, items) {
+      var html = '<div class="table-wrap"><table class="db-table">';
+      html += '<thead><tr><th>コア名</th><th>種族</th><th>基本Lv</th><th>Drop可</th><th>MIX Lv</th><th>メインコア</th><th>EC</th><th>サブコア</th><th>EC</th></tr></thead>';
+      html += '<tbody>';
+      items.forEach(function(item) {
+        var drop = item['Drop可'] === '〇' ? '<span class="droppable-badge">〇</span>' : '';
+        html += '<tr>';
+        html += '<td>' + esc(item['コア名'] || '') + '</td>';
+        html += '<td>' + esc(item['種族'] || '') + '</td>';
+        html += '<td>' + (item['基本Lv'] || '-') + '</td>';
+        html += '<td>' + drop + '</td>';
+        html += '<td>' + (item['MIX Lv'] || item['MIX_Lv'] || '-') + '</td>';
+        html += '<td>' + esc(item['メインコア'] || '') + '</td>';
+        html += '<td>' + (item['メインEC'] || '-') + '</td>';
+        html += '<td>' + esc(item['サブコア'] || '') + '</td>';
+        html += '<td>' + (item['サブEC'] || '-') + '</td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table></div>';
+      container.innerHTML = html;
+    }
+
+    function renderDelivery(container, items) {
+      var html = '<div class="table-wrap"><table class="db-table">';
+      html += '<thead><tr><th>大分類</th><th>アイテム名</th><th>個数</th><th>マップ</th><th>モンスター</th></tr></thead>';
+      html += '<tbody>';
+      items.forEach(function(item) {
+        html += '<tr>';
+        html += '<td>' + esc(item['大分類'] || '') + '</td>';
+        html += '<td>' + esc(item['アイテム名'] || '') + '</td>';
+        html += '<td>' + (item['個数'] || '-') + '</td>';
+        html += '<td>' + esc(item['マップ'] || '-') + '</td>';
+        html += '<td>' + esc(item['モンスター'] || '-') + '</td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table></div>';
+      container.innerHTML = html;
+    }
+
+    function esc(str) {
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    document.querySelector('.tab-bar').addEventListener('click', function(e) {
+      var btn = e.target.closest('.tab-btn');
+      if (!btn) return;
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+      currentPage = btn.dataset.page;
+      document.getElementById('page-' + currentPage).classList.add('active');
+      renderCurrentPage();
+    });
+
+    var searchTimeout;
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(function() {
+        currentSearch = e.target.value.trim();
+        renderCurrentPage();
+      }, 200);
+    });
+
+    fetchAllData();
+  </script>
+</body>
+</html>
