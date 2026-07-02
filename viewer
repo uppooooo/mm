@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>MixMaster Sprite Viewer v3</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #1a1a2e;
+  color: #eee;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+h1 { margin-bottom: 8px; font-size: 1.4rem; color: #e0c060; }
+.subtitle { font-size: 0.85rem; color: #888; margin-bottom: 20px; }
+#drop-zone {
+  width: 100%; max-width: 800px;
+  border: 2px dashed #555; border-radius: 12px;
+  padding: 40px; text-align: center;
+  transition: all 0.2s; cursor: pointer; margin-bottom: 20px;
+}
+#drop-zone.dragover { border-color: #e0c060; background: rgba(224,192,96,0.05); }
+#drop-zone p { font-size: 1rem; color: #aaa; }
+#drop-zone .ext { color: #e0c060; font-weight: bold; }
+#info {
+  width: 100%; max-width: 800px;
+  background: #16213e; border-radius: 8px;
+  padding: 16px; margin-bottom: 16px;
+  font-size: 0.85rem; line-height: 1.6; display: none;
+}
+#info .label { color: #888; }
+#info .value { color: #7ec8e3; }
+#info .format-objects { color: #8bc34a; }
+#info .format-sprite { color: #ff9800; }
+#controls {
+  display: none; gap: 12px; align-items: center;
+  margin-bottom: 16px; flex-wrap: wrap; justify-content: center;
+}
+#controls button {
+  background: #0f3460; border: 1px solid #1a508b;
+  color: #eee; padding: 6px 14px; border-radius: 6px;
+  cursor: pointer; font-size: 0.85rem;
+}
+#controls button:hover { background: #1a508b; }
+#controls button.active { background: #e0c060; color: #1a1a2e; }
+#controls select {
+  background: #0f3460; border: 1px solid #1a508b;
+  color: #eee; padding: 6px 10px; border-radius: 6px; font-size: 0.85rem;
+}
+#frame-label { font-size: 0.85rem; color: #aaa; }
+#bg-toggle { font-size: 0.8rem; color: #aaa; cursor: pointer; user-select: none; }
+#canvas-container {
+  border-radius: 8px; padding: 10px; display: inline-block; margin-bottom: 16px;
+}
+#canvas-container.checker {
+  background: repeating-conic-gradient(#2a2a3e 0% 25%, #222238 0% 50%) 50% / 20px 20px;
+}
+#canvas-container.black { background: #000; }
+#canvas-container.white { background: #fff; }
+canvas { display: block; image-rendering: pixelated; }
+</style>
+</head>
+<body>
+
+<h1>MixMaster Sprite Viewer v3</h1>
+<p class="subtitle">objects (.an) + sprite (.an) 自動判別対応</p>
+
+<div id="drop-zone">
+  <p><span class="ext">.an</span> または <span class="ext">.ina</span> ファイルをここにドロップ</p>
+  <p style="margin-top:8px;font-size:0.8rem;color:#666">（クリックでファイル選択も可、複数ファイル対応）</p>
+  <input type="file" id="file-input" accept=".an,.ina" multiple style="display:none">
+</div>
+
+<div id="info"></div>
+
+<div id="controls">
+  <select id="frame-select"></select>
+  <span id="frame-label"></span>
+  <button id="btn-prev">◀</button>
+  <button id="btn-next">▶</button>
+  <button id="btn-play">▶ 再生</button>
+  <button id="btn-zoom-out">−</button>
+  <button id="btn-zoom-in">＋</button>
+  <span id="zoom-label" style="font-size:0.8rem;color:#aaa">100%</span>
+  <span id="bg-toggle" title="背景切替">🎨 背景</span>
+  <button id="btn-download">PNG保存</button>
+</div>
+
+<div id="canvas-container" class="checker">
+  <canvas id="canvas"></canvas>
+</div>
+
+<script>
+// === Format detection ===
+function detectFormat(buf) {
+  const dv = new DataView(buf);
+  if (buf.byteLength < 20) return 'objects';
+  const fc = dv.getUint32(0, true);
+  if (fc === 0 || fc > 2000) return 'objects';
+
+  // Objects interpretation
+  const dsObj = dv.getUint32(12, true);
+  // Sprite interpretation
+  const dsSpr = dv.getUint32(14, true);
+
+  if (fc === 1) {
+    if (4 + 12 + dsObj === buf.byteLength) return 'objects';
+    if (4 + 14 + dsSpr === buf.byteLength) return 'sprite';
+  }
+
+  if (fc > 1) {
+    const objF2 = 4 + 12 + dsObj;
+    if (objF2 + 12 <= buf.byteLength) {
+      const w2 = dv.getUint16(objF2 + 4, true);
+      const h2 = dv.getUint16(objF2 + 6, true);
+      const ds2 = dv.getUint32(objF2 + 8, true);
+      if (w2 > 0 && w2 < 3000 && h2 > 0 && h2 < 3000 && ds2 < buf.byteLength) return 'objects';
+    }
+    const sprF2 = 4 + 14 + dsSpr;
+    if (sprF2 + 14 <= buf.byteLength) {
+      const w2 = dv.getUint16(sprF2 + 6, true);
+      const h2 = dv.getUint16(sprF2 + 8, true);
+      const ds2 = dv.getUint32(sprF2 + 10, true);
+      if (w2 > 0 && w2 < 3000 && h2 > 0 && h2 < 3000 && ds2 < buf.byteLength) return 'sprite';
+    }
+  }
+
+  const wObj = dv.getUint16(8, true), hObj = dv.getUint16(10, true);
+  const wSpr = dv.getUint16(10, true), hSpr = dv.getUint16(12, true);
+  const objOk = wObj > 0 && wObj < 3000 && hObj > 0 && hObj < 3000 && dsObj < buf.byteLength;
+  const sprOk = wSpr > 0 && wSpr < 3000 && hSpr > 0 && hSpr < 3000 && dsSpr < buf.byteLength;
+  if (objOk && !sprOk) return 'objects';
+  if (sprOk && !objOk) return 'sprite';
+  return 'objects';
+}
+
+// === Pixel decoders ===
+function xrgb1555(v) {
+  return [((v>>10)&0x1F)*255/31|0, ((v>>5)&0x1F)*255/31|0, (v&0x1F)*255/31|0, 255];
+}
+
+// === Objects frame decoder ===
+function decodeFrameObjects(dv, offset, w, h) {
+  const pixels = new Uint8ClampedArray(w * h * 4);
+  offset += 4;
+  let row = 0, cursorX = 0;
+  while (offset + 3 < dv.byteLength && row < h) {
+    const w1 = dv.getUint16(offset, true);
+    const w2 = dv.getUint16(offset+2, true);
+    if (w2 === 0xFFFF) { offset += 8; row++; cursorX = 0; continue; }
+    const skip = w1, count = w2, drawX = cursorX + skip;
+    offset += 4;
+    if (count > w*2) break;
+    for (let i = 0; i < count; i++) {
+      if (offset+1 >= dv.byteLength) break;
+      const p = dv.getUint16(offset, true); offset += 2;
+      const x = drawX + i;
+      if (x >= 0 && x < w && row < h) {
+        const idx = (row*w+x)*4;
+        const [r,g,b,a] = xrgb1555(p);
+        pixels[idx]=r; pixels[idx+1]=g; pixels[idx+2]=b; pixels[idx+3]=a;
+      }
+    }
+    cursorX = drawX + count;
+    if (offset+1 < dv.byteLength && dv.getUint16(offset,true)===0) offset+=2;
+  }
+  return pixels;
+}
+
+// === Sprite frame decoder (3 bytes/pixel, unaligned) ===
+function decodeFrameSprite(buf, offset, w, h) {
+  const bytes = new Uint8Array(buf);
+  const pixels = new Uint8ClampedArray(w * h * 4);
+  offset += 4;
+  let row = 0, cursorX = 0;
+  while (offset + 3 < buf.byteLength && row < h) {
+    const w1 = bytes[offset] | (bytes[offset+1]<<8);
+    const w2 = bytes[offset+2] | (bytes[offset+3]<<8);
+    if (w2 === 0xFFFF) { offset += 8; row++; cursorX = 0; continue; }
+    const skip = w1, count = w2, drawX = cursorX + skip;
+    offset += 4;
+    if (count > w*2) break;
+    for (let i = 0; i < count; i++) {
+      if (offset+2 >= buf.byteLength) break;
+      const color16 = bytes[offset] | (bytes[offset+1]<<8);
+      const alpha = bytes[offset+2];
+      offset += 3;
+      const r = ((color16>>10)&0x1F)*255/31|0;
+      const g = ((color16>>5)&0x1F)*255/31|0;
+      const b = (color16&0x1F)*255/31|0;
+      const a = Math.min(alpha*4, 255);
+      const x = drawX + i;
+      if (x >= 0 && x < w && row < h) {
+        const idx = (row*w+x)*4;
+        pixels[idx]=r; pixels[idx+1]=g; pixels[idx+2]=b; pixels[idx+3]=a;
+      }
+    }
+    cursorX = drawX + count;
+    // Terminator (unaligned u16 0x0000)
+    if (offset+1 < buf.byteLength) {
+      const term = bytes[offset] | (bytes[offset+1]<<8);
+      if (term === 0) offset += 2;
+    }
+  }
+  return pixels;
+}
+
+// === Main file decoder ===
+function decodeAnFile(buf) {
+  const dv = new DataView(buf);
+  const fc = dv.getUint32(0, true);
+  if (fc === 0 || fc > 2000) throw new Error('異常なフレーム数: ' + fc);
+
+  const fmt = detectFormat(buf);
+  const hdrSize = fmt === 'sprite' ? 14 : 12;
+  const frames = [];
+  let offset = 4;
+
+  for (let f = 0; f < fc; f++) {
+    if (offset + hdrSize > buf.byteLength) break;
+    let cx, cy, w, h, ds;
+    if (fmt === 'sprite') {
+      cx = dv.getInt16(offset+2, true);
+      cy = dv.getInt16(offset+4, true);
+      w = dv.getUint16(offset+6, true);
+      h = dv.getUint16(offset+8, true);
+      ds = dv.getUint32(offset+10, true);
+    } else {
+      cx = dv.getInt16(offset, true);
+      cy = dv.getInt16(offset+2, true);
+      w = dv.getUint16(offset+4, true);
+      h = dv.getUint16(offset+6, true);
+      ds = dv.getUint32(offset+8, true);
+    }
+    offset += hdrSize;
+    if (w === 0 || h === 0 || w > 5000 || h > 5000) { offset += ds; continue; }
+
+    let pixels;
+    if (fmt === 'sprite') {
+      pixels = decodeFrameSprite(buf, offset, w, h);
+    } else {
+      pixels = decodeFrameObjects(dv, offset, w, h);
+    }
+    frames.push({ width: w, height: h, centerX: cx, centerY: cy, dataSize: ds, pixels });
+    offset += ds;
+  }
+  return { frames, format: fmt };
+}
+
+function decodeInaFile(buf) {
+  const bytes = new Uint8Array(buf);
+  const decoder = new TextDecoder('euc-kr');
+  const layers = [];
+  let offset = 12;
+  while (offset + 50 <= buf.byteLength && layers.length < 20) {
+    const slice = bytes.slice(offset, offset+50);
+    let nullPos = slice.indexOf(0);
+    if (nullPos <= 0) break;
+    try { const name = decoder.decode(slice.slice(0, nullPos)); if (name.trim()) layers.push(name); }
+    catch { /* skip */ }
+    offset += 50;
+  }
+  return layers;
+}
+
+// === UI ===
+let currentFrames = [], currentFormat = '', currentFrameIdx = 0, zoomLevel = 1, animTimer = null;
+const bgModes = ['checker','black','white'];
+let bgIdx = 0;
+
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input');
+const infoDiv = document.getElementById('info');
+const controlsDiv = document.getElementById('controls');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const canvasContainer = document.getElementById('canvas-container');
+const frameSelect = document.getElementById('frame-select');
+const frameLabel = document.getElementById('frame-label');
+const zoomLabel = document.getElementById('zoom-label');
+
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
+fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+
+document.getElementById('btn-prev').addEventListener('click', () => { stopAnim(); showFrame(currentFrameIdx-1); });
+document.getElementById('btn-next').addEventListener('click', () => { stopAnim(); showFrame(currentFrameIdx+1); });
+document.getElementById('btn-play').addEventListener('click', toggleAnim);
+document.getElementById('btn-zoom-in').addEventListener('click', () => setZoom(zoomLevel+1));
+document.getElementById('btn-zoom-out').addEventListener('click', () => setZoom(zoomLevel-1));
+document.getElementById('btn-download').addEventListener('click', downloadPng);
+document.getElementById('bg-toggle').addEventListener('click', () => {
+  bgIdx = (bgIdx+1) % bgModes.length;
+  canvasContainer.className = bgModes[bgIdx];
+});
+frameSelect.addEventListener('change', () => { stopAnim(); showFrame(parseInt(frameSelect.value)); });
+
+function handleFiles(files) {
+  let anFile = null, inaFile = null;
+  for (const f of files) {
+    if (f.name.endsWith('.an')) anFile = f;
+    if (f.name.endsWith('.ina')) inaFile = f;
+  }
+  if (inaFile && !anFile) {
+    inaFile.arrayBuffer().then(buf => {
+      const layers = decodeInaFile(buf);
+      showInfo(`<b>${inaFile.name}</b> (レイヤーメタデータ)<br>` +
+        layers.map((l,i) => `<span class="label">${i+1}:</span> <span class="value">${l}</span>`).join('<br>') +
+        `<br><br><span style="color:#e0c060">※ .an ファイルもドロップすると画像表示</span>`);
+    });
+    return;
+  }
+  if (!anFile) { showInfo('<span style="color:#f66">.an ファイルが見つかりません</span>'); return; }
+
+  const promises = [anFile.arrayBuffer()];
+  if (inaFile) promises.push(inaFile.arrayBuffer());
+
+  Promise.all(promises).then(([anBuf, inaBuf]) => {
+    let layerInfo = '';
+    if (inaBuf) {
+      const layers = decodeInaFile(inaBuf);
+      layerInfo = `<br><span class="label">レイヤー:</span> ${layers.map(l=>`<span class="value">${l}</span>`).join(', ')}`;
+    }
+
+    const { frames, format } = decodeAnFile(anBuf);
+    if (frames.length === 0) { showInfo('<span style="color:#f66">デコード失敗</span>'); return; }
+
+    currentFrames = frames;
+    currentFormat = format;
+    currentFrameIdx = 0;
+
+    const f0 = frames[0];
+    const fmtClass = format === 'sprite' ? 'format-sprite' : 'format-objects';
+    const fmtLabel = format === 'sprite' ? 'sprite (3B+α)' : 'objects (XRGB1555)';
+    showInfo(
+      `<b>${anFile.name}</b><br>` +
+      `<span class="label">形式:</span> <span class="${fmtClass}">${fmtLabel}</span> | ` +
+      `<span class="label">フレーム:</span> <span class="value">${frames.length}</span> | ` +
+      `<span class="label">サイズ:</span> <span class="value">${f0.width}×${f0.height}</span> | ` +
+      `<span class="label">アンカー:</span> <span class="value">(${f0.centerX},${f0.centerY})</span> | ` +
+      `<span class="label">ファイル:</span> <span class="value">${(anBuf.byteLength/1024).toFixed(1)}KB</span>` +
+      layerInfo
+    );
+
+    frameSelect.innerHTML = '';
+    frames.forEach((fr,i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = `Frame ${i+1} (${fr.width}×${fr.height})`;
+      frameSelect.appendChild(opt);
+    });
+
+    controlsDiv.style.display = 'flex';
+    zoomLevel = 1;
+    if (f0.width < 80 && f0.height < 80) zoomLevel = 6;
+    else if (f0.width < 150 && f0.height < 150) zoomLevel = 3;
+    else if (f0.width < 300 && f0.height < 300) zoomLevel = 2;
+    showFrame(0);
+  });
+}
+
+function showFrame(idx) {
+  if (!currentFrames.length) return;
+  idx = ((idx % currentFrames.length) + currentFrames.length) % currentFrames.length;
+  currentFrameIdx = idx;
+  frameSelect.value = idx;
+  const frame = currentFrames[idx];
+  frameLabel.textContent = `${idx+1} / ${currentFrames.length}`;
+  canvas.width = frame.width;
+  canvas.height = frame.height;
+  const imgData = new ImageData(frame.pixels, frame.width, frame.height);
+  ctx.putImageData(imgData, 0, 0);
+  canvas.style.width = (frame.width * zoomLevel) + 'px';
+  canvas.style.height = (frame.height * zoomLevel) + 'px';
+  zoomLabel.textContent = `${zoomLevel*100}%`;
+}
+
+function setZoom(level) { zoomLevel = Math.max(1, Math.min(10, level)); showFrame(currentFrameIdx); }
+function toggleAnim() {
+  const btn = document.getElementById('btn-play');
+  if (animTimer) { stopAnim(); } else {
+    btn.textContent = '⏸ 停止'; btn.classList.add('active');
+    animTimer = setInterval(() => showFrame(currentFrameIdx+1), 100);
+  }
+}
+function stopAnim() {
+  const btn = document.getElementById('btn-play');
+  if (animTimer) { clearInterval(animTimer); animTimer = null; }
+  btn.textContent = '▶ 再生'; btn.classList.remove('active');
+}
+function downloadPng() {
+  if (!currentFrames.length) return;
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = `frame_${currentFrameIdx+1}.png`;
+  a.click();
+}
+function showInfo(html) { infoDiv.innerHTML = html; infoDiv.style.display = 'block'; }
+</script>
+</body>
+</html>
