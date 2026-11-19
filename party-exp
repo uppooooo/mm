@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>パーティ経験値倍率計算</title>
+<!-- 共通CSS -->
+<link rel="stylesheet" href="./styles.css">
+<!-- iPhone 最適化 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+</head>
+<body>
+<div class="container">
+<header>
+<h1>パーティ経験値倍率計算</h1>
+<p>レベルを半角数字で入力してください。（未入力のマスターは不参加として扱います）</p>
+</header>
+<main>
+<!-- 入力（iPhoneでも1行） -->
+<form class="form-grid cols-1" novalidate>
+<div class="row">
+<label class="label" for="m1" style="min-width:6em;">マスター1</label>
+<input id="m1" name="m1" class="fld" type="number"
+inputmode="numeric" data-index="0" enterkeyhint="next">
+</div>
+<div class="row">
+<label class="label" for="m2" style="min-width:6em;">マスター2</label>
+<input id="m2" name="m2" class="fld" type="number"
+inputmode="numeric" data-index="1" enterkeyhint="next">
+</div>
+<div class="row">
+<label class="label" for="m3" style="min-width:6em;">マスター3</label>
+<input id="m3" name="m3" class="fld" type="number"
+inputmode="numeric" data-index="2" enterkeyhint="next">
+</div>
+<div class="row">
+<label class="label" for="m4" style="min-width:6em;">マスター4</label>
+<input id="m4" name="m4" class="fld" type="number"
+inputmode="numeric" data-index="3" enterkeyhint="next">
+</div>
+<div class="row">
+<label class="label" for="enemy" style="min-width:6em;">敵レベル</label>
+<input id="enemy" name="enemy" class="fld" type="number"
+inputmode="numeric" data-index="4" enterkeyhint="done">
+</div>
+</form>
+
+<!-- 結果 -->
+<section class="result-panel" aria-live="polite">
+<div class="row" id="averageResult">PT平均レベル: -</div>
+<div class="row" id="differenceResult">敵とのレベル差: -</div>
+<div class="row" id="spreadResult">PT内レベル差: -</div>
+<div class="row" id="countResult">PT人数: -</div>
+<div class="row total" id="ratioResult">経験値倍率（1人あたり）: -</div>
+<div class="row total" id="efficiencyResult">全体効率（倍率×人数）: -</div>
+</section>
+
+<ul>
+<li><a href="https://uppooooo.github.io/mm/">トップページ</a></li>
+</ul>
+</main>
+</div>
+
+<script>
+(function(){
+const inputs = Array.from(document.querySelectorAll('.fld'))
+  .sort((a,b)=>+a.dataset.index-+b.dataset.index);
+const STORAGE_KEY = 'party-exp-ratio.v1';
+// 空欄は NaN（+'' が 0 になるのを防ぐ）
+const toNum = v => (String(v).trim()==='' || !Number.isFinite(+v)) ? NaN : +v;
+const pct = r => `${(r*100).toFixed(2)}%`;
+
+// DOM参照キャッシュ
+const memberInputs = ['m1','m2','m3','m4'].map(id=>document.getElementById(id));
+const enemyInput = document.getElementById('enemy');
+const averageResult = document.getElementById('averageResult');
+const differenceResult = document.getElementById('differenceResult');
+const spreadResult = document.getElementById('spreadResult');
+const countResult = document.getElementById('countResult');
+const ratioResult = document.getElementById('ratioResult');
+const efficiencyResult = document.getElementById('efficiencyResult');
+
+// 敵とのレベル差による倍率
+function diffRate(diff){
+  if (diff > 14.0) return 1.00;   // +14.1以上
+  if (diff > 7.0)  return 0.75;   // +14.0～+7.1
+  if (diff > -4.0) return 0.50;   // +7.0～-3.9
+  if (diff > -9.0) return 0.25;   // -4.0～-8.9
+  return 0.125;                   // -9.0以下
+}
+
+// PT内レベル差（最大－最小）による倍率
+function spreadRate(spread){
+  if (spread < 10) return 1.00;
+  if (spread < 15) return 0.95;
+  if (spread < 20) return 0.90;
+  if (spread < 25) return 0.80;
+  if (spread < 30) return 0.50;
+  if (spread < 40) return 0.30;
+  if (spread < 45) return 0.10;
+  if (spread < 50) return 0.05;
+  return 0;
+}
+
+// PT人数による倍率（1人は表にないため100%扱い）
+function countRate(n){
+  return {1:1.00, 2:0.65, 3:0.5333, 4:0.50}[n] ?? 1.00;
+}
+
+function clearResults(msg){
+  averageResult.textContent = msg;
+  [differenceResult, spreadResult, countResult, ratioResult, efficiencyResult]
+    .forEach(el=>el.textContent='');
+}
+
+function calc(){
+  const levels = memberInputs.map(i=>toNum(i.value)).filter(v=>!isNaN(v));
+  const enemy = toNum(enemyInput.value);
+
+  if (levels.length===0 || isNaN(enemy)){
+    clearResults('マスターを1人以上と敵レベルを入力してください。');
+    return;
+  }
+
+  const max = Math.max(...levels);
+  const min = Math.min(...levels);
+  // 最大レベルから15.1以上離れているメンバーは平均の計算から除外
+  const targets = levels.filter(v => max - v <= 15);
+  const avg = targets.reduce((s,v)=>s+v,0) / targets.length;
+  const diff = enemy - avg;
+  const spread = max - min;
+  const count = levels.length;
+
+  const rDiff = diffRate(diff);
+  const rSpread = spreadRate(spread);
+  const rCount = countRate(count);
+  const ratio = rDiff * rSpread * rCount;
+  const efficiency = ratio * count;
+
+  const excluded = count - targets.length;
+  const sign = diff > 0 ? '+' : '';
+
+  averageResult.textContent =
+    `PT平均レベル: ${avg.toFixed(2)}` + (excluded ? `（${excluded}人を平均から除外）` : '');
+  differenceResult.textContent = `敵とのレベル差: ${sign}${diff.toFixed(2)} → ${pct(rDiff)}`;
+  spreadResult.textContent = `PT内レベル差: ${spread}（最大${max}／最小${min}） → ${pct(rSpread)}`;
+  countResult.textContent = `PT人数: ${count}人 → ${pct(rCount)}`;
+  ratioResult.textContent = `経験値倍率（1人あたり）: ${pct(ratio)}`;
+  efficiencyResult.textContent = `全体効率（倍率×人数）: ${pct(efficiency)}`;
+}
+
+// 前回入力の復元
+try{
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw){
+    const data = JSON.parse(raw);
+    inputs.forEach(i=>{ if (data[i.name]!=null) i.value=data[i.name]; });
+  }
+}catch{}
+
+inputs.forEach((el,i)=>{
+  el.addEventListener('focus',()=>setTimeout(()=>el.select?.(),0));
+  el.addEventListener('input',()=>{
+    calc();
+    const data={};
+    inputs.forEach(x=>data[x.name]=x.value);
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch{}
+  });
+  el.addEventListener('keydown', e=>{
+    if (e.key==='Enter'){
+      e.preventDefault();
+      inputs[i+1]?.focus();
+    }
+  });
+});
+
+calc();
+inputs[0]?.focus();
+})();
+</script>
+</body>
+</html>
